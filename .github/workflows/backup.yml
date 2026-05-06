@@ -1,0 +1,37 @@
+name: Supabase Weekly Backup
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'   # Zondag 03:00 UTC
+  workflow_dispatch:        # Handmatige trigger
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install postgresql-client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Run pg_dump
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+        run: |
+          FILENAME="backup-$(date +%Y-%m-%d).sql.gz"
+          pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
+          echo "✅ Dump gemaakt: $FILENAME"
+
+      - name: Push to gymbot-backups
+        env:
+          GH_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GH_TOKEN}@github.com/erikdekock/gymbot-backups.git backup-repo
+          cp "$FILENAME" backup-repo/
+          cd backup-repo
+          git config user.email "builder@gymbot.app"
+          git config user.name "GymBot App Builder"
+          git add "$FILENAME"
+          git commit -m "Backup $FILENAME"
+          git push
+          echo "✅ Gepusht naar gymbot-backups"
