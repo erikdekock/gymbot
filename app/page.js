@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
+import GoalCard from '../components/GoalCard'
+import { activeGoal } from '../lib/season'
+import { timePercent, readinessPercent } from '../lib/readiness'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const FOCUS_OPTIONS = ['Lower Posterior', 'Upper Push/Pull', 'Lower Anterior', 'Upper + Core', 'Full Body', 'Mobility', 'Run']
@@ -84,31 +87,27 @@ export default function Home() {
     }
   }
 
-  const foxDate = new Date('2026-05-23')
   const today = new Date()
-  const daysToFox = Math.ceil((foxDate - today) / (1000 * 60 * 60 * 24))
+  const daysRemaining = Math.ceil((activeGoal.raceDate - today) / (1000 * 60 * 60 * 24))
+  const timePct = Math.round(timePercent(activeGoal.seasonStart, activeGoal.raceDate, today))
+  const readinessPct = Math.round(readinessPercent(activeGoal))
 
   return (
     <div className="px-5 pt-14 pb-10">
-      {/* Header */}
       <div className="mb-8">
         <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">GymBot</p>
         <h1 className="text-3xl font-bold text-white">This week</h1>
       </div>
 
-      {/* Fox countdown */}
-      <div className="mb-6 rounded-2xl bg-zinc-900 border border-zinc-800 p-4 flex items-center justify-between">
-        <div>
-          <p className="text-xs text-zinc-500 mb-1">The Fox 20K</p>
-          <p className="text-white font-semibold">May 23 · Surrey UK</p>
-        </div>
-        <div className="text-right">
-          <p className="text-3xl font-bold text-white">{daysToFox}</p>
-          <p className="text-xs text-zinc-500">days</p>
-        </div>
-      </div>
+      <GoalCard
+        seasonType={activeGoal.seasonType}
+        name={activeGoal.name}
+        meta={activeGoal.meta}
+        daysRemaining={daysRemaining}
+        timePercent={timePct}
+        readinessPercent={readinessPct}
+      />
 
-      {/* Week */}
       <div className="space-y-3 mb-6">
         {loading ? (
           <div className="text-zinc-600 text-sm py-8 text-center">Loading...</div>
@@ -150,7 +149,6 @@ export default function Home() {
         })}
       </div>
 
-      {/* Plan week button */}
       <button
         onClick={() => setShowPlanner(true)}
         className="w-full rounded-2xl border border-zinc-700 border-dashed p-4 text-zinc-500 text-sm font-medium active:scale-95 transition-all"
@@ -158,7 +156,6 @@ export default function Home() {
         + Plan this week
       </button>
 
-      {/* Planner modal */}
       {showPlanner && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
           <div className="flex items-center justify-between px-5 pt-14 pb-4 border-b border-zinc-800">

@@ -12,3 +12,115 @@ body {
   margin: 0 auto;
   min-height: 100vh;
 }
+
+/* GymBot design tokens */
+:root {
+  --gb-bg-page: #0a0a0a;
+  --gb-bg-card: #181818;
+  --gb-bg-goal: #1c1410;
+  --gb-border-goal: #3a2614;
+  --gb-track: #2a1c14;
+  --gb-track-time: #555555;
+  --gb-accent-race: #EF9F27;
+  --gb-text-primary: #ffffff;
+  --gb-text-secondary: #888888;
+  --gb-text-tertiary: #cccccc;
+}
+
+.goal-card {
+  background: var(--gb-bg-goal);
+  border: 1px solid var(--gb-border-goal);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.goal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.goal-icon {
+  font-size: 22px;
+  color: var(--gb-accent-race);
+}
+.goal-body {
+  flex: 1;
+  min-width: 0;
+}
+.goal-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--gb-accent-race);
+  margin: 0 0 3px 0;
+  font-weight: 500;
+}
+.goal-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gb-text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+.goal-meta {
+  font-size: 11px;
+  color: var(--gb-text-secondary);
+  margin: 2px 0 0 0;
+}
+.goal-count {
+  text-align: right;
+  min-width: 50px;
+}
+.goal-count-num {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--gb-text-primary);
+  line-height: 1;
+}
+.goal-count-unit {
+  font-size: 10px;
+  color: var(--gb-text-secondary);
+}
+.goal-progress {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gb-track);
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.progress-row:last-child {
+  margin-bottom: 0;
+}
+.progress-label {
+  font-size: 10px;
+  color: var(--gb-text-secondary);
+  min-width: 64px;
+}
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--gb-track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.progress-fill--time {
+  background: var(--gb-track-time);
+}
+.progress-fill--ready {
+  background: var(--gb-accent-race);
+}
+.progress-pct {
+  font-size: 10px;
+  color: var(--gb-text-tertiary);
+  min-width: 30px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
