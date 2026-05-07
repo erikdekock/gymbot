@@ -20,10 +20,12 @@ export default function Home() {
   const [showPlanner, setShowPlanner] = useState(false)
   const [plannerDays, setPlannerDays] = useState({})
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     buildWeek()
     loadSessions()
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
   }, [])
 
   function buildWeek() {
@@ -94,9 +96,19 @@ export default function Home() {
 
   return (
     <div className="px-5 pt-14 pb-10">
-      <div className="mb-8">
-        <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">GymBot</p>
-        <h1 className="text-3xl font-bold text-white">This week</h1>
+      <div className="mb-8" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+        <div>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">GymBot</p>
+          <h1 className="text-3xl font-bold text-white">This week</h1>
+        </div>
+        <button
+          className="avatar-circle-sm"
+          onClick={() => router.push("/profile")}
+          aria-label="Go to profile"
+          style={{ marginTop: 4 }}
+        >
+          {user?.email ? user.email[0].toUpperCase() : "?"}
+        </button>
       </div>
 
       <GoalCard
