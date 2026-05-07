@@ -15,8 +15,8 @@ export default function Welcome() {
 
   async function handleSubmit() {
     if (!canSubmit) {
-      if (!isValidEmail) setError('That doesn't look like a valid email.')
-      else if (!agreed) setError('You'll need to accept the notice to continue.')
+      if (!isValidEmail) setError('That does not look like a valid email.')
+      else if (!agreed) setError('Please accept the notice to continue.')
       return
     }
     setLoading(true)
@@ -28,7 +28,7 @@ export default function Welcome() {
       },
     })
     if (err) {
-      setError('We couldn't send the link. Try again.')
+      setError('We could not send the link. Try again.')
       setLoading(false)
     } else {
       router.push(`/check-email?email=${encodeURIComponent(email)}`)

@@ -41,7 +41,7 @@ export default function TargetWeights() {
     const { error } = await supabase.from('profiles')
       .upsert({ id: userId, target_weights: weights }, { onConflict: 'id' })
     if (error) {
-      alert('Couldn't save. Check your connection and try again.')
+      alert('Could not save. Check your connection and try again.')
     } else {
       setOriginal(weights)
     }

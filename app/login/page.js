@@ -12,7 +12,7 @@ export default function Login() {
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
   async function handleSubmit() {
-    if (!isValidEmail) { setError('That doesn't look like a valid email.'); return }
+    if (!isValidEmail) { setError('That does not look like a valid email.'); return }
     setLoading(true)
     setError('')
     const { error: err } = await supabase.auth.signInWithOtp({
@@ -20,7 +20,7 @@ export default function Login() {
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
     if (err) {
-      setError('We couldn't send the link. Try again.')
+      setError('We could not send the link. Try again.')
       setLoading(false)
     } else {
       router.push(`/check-email?email=${encodeURIComponent(email)}`)
@@ -34,7 +34,7 @@ export default function Login() {
         <div style={{ marginTop: 48 }}>
           <h1 className="auth-tagline">Welcome back.</h1>
           <p style={{ fontSize: 15, color: 'var(--gb-text-secondary)', marginTop: 8 }}>
-            Enter your email and we'll send you a link.
+            Enter your email and we will send you a link.
           </p>
         </div>
       </div>
