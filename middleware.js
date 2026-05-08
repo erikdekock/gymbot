@@ -1,3 +1,4 @@
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 const PUBLIC_PATHS = [
@@ -6,27 +7,49 @@ const PUBLIC_PATHS = [
   '/check-email',
   '/link-expired',
   '/first-login',
-  '/auth/callback',
+  '/auth',
 ]
 
-export function middleware(request) {
+export async function middleware(request) {
+  let supabaseResponse = NextResponse.next({ request })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          )
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser()
+
   const { pathname } = request.nextUrl
   const isPublic = PUBLIC_PATHS.some(p => pathname.startsWith(p))
 
-  // Check for Supabase auth cookie
-  const hasSession =
-    request.cookies.get('sb-bdekeqbphmkrswcrubco-auth-token') ||
-    request.cookies.get('sb-access-token') ||
-    // Supabase v2 cookie names
-    [...request.cookies.getAll()].some(c => c.name.includes('auth-token'))
-
-  if (!isPublic && !hasSession) {
-    return NextResponse.redirect(new URL('/welcome', request.url))
+  if (!user && !isPublic) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/welcome'
+    return NextResponse.redirect(url)
   }
 
-  return NextResponse.next()
+  return supabaseResponse
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|manifest.json).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

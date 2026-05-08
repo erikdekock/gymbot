@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../../../lib/supabase'
+import { createClient } from '../../../lib/supabase/client'
+
+const supabase = createClient()
 
 const DEFAULT_EXERCISES = [
   { key: 'squat', label: 'Squat', unit: 'kg' },

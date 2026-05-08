@@ -1,7 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../../lib/supabase'
+import { createClient } from '../../lib/supabase/client'
+
+const supabase = createClient()
 
 export default function Login() {
   const router = useRouter()
@@ -17,7 +19,7 @@ export default function Login() {
     setError('')
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
     if (err) {
       setError('We could not send the link. Try again.')

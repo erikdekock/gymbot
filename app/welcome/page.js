@@ -1,7 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../../lib/supabase'
+import { createClient } from '../../lib/supabase/client'
+
+const supabase = createClient()
 
 export default function Welcome() {
   const router = useRouter()
@@ -24,7 +26,7 @@ export default function Welcome() {
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
     if (err) {

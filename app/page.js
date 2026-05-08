@@ -1,10 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../lib/supabase'
+import { createClient } from '../lib/supabase/client'
 import GoalCard from '../components/GoalCard'
 import { activeGoal } from '../lib/season'
 import { timePercent, readinessPercent } from '../lib/readiness'
+
+const supabase = createClient()
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const FOCUS_OPTIONS = ['Lower Posterior', 'Upper Push/Pull', 'Lower Anterior', 'Upper + Core', 'Full Body', 'Mobility', 'Run']

@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../../lib/supabase'
+import { createClient } from '../../lib/supabase/client'
+
+const supabase = createClient()
 
 const TAGS = ['Experienced', 'Casual', 'Beginner']
 const TOTAL_SLOTS = 6
