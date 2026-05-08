@@ -7,33 +7,42 @@ export default function AuthConfirm() {
   const router = useRouter()
 
   useEffect(() => {
-    // Handle implicit flow where token is in URL hash
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.push('/')
-      } else {
-        // Listen for auth state change (triggered by hash fragment)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          if (session) {
-            subscription.unsubscribe()
-            router.push('/')
-          }
-        })
-        // Timeout fallback
-        setTimeout(() => {
-          subscription.unsubscribe()
-          router.push('/link-expired')
-        }, 5000)
+    // Supabase automatically picks up the hash fragment and sets the session
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        subscription.unsubscribe()
+        router.replace('/')
       }
     })
+
+    // Also check if session already exists (e.g. page reload)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.replace('/')
+      }
+    })
+
+    // Fallback: if nothing happens in 6 seconds, link has expired
+    const timeout = setTimeout(() => {
+      subscription.unsubscribe()
+      router.replace('/link-expired')
+    }, 6000)
+
+    return () => {
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
   }, [])
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#0a0a0a', display: 'flex',
-      alignItems: 'center', justifyContent: 'center', color: '#888'
+      minHeight: '100vh',
+      background: '#0a0a0a',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}>
-      <p style={{ fontSize: 15 }}>Signing you in…</p>
+      <p style={{ fontSize: 15, color: '#888' }}>Signing you in…</p>
     </div>
   )
 }

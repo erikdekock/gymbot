@@ -17,7 +17,7 @@ export default function Login() {
     setError('')
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     })
     if (err) {
       setError('We could not send the link. Try again.')
