@@ -160,7 +160,7 @@ function WelcomeContent() {
           />
           {emailEdited && originalEmail && (
             <p style={{ fontSize: 12, color: 'var(--gb-text-secondary)', margin: 0, lineHeight: 1.4 }}>
-              This invite was sent to {originalEmail}. Continuing with a different email is fine, but the link will go to whichever address you submit.
+              This invite was set up for {originalEmail}. You can continue with a different email — the magic link will go to whatever you enter here.
             </p>
           )}
         </div>
