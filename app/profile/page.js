@@ -112,11 +112,17 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Destructive delete — not in a card, isolated */}
-      <div style={{ padding: '32px 20px 48px' }}>
+      {/* Feedback + destructive actions */}
+      <div style={{ padding: '24px 20px 48px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <button
+          onClick={() => router.push('/profile/feedback')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
+        >
+          <span style={{ fontSize: 15, color: 'var(--gb-text-secondary)' }}>Send feedback</span>
+        </button>
         <button
           onClick={() => setShowDelete(true)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
         >
           <span style={{ fontSize: 15, color: 'var(--gb-destructive)' }}>Delete account</span>
         </button>

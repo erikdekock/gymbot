@@ -239,6 +239,105 @@ export default function Admin() {
           </>
         )}
       </div>
+
+      {/* Feedback section */}
+      <FeedbackSection />
+    </div>
+  )
+}
+
+const CATEGORY_LABELS = { bug: 'Bug', idea: 'Idea', confusion: 'Confused', other: 'Other' }
+
+function FeedbackSection() {
+  const [feedback, setFeedback] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadFeedback()
+  }, [])
+
+  async function loadFeedback() {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('feedback_messages')
+      .select('*, profiles(display_name, tester_profile)')
+      .order('created_at', { ascending: false })
+    setFeedback(data || [])
+    setLoading(false)
+  }
+
+  async function toggleRead(id, current) {
+    const supabase = createClient()
+    await supabase
+      .from('feedback_messages')
+      .update({ read_by_admin: !current })
+      .eq('id', id)
+    setFeedback(f => f.map(item => item.id === id ? { ...item, read_by_admin: !current } : item))
+  }
+
+  const unread = feedback.filter(f => !f.read_by_admin).length
+
+  return (
+    <div style={{ padding: '0 16px 48px' }}>
+      <div style={{ padding: '16px 4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--gb-text-secondary)', margin: 0 }}>
+          FEEDBACK
+        </p>
+        {unread > 0 && (
+          <span style={{ fontSize: 11, color: 'var(--gb-warn)' }}>{unread} unread</span>
+        )}
+      </div>
+
+      {loading ? (
+        <p style={{ color: 'var(--gb-text-quiet)', fontSize: 14 }}>Loading…</p>
+      ) : feedback.length === 0 ? (
+        <p style={{ color: 'var(--gb-text-quiet)', fontSize: 14 }}>No feedback yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {feedback.map(item => (
+            <div
+              key={item.id}
+              style={{
+                background: item.read_by_admin ? 'var(--gb-bg-card)' : '#1a1a2e',
+                borderRadius: 'var(--gb-radius-lg)',
+                padding: '12px 16px',
+                borderLeft: item.read_by_admin ? 'none' : '3px solid var(--gb-accent)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <div>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--gb-text-primary)' }}>
+                    {item.profiles?.display_name || 'Unknown'}
+                  </span>
+                  {item.category && (
+                    <span style={{
+                      marginLeft: 8, fontSize: 10, color: 'var(--gb-text-secondary)',
+                      background: 'var(--gb-bg-elevated)', borderRadius: 4, padding: '2px 6px',
+                    }}>
+                      {CATEGORY_LABELS[item.category]}
+                    </span>
+                  )}
+                </div>
+                <span style={{ fontSize: 11, color: 'var(--gb-text-quiet)' }}>
+                  {new Date(item.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                </span>
+              </div>
+              <p style={{ fontSize: 14, color: 'var(--gb-text-secondary)', margin: '0 0 8px', lineHeight: 1.5 }}>
+                {item.message}
+              </p>
+              <button
+                onClick={() => toggleRead(item.id, item.read_by_admin)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  fontSize: 11, color: 'var(--gb-text-quiet)',
+                }}
+              >
+                {item.read_by_admin ? 'Mark as unread' : 'Mark as read'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
