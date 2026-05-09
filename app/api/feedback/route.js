@@ -76,7 +76,7 @@ export async function POST(request) {
             select: { name: notionType },
           },
           Status: {
-            select: { name: 'New' },
+            status: { name: 'New' },
           },
           Description: {
             rich_text: [{ text: { content: details.trim() } }],
