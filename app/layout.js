@@ -1,10 +1,10 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'GymBot',
-  description: 'Jouw persoonlijke gym tracker',
+  title: 'Reprise',
+  description: 'AI strength coach',
   manifest: '/manifest.json',
-  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'GymBot' },
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'Reprise' },
   viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
 }
 

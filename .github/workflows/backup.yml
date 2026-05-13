@@ -22,16 +22,16 @@ jobs:
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
           echo "✅ Dump gemaakt: $FILENAME"
 
-      - name: Push to gymbot-backups
+      - name: Push to reprise-backups
         env:
           GH_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
         run: |
           git clone https://x-access-token:${GH_TOKEN}@github.com/erikdekock/gymbot-backups.git backup-repo
           cp "$FILENAME" backup-repo/
           cd backup-repo
-          git config user.email "builder@gymbot.app"
-          git config user.name "GymBot App Builder"
+          git config user.email "builder@reprise.coach"
+          git config user.name "Reprise App Builder"
           git add "$FILENAME"
           git commit -m "Backup $FILENAME"
           git push
-          echo "✅ Gepusht naar gymbot-backups"
+          echo "✅ Gepusht naar reprise-backups"
