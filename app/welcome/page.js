@@ -17,23 +17,36 @@ export default function Welcome() {
 
   async function handleSubmit() {
     if (!canSubmit) {
-      if (!isValidEmail) setError('That does not look like a valid email.')
+      if (!isValidEmail) setError('Please check the email address — that format isn\'t valid.')
       else if (!agreed) setError('Please accept the notice to continue.')
       return
     }
     setLoading(true)
     setError('')
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-    if (err) {
-      setError('We could not send the link. Try again.')
+
+    try {
+      const { error: err } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (err) {
+        if (err.name === 'AuthRetryableFetchError') {
+          setError('No connection right now. Check your network — we\'ll send the link when you\'re back online.')
+        } else if (err.status === 429 || err.code === 'over_email_send_rate_limit') {
+          setError('Too many sign-in attempts in a row. Wait a few minutes before trying again.')
+        } else {
+          setError('Something failed on our end and the link wasn\'t sent. Try again in a few minutes. If it keeps failing, email us at hello@reprise.coach.')
+        }
+        setLoading(false)
+      } else {
+        router.push(`/check-email?email=${encodeURIComponent(email)}`)
+      }
+    } catch (e) {
+      setError('No connection right now. Check your network — we\'ll send the link when you\'re back online.')
       setLoading(false)
-    } else {
-      router.push(`/check-email?email=${encodeURIComponent(email)}`)
     }
   }
 
