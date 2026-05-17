@@ -95,7 +95,7 @@ export default function SessionPage() {
 
   async function loadLastWeights(focus) {
     const { data } = await supabase
-      .from('exercises')
+      .from('exercise_log')
       .select('name, kg')
       .order('created_at', { ascending: false })
       .limit(100)
@@ -122,7 +122,7 @@ export default function SessionPage() {
   }
 
   async function loadSets(sid, t) {
-    const { data } = await supabase.from('exercises').select('*').eq('session_id', sid).order('created_at')
+    const { data } = await supabase.from('exercise_log').select('*').eq('session_id', sid).order('created_at')
     if (data && data.length > 0) {
       const grouped = {}
       data.forEach(e => {
@@ -147,7 +147,7 @@ export default function SessionPage() {
     const existing = sets[supersetLabel] || []
     const setNum = existing.length + 1
 
-    await supabase.from('exercises').insert([
+    await supabase.from('exercise_log').insert([
       { session_id: sessionId, name: ss.exerciseA, set_number: setNum, kg: kgA, reps: repsA, notes: supersetLabel },
       { session_id: sessionId, name: ss.exerciseB, set_number: setNum, kg: kgB, reps: repsB, notes: supersetLabel + '_B' },
     ])

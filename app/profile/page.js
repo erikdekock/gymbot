@@ -41,7 +41,7 @@ export default function Profile() {
     setDeleting(true)
     const { data: sessions } = await supabase.from('sessions').select('id').eq('user_id', user.id)
     if (sessions?.length) {
-      await supabase.from('exercises').delete().in('session_id', sessions.map(s => s.id))
+      await supabase.from('exercise_log').delete().in('session_id', sessions.map(s => s.id))
     }
     await supabase.from('sessions').delete().eq('user_id', user.id)
     await supabase.from('profiles').delete().eq('id', user.id)
