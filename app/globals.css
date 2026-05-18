@@ -333,3 +333,106 @@ body {
   margin: 0 0 16px;
   line-height: 1.5;
 }
+
+/* ============================================================
+   Reprise Design System v1.1 — Paper & Sage tokens (12.2 Prelude UI)
+   Locked 19 May 2026 per [Spec] Reprise Design System v1.1.
+   Supersedes v1.0 warm-dark direction. Coexists with legacy --gb-*
+   tokens; consumed inside .rep-onboarding for 12.2. Brand-launch 15a
+   refactors auth + remaining surfaces.
+   ============================================================ */
+:root {
+  /* Typefaces — next/font/google variables wired in app/layout.js */
+  --rep-font-display: var(--font-display), Georgia, 'Times New Roman', serif;
+  --rep-font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --rep-font-mono: var(--font-mono), 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Surface hierarchy — cream paper stops, hex locked 19 May 2026 per v1.1 §4.1 */
+  --paper-100: #F3EFE6; /* primary cream — phone surface, content background */
+  --paper-95:  #ECE7DA; /* page background, slightly recessed cards */
+  --paper-90:  #E3DDC8; /* deeper recess, input field fills */
+  --paper-80:  #D2CAB0; /* dividers, soft borders, hairline rules */
+  --paper-70:  #B5AC93; /* mid hairlines, stronger borders, dotted rules */
+
+  /* Text + structure — graphite family per v1.1 §4.2 */
+  --graphite-30: #6E6759; /* muted text, secondary labels, italic helpers */
+  --graphite-20: #3A352D; /* body copy in dense paragraphs */
+  --graphite-10: #1C1A17; /* primary text, deep structure, frames, CTA fills */
+
+  /* Accent — forest sage per v1.1 §4.3. Single accent, one living element per surface. */
+  --sage: #3D6B5C;
+
+  /* Semantic (subdued; pair with icon/position per §4.5 + §7.3 Differentiate Without Color)
+     v1.1 §4.5 leaves final hex open; #B5503E placeholder is desaturated brick-red
+     distinct from Claude burnt sienna; pending UX/UI Designer lock. */
+  --error: #B5503E;
+
+  /* Spacing — 8-pt base scale */
+  --rep-space-1:  4px;
+  --rep-space-2:  8px;
+  --rep-space-3:  12px;
+  --rep-space-4:  16px;
+  --rep-space-6:  24px;
+  --rep-space-8:  32px;
+  --rep-space-12: 48px;
+  --rep-space-16: 64px;
+  --rep-space-24: 96px;
+
+  /* Border radii */
+  --rep-radius-0:    0;
+  --rep-radius-sm:   4px;
+  --rep-radius-md:   8px;
+  --rep-radius-lg:   16px;
+  --rep-radius-full: 9999px;
+}
+
+/* Light-mode canvas: paper-95 fills the body so the cream surface extends
+   beyond any onboarding wrapper (per v1.1 §4.1 + §5). */
+body {
+  background: var(--paper-95);
+}
+
+/* Onboarding screen wrapper — applied by app/onboarding/layout.js */
+.rep-onboarding {
+  background: var(--paper-95);
+  color: var(--graphite-10);
+  font-family: var(--rep-font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Body text legibility tuning (§3.3) */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* All focus rings inside onboarding: 2px forest sage, rounded to element shape.
+   Browser default outline is unacceptable per §7.4. */
+.rep-onboarding :focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+.rep-onboarding :focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Progress line — 1px hairline track on paper-80, fill in forest sage as
+   the conversation progresses. No step numbers, no percentage. Reduce
+   Motion: static fill. */
+.rep-progress-line {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--paper-80);
+  z-index: 10;
+}
+.rep-progress-line__fill {
+  height: 100%;
+  background: var(--sage);
+  transition: width 0.4s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rep-progress-line__fill {
+    transition: none;
+  }
+}
