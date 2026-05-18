@@ -6,6 +6,7 @@
  */
 import { Client } from "@notionhq/client";
 import { z } from "zod";
+import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -146,25 +147,32 @@ async function discoverLayers() {
   return layers;
 }
 
-// ---------- Layer 6 extractor ----------
+// ---------- layer schemas ----------
 
-const Layer6Schema = z.object({
-  layer: z.literal(6),
-  title: z.string().min(1),
-  source_page_id: z.string().min(1),
-  built_at: z.string().min(1),
-  sections: z
-    .array(
-      z.object({
-        heading: z.string().min(1),
-        level: z.number().int().min(2).max(3),
-        content_markdown: z.string().min(1),
-      })
-    )
-    .min(1),
+const sectionSchema = z.object({
+  heading: z.string(),
+  level: z.number().int().min(1).max(6),
+  content_markdown: z.string(),
 });
 
-async function extractLayer6(layer) {
+const makeLayerSchema = (layerLiteral) =>
+  z.object({
+    layer: z.literal(layerLiteral),
+    title: z.string(),
+    source_page_id: z.string(),
+    content_hash: z.string().regex(/^[a-f0-9]{64}$/),
+    sections: z.array(sectionSchema),
+  });
+
+const layer1Schema = makeLayerSchema("1");
+const layer2Schema = makeLayerSchema("2");
+const layer25Schema = makeLayerSchema("2.5");
+const layer3Schema = makeLayerSchema("3");
+const layer6Schema = makeLayerSchema("6");
+
+// ---------- shared section extractor ----------
+
+async function extractSectionsLayer(layer) {
   // Group content blocks into sections by heading_2 / heading_3 boundaries.
   const sections = [];
   let cur = null;
@@ -201,11 +209,19 @@ async function extractLayer6(layer) {
       out.push({ heading: s.heading, level: s.level, content_markdown: md });
     }
   }
-  return {
-    layer: 6,
+
+  const hashable = {
+    layer: layer.layerNumber,
     title: layer.title,
     source_page_id: KB_PAGE_ID,
-    built_at: new Date().toISOString(),
+    sections: out,
+  };
+  const content_hash = createHash("sha256").update(JSON.stringify(hashable)).digest("hex");
+  return {
+    layer: layer.layerNumber,
+    title: layer.title,
+    source_page_id: KB_PAGE_ID,
+    content_hash,
     sections: out,
   };
 }
@@ -213,7 +229,11 @@ async function extractLayer6(layer) {
 // ---------- main ----------
 
 const EXTRACTORS = {
-  "6": { extractor: extractLayer6, schema: Layer6Schema, file: "layer-6.json" },
+  "1": { schema: layer1Schema, extract: extractSectionsLayer },
+  "2": { schema: layer2Schema, extract: extractSectionsLayer },
+  "2.5": { schema: layer25Schema, extract: extractSectionsLayer },
+  "3": { schema: layer3Schema, extract: extractSectionsLayer },
+  "6": { schema: layer6Schema, extract: extractSectionsLayer },
 };
 
 async function main() {
@@ -233,9 +253,10 @@ async function main() {
       failures++;
       continue;
     }
-    const { extractor, schema, file } = EXTRACTORS[num];
+    const { extract, schema } = EXTRACTORS[num];
+    const file = `layer-${num}.json`;
     try {
-      const data = await extractor(layer);
+      const data = await extract(layer);
       const parsed = schema.safeParse(data);
       if (!parsed.success) {
         const issue = parsed.error.issues[0];
