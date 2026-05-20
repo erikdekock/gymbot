@@ -511,12 +511,14 @@ body {
 }
 
 /* ------------------------------------------------------------
-   Buttons — outlined CTA per DS v1.1 §4.4 WCAG verification
+   Buttons — filled-sage primary CTA per DS v1.1 §4.3 + §8.1
    ------------------------------------------------------------ */
 .rep-btn {
-  font-family: var(--rep-font-sans);
-  font-size: 1rem;
+  font-family: var(--rep-font-mono);
+  font-size: 0.8125rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
   min-height: 48px;
   padding: var(--rep-space-3) var(--rep-space-6);
   border-radius: var(--rep-radius-md);
@@ -529,19 +531,26 @@ body {
   opacity: 0.35;
   cursor: not-allowed;
 }
+/* Primary: filled sage stamp. Paper-100 text on sage gives WCAG AAA contrast. */
 .rep-btn--primary {
-  background: transparent;
-  color: var(--graphite-10);
+  background: var(--sage);
+  color: var(--paper-100);
   border: 1.5px solid var(--sage);
 }
 .rep-btn--primary:not(:disabled):hover,
 .rep-btn--primary:not(:disabled):active {
-  background: color-mix(in srgb, var(--sage) 12%, transparent);
+  background: var(--sage-deep, #2D5447);
+  border-color: var(--sage-deep, #2D5447);
 }
+/* Ghost: secondary control, sentence case (overrides .rep-btn uppercase). */
 .rep-btn--ghost {
   background: transparent;
   color: var(--graphite-30);
   border: 1px solid var(--paper-80);
+  font-family: var(--rep-font-sans);
+  font-size: 0.9375rem;
+  text-transform: none;
+  letter-spacing: normal;
 }
 .rep-btn--ghost:not(:disabled):hover,
 .rep-btn--ghost:not(:disabled):active {

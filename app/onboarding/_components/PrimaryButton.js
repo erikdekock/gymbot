@@ -1,12 +1,16 @@
 'use client'
 
 /**
- * Primary CTA button — outlined style per DS v1.1 §4.4 WCAG verification:
- * off-white text on surface-100 (14.1:1 AAA) + accent border (4.0:1 ✓ for UI
- * components). Filled accent variant rejected for body text (3.5:1 fail).
+ * Primary CTA button — filled sage stamp per DS v1.1 §4.3 + §8.1.
+ * Plex Mono uppercase letterspaced text on sage fill. Paper-100 text on
+ * sage gives WCAG AAA contrast.
  *
  * 48pt minimum height per 12.2 brief (matches Moment 2b precedent).
  * Focus ring inherits from .rep-onboarding :focus-visible global rule.
+ *
+ * Variants:
+ *   primary — filled sage stamp (default)
+ *   ghost   — secondary control, sentence case, paper-80 border
  *
  * @param {{
  *   children: React.ReactNode,
