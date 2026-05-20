@@ -468,7 +468,11 @@ body {
    Typography
    ------------------------------------------------------------ */
 .rep-wordmark {
-  font-family: var(--rep-font-display);
+  /* Explicit font stack — bypasses token indirection so wordmark always
+     renders in display register. next/font's CSS var is preferred when
+     loaded; the second fallback is the actual display family (Big
+     Shoulders Display), not a serif/mono inheritance. */
+  font-family: var(--font-display), 'Big Shoulders Display', Impact, 'Arial Narrow', sans-serif;
   font-weight: 900;
   letter-spacing: 0.04em;
   color: var(--graphite-10);
