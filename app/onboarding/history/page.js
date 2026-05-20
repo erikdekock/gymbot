@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import { validateHistory } from '../_state/validators'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import OptionButton from '../_components/OptionButton'
 import PrimaryButton from '../_components/PrimaryButton'
@@ -84,6 +85,7 @@ export default function HistoryPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/welcome" />
           <QuestionHeading>Have you lifted weights before?</QuestionHeading>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--rep-space-2)' }}>

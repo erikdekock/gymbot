@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import { validateEquipment } from '../_state/validators'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { HelperCopy } from '../_components/Typography'
 import MultiSelectTile from '../_components/MultiSelectTile'
@@ -52,6 +53,7 @@ export default function EquipmentPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/schedule" />
           <QuestionHeading>What do you have access to when you train?</QuestionHeading>
           <HelperCopy>Select everything that applies.</HelperCopy>
 

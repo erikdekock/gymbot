@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { HelperCopy } from '../_components/Typography'
 import MultiSelectTile from '../_components/MultiSelectTile'
@@ -74,6 +75,7 @@ export default function CrossModalPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/history" />
           <QuestionHeading>Do you train in other ways alongside strength work?</QuestionHeading>
           <HelperCopy>Select everything that applies.</HelperCopy>
 

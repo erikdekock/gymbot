@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { BodyCopy } from '../_components/Typography'
 import NumberInput from '../_components/NumberInput'
@@ -115,6 +116,7 @@ export default function ContextPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/metrics" />
           <QuestionHeading>A couple of things that help us calibrate.</QuestionHeading>
 
           <NumberInput

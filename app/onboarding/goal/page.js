@@ -6,6 +6,7 @@ import { useOnboarding } from '../_state/context'
 import { validateGoal } from '../_state/validators'
 import { GOAL_OPTIONS_V1 } from '../../../lib/onboarding-copy'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { BodyCopy, HelperCopy } from '../_components/Typography'
 import OptionButton from '../_components/OptionButton'
@@ -84,6 +85,7 @@ export default function GoalPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/context" />
           <QuestionHeading>What are you working toward?</QuestionHeading>
           <HelperCopy>Pick the one that fits closest.</HelperCopy>
 

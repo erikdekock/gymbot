@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { HelperCopy } from '../_components/Typography'
 import PrimaryButton from '../_components/PrimaryButton'
@@ -60,6 +61,7 @@ export default function OwnWordsPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/goal" />
           <QuestionHeading>In your own words — what does getting there look like?</QuestionHeading>
           <HelperCopy>We use your phrasing, not ours, when we talk about your direction.</HelperCopy>
 

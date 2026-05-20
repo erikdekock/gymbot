@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useOnboarding } from '../_state/context'
 import { validateSchedule } from '../_state/validators'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { HelperCopy } from '../_components/Typography'
 import PrimaryButton from '../_components/PrimaryButton'
@@ -47,6 +48,7 @@ export default function SchedulePage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/cross-modal" />
           <QuestionHeading>How many days a week can you train?</QuestionHeading>
           <HelperCopy>We&rsquo;ll build the week around this — not around an ideal.</HelperCopy>
 

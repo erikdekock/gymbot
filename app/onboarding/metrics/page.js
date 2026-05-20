@@ -6,6 +6,7 @@ import { useOnboarding } from '../_state/context'
 import { shouldRenderA2Variant } from '../_state/archetype'
 import { softWarnLift } from '../_state/validators'
 import ScreenContainer from '../_components/ScreenContainer'
+import BackAffordance from '../_components/BackAffordance'
 import QuestionHeading from '../_components/QuestionHeading'
 import { BodyCopy } from '../_components/Typography'
 import KgInput from '../_components/KgInput'
@@ -92,6 +93,7 @@ export default function MetricsPage() {
     <ScreenContainer
       top={
         <>
+          <BackAffordance to="/onboarding/equipment" />
           <QuestionHeading>Your numbers.</QuestionHeading>
 
           {isA2 ? (
