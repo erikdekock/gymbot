@@ -15,20 +15,20 @@ import PrimaryButton from '../_components/PrimaryButton'
 /**
  * Screen 9 — Completion (Scripted #1 surface).
  *
- * Spec §2 + §7 Screen 9. Brand mode, full editorial weight. REPRISE
- * wordmark returns to primary position (mirrors auth welcome — threshold
- * crossing).
+ * Spec §2 + §7 Screen 9 (revised 20 May 2026). Brand mode, full editorial
+ * weight. REPRISE wordmark returns to primary position (mirrors auth
+ * welcome — threshold crossing).
  *
  * Content:
- * - Scripted #1 (stubbed in 12.2 from lib/onboarding-copy.js; 12.3 swaps
- *   to KB-derived canonical text)
- * - "Your Key" sub-line (goal display name OR provisional framing)
+ * - Scripted #1 (12.2 stub: neutral profile-independent string from
+ *   lib/onboarding-copy.js; 12.3 swaps to AI-synthesised canonical text)
+ * - "Your Key" sub-line — 12.2 stub returns null so NO Key line renders.
+ *   Per revised spec, Your Key is ALWAYS AI-synthesised in 12.3, never
+ *   echoed from user_words_goal, never a placeholder. The rejected
+ *   verbatim-echo + "name it after a few sessions" patterns are removed.
  * - Single CTA: "Open the Set"
  *
- * Sparse-profile path (spec §8 — completeness_score < 0.3 surfaces
- * assumption list with confirm/correct affordances): NOT in 12.2 scope.
- * Completeness score is computed by the engine in 12.3. Stub renders the
- * standard completion path.
+ * Sparse-profile path (spec §8): NOT in 12.2 scope; handled by 12.3 engine.
  */
 export default function CompletePage() {
   const router = useRouter()
@@ -60,16 +60,18 @@ export default function CompletePage() {
 
           <BodyCopy>{scripted1}</BodyCopy>
 
-          <p
-            style={{
-              fontFamily: 'var(--rep-font-sans)',
-              fontSize: '0.875rem',
-              color: 'var(--graphite-30)',
-              margin: 0,
-            }}
-          >
-            {yourKey}
-          </p>
+          {yourKey ? (
+            <p
+              style={{
+                fontFamily: 'var(--rep-font-sans)',
+                fontSize: '0.875rem',
+                color: 'var(--graphite-30)',
+                margin: 0,
+              }}
+            >
+              {yourKey}
+            </p>
+          ) : null}
         </div>
       }
       bottom={

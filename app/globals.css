@@ -394,7 +394,11 @@ body {
 
 /* Onboarding screen wrapper — applied by app/onboarding/layout.js */
 .rep-onboarding {
-  background: var(--paper-95);
+  /* Explicitly override legacy GymBot body cascade (globals.css top:
+     color #f5f5f5, SF Pro font, dark bg). These three properties win
+     here because .rep-onboarding wraps every Prelude screen and is more
+     specific than the bare `body` selector for inherited properties. */
+  background-color: var(--paper-95);
   color: var(--graphite-10);
   font-family: var(--rep-font-sans);
   min-height: 100vh;
@@ -535,20 +539,25 @@ body {
   opacity: 0.35;
   cursor: not-allowed;
 }
-/* Primary: filled sage stamp. Paper-100 text on sage gives WCAG AAA contrast. */
+/* Primary: filled sage stamp. Paper-100 text on sage gives WCAG AAA contrast.
+   background-color (longhand) used deliberately to override Tailwind
+   preflight's `button { background-color: transparent }` reset with
+   matching property granularity; `background` shorthand was being
+   out-specified by the preflight longhand on the button element. */
 .rep-btn--primary {
-  background: var(--sage);
+  background-color: var(--sage);
+  background-image: none;
   color: var(--paper-100);
   border: 1.5px solid var(--sage);
 }
 .rep-btn--primary:not(:disabled):hover,
 .rep-btn--primary:not(:disabled):active {
-  background: var(--sage-deep, #2D5447);
+  background-color: var(--sage-deep, #2D5447);
   border-color: var(--sage-deep, #2D5447);
 }
 /* Ghost: secondary control, sentence case (overrides .rep-btn uppercase). */
 .rep-btn--ghost {
-  background: transparent;
+  background-color: transparent;
   color: var(--graphite-30);
   border: 1px solid var(--paper-80);
   font-family: var(--rep-font-sans);
