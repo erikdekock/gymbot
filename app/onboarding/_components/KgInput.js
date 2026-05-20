@@ -5,6 +5,16 @@
  * `inputMode="decimal"` for mobile numeric keypad. Value bridges to React
  * state via parseFloat; empty string → null.
  *
+ * Fresh-signup state: `value` is null (from initialOnboardingState), the
+ * input renders empty, placeholder "kg" shows in graphite-30. There is no
+ * default load; the engine assigns Week 1 loads from whatever the user
+ * provides (or applies sparse-profile defaults if all five are skipped).
+ *
+ * Within-session persistence: once the user enters a value and navigates
+ * forward, the OnboardingContext retains it. Navigating back via the
+ * Back affordance re-renders the input with the prior value, by design.
+ * That is not pre-fill — it is field memory across navigation.
+ *
  * @param {{
  *   label: string,
  *   value: number|null,
@@ -25,7 +35,7 @@ export default function KgInput({ label, value, onChange, onSkip, skipped, max =
           inputMode="decimal"
           pattern="[0-9]*\.?[0-9]*"
           className="rep-kg-input"
-          placeholder="—"
+          placeholder="kg"
           value={display}
           disabled={skipped}
           maxLength={5}
