@@ -333,3 +333,507 @@ body {
   margin: 0 0 16px;
   line-height: 1.5;
 }
+
+/* ============================================================
+   Reprise Design System v1.1 — Paper & Sage tokens (12.2 Prelude UI)
+   Locked 19 May 2026 per [Spec] Reprise Design System v1.1.
+   Supersedes v1.0 warm-dark direction. Coexists with legacy --gb-*
+   tokens; consumed inside .rep-onboarding for 12.2. Brand-launch 15a
+   refactors auth + remaining surfaces.
+   ============================================================ */
+:root {
+  /* Typefaces — next/font/google variables wired in app/layout.js */
+  --rep-font-display: var(--font-display), Georgia, 'Times New Roman', serif;
+  --rep-font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --rep-font-mono: var(--font-mono), 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Surface hierarchy — cream paper stops, hex locked 19 May 2026 per v1.1 §4.1 */
+  --paper-100: #F3EFE6; /* primary cream — phone surface, content background */
+  --paper-95:  #ECE7DA; /* page background, slightly recessed cards */
+  --paper-90:  #E3DDC8; /* deeper recess, input field fills */
+  --paper-80:  #D2CAB0; /* dividers, soft borders, hairline rules */
+  --paper-70:  #B5AC93; /* mid hairlines, stronger borders, dotted rules */
+
+  /* Text + structure — graphite family per v1.1 §4.2 */
+  --graphite-30: #6E6759; /* muted text, secondary labels, italic helpers */
+  --graphite-20: #3A352D; /* body copy in dense paragraphs */
+  --graphite-10: #1C1A17; /* primary text, deep structure, frames, CTA fills */
+
+  /* Accent — forest sage per v1.1 §4.3. Single accent, one living element per surface. */
+  --sage: #3D6B5C;
+
+  /* Semantic (subdued; pair with icon/position per §4.5 + §7.3 Differentiate Without Color)
+     v1.1 §4.5 leaves final hex open; #B5503E placeholder is desaturated brick-red
+     distinct from Claude burnt sienna; pending UX/UI Designer lock. */
+  --error: #B5503E;
+
+  /* Spacing — 8-pt base scale */
+  --rep-space-1:  4px;
+  --rep-space-2:  8px;
+  --rep-space-3:  12px;
+  --rep-space-4:  16px;
+  --rep-space-6:  24px;
+  --rep-space-8:  32px;
+  --rep-space-12: 48px;
+  --rep-space-16: 64px;
+  --rep-space-24: 96px;
+
+  /* Border radii */
+  --rep-radius-0:    0;
+  --rep-radius-sm:   4px;
+  --rep-radius-md:   8px;
+  --rep-radius-lg:   16px;
+  --rep-radius-full: 9999px;
+}
+
+/* Light-mode canvas: paper-95 fills the body so the cream surface extends
+   beyond any onboarding wrapper (per v1.1 §4.1 + §5). */
+body {
+  background: var(--paper-95);
+}
+
+/* Onboarding screen wrapper — applied by app/onboarding/layout.js */
+.rep-onboarding {
+  /* Explicitly override legacy GymBot body cascade (globals.css top:
+     color #f5f5f5, SF Pro font, dark bg). These three properties win
+     here because .rep-onboarding wraps every Prelude screen and is more
+     specific than the bare `body` selector for inherited properties. */
+  background-color: var(--paper-95);
+  color: var(--graphite-10);
+  font-family: var(--rep-font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Body text legibility tuning (§3.3) */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* All focus rings inside onboarding: 2px forest sage, rounded to element shape.
+   Browser default outline is unacceptable per §7.4. */
+.rep-onboarding :focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+.rep-onboarding :focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Progress line — 1px hairline track on paper-80, fill in forest sage as
+   the conversation progresses. No step numbers, no percentage. Reduce
+   Motion: static fill. */
+.rep-progress-line {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--paper-80);
+  z-index: 10;
+}
+.rep-progress-line__fill {
+  height: 100%;
+  background: var(--sage);
+  transition: width 0.4s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rep-progress-line__fill {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   Screen layout
+   ------------------------------------------------------------ */
+.rep-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--rep-space-8) var(--rep-space-6) var(--rep-space-8);
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.rep-screen__top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rep-space-4);
+  flex: 1;
+}
+.rep-screen__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rep-space-3);
+  padding-top: var(--rep-space-6);
+}
+
+/* ------------------------------------------------------------
+   Typography
+   ------------------------------------------------------------ */
+.rep-wordmark {
+  /* Explicit font stack — bypasses token indirection so wordmark always
+     renders in display register. next/font's CSS var is preferred when
+     loaded; the second fallback is the actual display family (Big
+     Shoulders Display), not a serif/mono inheritance. */
+  font-family: var(--font-display), 'Big Shoulders Display', Impact, 'Arial Narrow', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--graphite-10);
+  display: inline-block;
+}
+.rep-wordmark--small {
+  font-size: 0.875rem;
+  letter-spacing: 0.18em;
+}
+.rep-wordmark--primary {
+  font-size: 2.5rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.rep-heading {
+  font-family: var(--rep-font-sans);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  color: var(--graphite-10);
+  margin: 0 0 var(--rep-space-3) 0;
+  letter-spacing: -0.01em;
+}
+
+.rep-body {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--graphite-10);
+  margin: 0 0 var(--rep-space-3) 0;
+}
+
+.rep-helper {
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--graphite-30);
+  margin: 0 0 var(--rep-space-4) 0;
+}
+
+/* ------------------------------------------------------------
+   Buttons — filled-sage primary CTA per DS v1.1 §4.3 + §8.1
+   ------------------------------------------------------------ */
+.rep-btn {
+  font-family: var(--rep-font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  min-height: 48px;
+  padding: var(--rep-space-3) var(--rep-space-6);
+  border-radius: var(--rep-radius-md);
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.rep-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+/* Primary: filled sage stamp. Paper-100 text on sage gives WCAG AAA contrast.
+   background-color (longhand) used deliberately to override Tailwind
+   preflight's `button { background-color: transparent }` reset with
+   matching property granularity; `background` shorthand was being
+   out-specified by the preflight longhand on the button element. */
+.rep-btn--primary {
+  background-color: var(--sage);
+  background-image: none;
+  color: var(--paper-100);
+  border: 1.5px solid var(--sage);
+}
+.rep-btn--primary:not(:disabled):hover,
+.rep-btn--primary:not(:disabled):active {
+  background-color: var(--sage-deep, #2D5447);
+  border-color: var(--sage-deep, #2D5447);
+}
+/* Ghost: secondary control, sentence case (overrides .rep-btn uppercase). */
+.rep-btn--ghost {
+  background-color: transparent;
+  color: var(--graphite-30);
+  border: 1px solid var(--paper-80);
+  font-family: var(--rep-font-sans);
+  font-size: 0.9375rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.rep-btn--ghost:not(:disabled):hover,
+.rep-btn--ghost:not(:disabled):active {
+  border-color: var(--graphite-30);
+  color: var(--graphite-10);
+}
+
+/* ------------------------------------------------------------
+   Option buttons — single + multi select
+   Active state via border + checkmark (Differentiate Without Color)
+   ------------------------------------------------------------ */
+.rep-option {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  min-height: 48px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--graphite-10);
+  border: 1px solid var(--paper-80);
+  border-radius: var(--rep-radius-md);
+  padding: var(--rep-space-3) var(--rep-space-4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rep-space-3);
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.rep-option:hover {
+  border-color: var(--graphite-30);
+}
+.rep-option--selected {
+  border-color: var(--sage);
+  border-width: 2px;
+  /* Compensate padding so layout doesn't shift on border-width change */
+  padding: calc(var(--rep-space-3) - 1px) calc(var(--rep-space-4) - 1px);
+  background: color-mix(in srgb, var(--sage) 8%, transparent);
+}
+.rep-option__label {
+  flex: 1;
+}
+.rep-option__check {
+  font-family: var(--rep-font-mono);
+  color: var(--sage);
+  min-width: 1rem;
+  text-align: right;
+}
+
+/* ------------------------------------------------------------
+   Numeric inputs — Screen 5 (kg, mono) + Screen 6 (age, sans)
+   ------------------------------------------------------------ */
+.rep-kg-row {
+  display: flex;
+  align-items: center;
+  gap: var(--rep-space-3);
+  padding: var(--rep-space-3) 0;
+  border-bottom: 1px solid var(--paper-80);
+  min-height: 48px;
+}
+.rep-kg-row--skipped { opacity: 0.5; }
+.rep-kg-row__label {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  color: var(--graphite-10);
+  flex: 1;
+}
+.rep-kg-row__field {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rep-space-1);
+  min-width: 5.5rem;
+  justify-content: flex-end;
+}
+.rep-kg-input {
+  font-family: var(--rep-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.125rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  color: var(--graphite-10);
+  text-align: right;
+  width: 3.5rem;
+  outline: none;
+  -webkit-appearance: none;
+  padding: 0;
+}
+.rep-kg-input::placeholder { color: var(--graphite-30); }
+.rep-kg-input:disabled { background: transparent; color: var(--graphite-30); }
+.rep-kg-input__unit {
+  font-family: var(--rep-font-mono);
+  font-size: 0.875rem;
+  color: var(--graphite-30);
+}
+.rep-kg-row__skip {
+  font-family: var(--rep-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  background: transparent;
+  border: none;
+  color: var(--graphite-30);
+  cursor: pointer;
+  padding: var(--rep-space-2);
+  min-width: 3rem;
+  text-align: right;
+}
+
+.rep-num-row {
+  display: flex;
+  align-items: center;
+  gap: var(--rep-space-3);
+  padding: var(--rep-space-3) 0;
+  min-height: 48px;
+}
+.rep-num-row__labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+}
+.rep-num-row__label {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  color: var(--graphite-10);
+}
+.rep-num-row__sublabel {
+  font-family: var(--rep-font-sans);
+  font-size: 0.8125rem;
+  color: var(--graphite-30);
+}
+.rep-num-row__field {
+  display: flex;
+  align-items: center;
+  gap: var(--rep-space-2);
+}
+.rep-num-input {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  background: transparent;
+  border: 1px solid var(--paper-80);
+  border-radius: var(--rep-radius-md);
+  color: var(--graphite-10);
+  padding: var(--rep-space-2) var(--rep-space-3);
+  width: 4rem;
+  text-align: center;
+  outline: none;
+  -webkit-appearance: none;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+.rep-num-input:focus {
+  border-color: var(--sage);
+}
+.rep-num-row__skip {
+  font-family: var(--rep-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  background: transparent;
+  border: none;
+  color: var(--graphite-30);
+  cursor: pointer;
+  padding: var(--rep-space-2);
+}
+
+/* ------------------------------------------------------------
+   Separator (Screen 7) — with optional "Or" label
+   ------------------------------------------------------------ */
+.rep-separator {
+  border: 0;
+  border-top: 1px solid var(--paper-80);
+  margin: var(--rep-space-4) 0;
+  width: 100%;
+}
+.rep-separator--labeled {
+  position: relative;
+  text-align: center;
+  border-top: 1px solid var(--paper-80);
+  height: 1px;
+  margin: var(--rep-space-6) 0 var(--rep-space-4);
+}
+.rep-separator__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--paper-100);
+  color: var(--graphite-30);
+  font-family: var(--rep-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  padding: 0 var(--rep-space-3);
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   Skip affordance, error, loading
+   ------------------------------------------------------------ */
+.rep-skip {
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  background: transparent;
+  border: none;
+  color: var(--graphite-30);
+  cursor: pointer;
+  padding: var(--rep-space-2) 0;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--paper-80);
+  align-self: flex-start;
+}
+.rep-skip:hover { color: var(--graphite-10); }
+
+.rep-error {
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  color: var(--error);
+  margin: var(--rep-space-2) 0 0;
+}
+
+/* Loading bar — indeterminate forest sage sweep.
+   Reduce Motion: static 50% line, no animation. */
+.rep-loading {
+  width: 100%;
+  height: 1px;
+  background: var(--paper-80);
+  overflow: hidden;
+  position: relative;
+}
+.rep-loading__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: var(--sage);
+  animation: rep-loading-sweep 1.6s ease-in-out infinite;
+}
+@keyframes rep-loading-sweep {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rep-loading__bar {
+    animation: none;
+    width: 50%;
+    left: 25%;
+  }
+}
+/* ------------------------------------------------------------
+   Back affordance — secondary control on Screens 1–7b (FIX 1)
+   ------------------------------------------------------------ */
+.rep-back {
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  background: transparent;
+  border: none;
+  color: var(--graphite-30);
+  cursor: pointer;
+  padding: var(--rep-space-2) var(--rep-space-2) var(--rep-space-2) 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rep-space-1);
+  align-self: flex-start;
+  letter-spacing: 0.01em;
+  -webkit-tap-highlight-color: transparent;
+  margin-bottom: var(--rep-space-2);
+}
+.rep-back:hover { color: var(--graphite-10); }
+.rep-back:active { color: var(--graphite-10); }
