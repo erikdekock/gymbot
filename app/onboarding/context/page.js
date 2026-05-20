@@ -123,8 +123,8 @@ export default function ContextPage() {
             value={state.archetype_flags.age}
             onChange={setAge}
             onSkip={skipAge}
-            min={10}
-            max={100}
+            min={13}
+            max={99}
           />
 
           <hr className="rep-separator" />
