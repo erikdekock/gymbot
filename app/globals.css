@@ -402,6 +402,9 @@ body {
   color: var(--graphite-10);
   font-family: var(--rep-font-sans);
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   /* Body text legibility tuning (§3.3) */
@@ -446,6 +449,7 @@ body {
    ------------------------------------------------------------ */
 .rep-screen {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -460,12 +464,15 @@ body {
   flex-direction: column;
   gap: var(--rep-space-4);
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 .rep-screen__bottom {
   display: flex;
   flex-direction: column;
   gap: var(--rep-space-3);
   padding-top: var(--rep-space-6);
+  flex-shrink: 0;
 }
 
 /* ------------------------------------------------------------
