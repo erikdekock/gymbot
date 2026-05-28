@@ -1,13 +1,11 @@
 'use client'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Wordmark from '../onboarding/_components/Wordmark'
 
 export default function TermsAlpha() {
   const router = useRouter()
-  const [agreed, setAgreed] = useState(false)
 
-  function handleAgree() {
+  function handleClose() {
     if (typeof window !== 'undefined') {
       window.close()
       // If the page wasn't opened in a new tab, window.close() is a no-op
@@ -84,23 +82,8 @@ export default function TermsAlpha() {
         </div>
 
         <div className="rep-screen__bottom">
-          <label className="rep-check">
-            <input
-              className="rep-check__input"
-              type="checkbox"
-              checked={agreed}
-              onChange={e => setAgreed(e.target.checked)}
-            />
-            <span className="rep-check__label">
-              I&apos;ve read and understood these terms.
-            </span>
-          </label>
-          <button
-            className="rep-btn rep-btn--primary"
-            disabled={!agreed}
-            onClick={handleAgree}
-          >
-            I agree
+          <button className="rep-btn rep-btn--primary" onClick={handleClose}>
+            Close
           </button>
         </div>
       </div>
