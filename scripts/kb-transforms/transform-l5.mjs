@@ -155,6 +155,52 @@ function phaseEnumFor(label, ordinalIndex) {
   return `phase_${n}`;
 }
 
+/**
+ * Expand a label's phase reference into the full set of phase enums it
+ * covers. Handles "Phase 2-3", "Phase 1 / 2 / 3", "Phase 2/3" — each yields
+ * multiple phase enums. A single "Phase N" returns `[phase_N]`. A label with
+ * no numeric phase falls back to the ordinal position (single enum).
+ *
+ * Without this, a "Phase 2-3" block would emit only phase_2 and phase_3
+ * would silently inherit from a different italic block (or go missing) —
+ * exactly the collision flagged in AC5.
+ */
+function expandPhaseLabel(label, ordinalIndex) {
+  // Match all phase-N tokens in the label, then expand ranges/lists.
+  const seen = new Set();
+  // First pass: ranges like "Phase 2-3" / "Phase 2–3".
+  const rangeRe = /Phase\s+(\d)\s*[-–]\s*(\d)/gi;
+  let m;
+  while ((m = rangeRe.exec(label)) !== null) {
+    const start = Number(m[1]);
+    const end = Number(m[2]);
+    for (let n = start; n <= end; n++) if (n >= 1 && n <= 3) seen.add(`phase_${n}`);
+  }
+  // Second pass: lists like "Phase 1 / 2 / 3".
+  const listRe = /Phase\s+(\d)(?:\s*\/\s*(\d))(?:\s*\/\s*(\d))?/gi;
+  while ((m = listRe.exec(label)) !== null) {
+    for (const g of [m[1], m[2], m[3]]) {
+      if (!g) continue;
+      const n = Number(g);
+      if (n >= 1 && n <= 3) seen.add(`phase_${n}`);
+    }
+  }
+  // Third pass: any remaining "Phase N" singletons.
+  if (seen.size === 0) {
+    const allRe = /Phase\s+(\d)/gi;
+    while ((m = allRe.exec(label)) !== null) {
+      const n = Number(m[1]);
+      if (n >= 1 && n <= 3) seen.add(`phase_${n}`);
+    }
+  }
+  if (seen.size === 0) {
+    // No numeric phase in label → ordinal position fallback.
+    const n = Math.min(Math.max(ordinalIndex + 1, 1), 3);
+    return [`phase_${n}`];
+  }
+  return [...seen].sort();
+}
+
 // ---------- eligible_templates (B6) ----------
 
 /**
@@ -411,11 +457,49 @@ function parseEligibleTemplates(md, warn) {
   // Some labels carry template references the body omits (C4's
   // "*Hybrid-in-comeback Phase 1 / 2 / 3*: For users returning...") — scan
   // the label too so those resolve.
-  const phases = blocks.map((b, i) => ({
-    phase: phaseEnumFor(b.label, i),
-    phase_label: b.label,
-    eligible_templates: parseOptionList(`${b.label}. ${b.text}`, warn),
-  }));
+  //
+  // A label like "Returning Athlete Phase 2-3" expands to a phase_2 block AND
+  // a phase_3 block with the same options (otherwise phase_3 silently goes
+  // missing). When that expansion lands on the same phase enum as another
+  // italic block (e.g. A2's "Non-comeback A2 (trained user)" maps to phase_3
+  // by ordinal), the option sets are merged into one phase block — the
+  // schema's phase enum is discrete, so two divergent options sets on the
+  // same enum is a silent collision the engine couldn't disambiguate.
+  const rawPhases = [];
+  blocks.forEach((b, i) => {
+    const expandedEnums = expandPhaseLabel(b.label, i);
+    const opts = parseOptionList(`${b.label}. ${b.text}`, warn);
+    for (const phaseEnum of expandedEnums) {
+      rawPhases.push({ phase: phaseEnum, phase_label: b.label, eligible_templates: opts });
+    }
+  });
+  // Merge blocks with the same phase enum.
+  const byPhase = new Map();
+  for (const p of rawPhases) {
+    if (!byPhase.has(p.phase)) {
+      byPhase.set(p.phase, {
+        phase: p.phase,
+        phase_label: p.phase_label,
+        eligible_templates: [...p.eligible_templates],
+      });
+    } else {
+      const existing = byPhase.get(p.phase);
+      existing.phase_label = `${existing.phase_label} + ${p.phase_label}`;
+      const seenIds = new Set(existing.eligible_templates.map((o) => o.template_id));
+      for (const opt of p.eligible_templates) {
+        if (!seenIds.has(opt.template_id)) {
+          existing.eligible_templates.push({
+            ...opt,
+            order: existing.eligible_templates.length + 1,
+          });
+          seenIds.add(opt.template_id);
+        }
+      }
+    }
+  }
+  const phases = [...byPhase.values()].sort((a, b) =>
+    a.phase.localeCompare(b.phase)
+  );
   // Drop any phase with empty options to keep the schema satisfied; warn.
   const filledPhases = phases.filter((p) => p.eligible_templates.length > 0);
   if (filledPhases.length === 0) {
