@@ -1,26 +1,29 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import Wordmark from '../onboarding/_components/Wordmark'
 
 export default function AccountDeleted() {
   const router = useRouter()
 
   return (
-    <div className="auth-screen" style={{ justifyContent: 'space-between', paddingTop: 64, paddingBottom: 48 }}>
-      <div>
-        <p className="auth-wordmark">GYMBOT</p>
-        <div style={{ marginTop: 48, textAlign: 'center' }}>
-          <h1 className="auth-tagline" style={{ textAlign: 'center' }}>
-            Your account has been deleted.
-          </h1>
-          <p style={{ fontSize: 15, color: 'var(--gb-text-secondary)', marginTop: 12 }}>
-            All your training data has been removed.
-          </p>
+    <div className="rep-surface">
+      <div className="rep-screen">
+        <div className="rep-screen__top">
+          <Wordmark size="small" />
+          <div style={{ marginTop: 48 }}>
+            <h1 className="rep-heading">Your account has been deleted.</h1>
+            <p className="rep-body">
+              Your account, your conversations, and your training history are gone from our systems. Nothing remains.
+            </p>
+            <p className="rep-helper">If you return later, you&apos;ll begin fresh.</p>
+          </div>
+        </div>
+        <div className="rep-screen__bottom">
+          <button className="rep-btn rep-btn--primary" onClick={() => router.push('/welcome')}>
+            Return to start
+          </button>
         </div>
       </div>
-
-      <button className="auth-btn" onClick={() => router.push('/welcome')}>
-        Return to start
-      </button>
     </div>
   )
 }

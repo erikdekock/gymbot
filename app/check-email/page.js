@@ -1,12 +1,12 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
+import Wordmark from '../onboarding/_components/Wordmark'
 
 const supabase = createClient()
 
 function CheckEmailContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
   const [cooldown, setCooldown] = useState(0)
@@ -31,36 +31,38 @@ function CheckEmailContent() {
   }
 
   return (
-    <div className="auth-screen" style={{ justifyContent: 'space-between', paddingTop: 64, paddingBottom: 48 }}>
-      <div>
-        <p className="auth-wordmark">GYMBOT</p>
-        <div style={{ marginTop: 48, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 24 }}>✉️</div>
-          <h1 className="auth-tagline" style={{ textAlign: 'center' }}>Check your email.</h1>
-          <p style={{ fontSize: 15, color: 'var(--gb-text-secondary)', marginTop: 12, lineHeight: 1.5 }}>
-            We sent a link to <strong style={{ color: 'var(--gb-text-primary)' }}>{email}</strong>.{' '}
-            Tap the link to continue.
+    <div className="rep-surface">
+      <div className="rep-screen">
+        <div className="rep-screen__top">
+          <Wordmark size="small" />
+          <div style={{ marginTop: 48 }}>
+            <h1 className="rep-heading">Check your email.</h1>
+            <p className="rep-body">
+              We sent a link to <strong>{email}</strong>. Tap the link to continue.
+            </p>
+          </div>
+        </div>
+
+        <div className="rep-screen__bottom">
+          <p className="rep-helper" style={{ margin: 0 }}>
+            Didn&apos;t get it? Check your spam folder
+            {cooldown > 0 ? (
+              <> or resend the link in {cooldown}s.</>
+            ) : (
+              <>
+                {' or '}
+                <button
+                  className="rep-btn tertiary"
+                  onClick={resend}
+                  style={{ display: 'inline', minHeight: 0, padding: 0 }}
+                >
+                  resend the link
+                </button>
+                .
+              </>
+            )}
           </p>
         </div>
-      </div>
-
-      <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 13, color: 'var(--gb-text-quiet)', lineHeight: 1.5 }}>
-          Didn't get it? Check your spam folder or{' '}
-          {cooldown > 0 ? (
-            <span>resend the link in {cooldown}s</span>
-          ) : (
-            <button
-              onClick={resend}
-              style={{
-                background: 'none', border: 'none', color: 'var(--gb-text-secondary)',
-                textDecoration: 'underline', cursor: 'pointer', fontSize: 13, padding: 0,
-              }}
-            >
-              resend the link
-            </button>
-          )}
-        </p>
       </div>
     </div>
   )
@@ -68,7 +70,7 @@ function CheckEmailContent() {
 
 export default function CheckEmail() {
   return (
-    <Suspense fallback={<div className="auth-screen" />}>
+    <Suspense fallback={<div className="rep-surface" />}>
       <CheckEmailContent />
     </Suspense>
   )
