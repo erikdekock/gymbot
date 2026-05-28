@@ -857,136 +857,157 @@
       "goal_phase": "phase_1",
       "templates": [
         {
-          "template_id": "reactivator-p1-foundation-2d",
+          "template_id": "full-body",
           "role": "primary",
-          "day_variant": "day_1_lower_emphasis"
+          "day_variant": "default"
         },
         {
-          "template_id": "reactivator-p1-foundation-2d",
+          "template_id": "full-body",
           "role": "primary",
-          "day_variant": "day_2_lower_emphasis"
+          "day_variant": "default"
         }
       ],
       "sessions": [
         {
           "day": 0,
-          "template": "reactivator-p1-foundation-2d",
-          "variant": "day_1_lower_emphasis",
+          "template": "full-body",
+          "variant": "default",
           "exercises": [
             {
-              "slot": "block_a_hinge",
-              "id": 26,
-              "name": "Glute Bridge",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": null
-            },
-            {
-              "slot": "block_a_squat",
-              "id": 31,
-              "name": "Goblet Squat",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
+              "rpe": 7,
               "load": "82.5 kg"
             },
             {
-              "slot": "block_a_core",
-              "id": 53,
-              "name": "Dead Bug",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": "%BW"
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "45 kg"
             },
             {
-              "slot": "block_b_push",
-              "id": 36,
-              "name": "Push-Up",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": "%BW"
+              "slot": "superset_b_unilateral",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
             },
             {
-              "slot": "block_b_pull",
-              "id": 38,
-              "name": "Inverted Row",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "3×10",
+              "rpe": 7,
               "load": "57.5 kg"
             },
             {
-              "slot": "block_b_core",
-              "id": 50,
-              "name": "Pallof Press",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
               "load": null
             }
           ]
         },
         {
           "day": 1,
-          "template": "reactivator-p1-foundation-2d",
-          "variant": "day_2_lower_emphasis",
+          "template": "full-body",
+          "variant": "default",
           "exercises": [
             {
-              "slot": "block_a_hinge",
-              "id": 26,
-              "name": "Glute Bridge",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": null
-            },
-            {
-              "slot": "block_a_squat",
-              "id": 31,
-              "name": "Goblet Squat",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
+              "rpe": 7,
               "load": "82.5 kg"
             },
             {
-              "slot": "block_a_core",
-              "id": 53,
-              "name": "Dead Bug",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": "%BW"
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "45 kg"
             },
             {
-              "slot": "block_b_push",
-              "id": 36,
-              "name": "Push-Up",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
-              "load": "%BW"
+              "slot": "superset_b_unilateral",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
             },
             {
-              "slot": "block_b_pull",
-              "id": 38,
-              "name": "Inverted Row",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "3×10",
+              "rpe": 7,
               "load": "57.5 kg"
             },
             {
-              "slot": "block_b_core",
-              "id": 50,
-              "name": "Pallof Press",
-              "scheme": "2×8-10",
-              "rpe": 6.5,
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
               "load": null
             }
           ]
         }
       ],
-      "substitutions": [],
+      "substitutions": [
+        {
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        }
+      ],
       "alerts": [
         {
           "severity": "warning",
           "message": "frequency_capped: user days_per_week=3 > L5 max=2; capped"
         }
       ],
-      "hash": "adeef0478ac2b09e"
+      "hash": "49726f25d2becabf"
     },
     {
       "name": "VF-A2-noncomeback",
@@ -1269,17 +1290,8 @@
           ]
         }
       ],
-      "alerts": [
-        {
-          "severity": "info",
-          "message": "template returning-athlete-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
-        },
-        {
-          "severity": "info",
-          "message": "template returning-athlete-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
-        }
-      ],
-      "hash": "21489a6f8f1c2e34"
+      "alerts": [],
+      "hash": "ba26c353614f8871"
     },
     {
       "name": "VF-E1-entry",
@@ -1523,13 +1535,13 @@
       "identical": true
     },
     "VF-A1-noncomeback": {
-      "hash_run_1": "adeef0478ac2b09e",
-      "hash_run_2": "adeef0478ac2b09e",
+      "hash_run_1": "49726f25d2becabf",
+      "hash_run_2": "49726f25d2becabf",
       "identical": true
     },
     "VF-A2-noncomeback": {
-      "hash_run_1": "21489a6f8f1c2e34",
-      "hash_run_2": "21489a6f8f1c2e34",
+      "hash_run_1": "ba26c353614f8871",
+      "hash_run_2": "ba26c353614f8871",
       "identical": true
     },
     "VF-E1-entry": {
@@ -1562,7 +1574,7 @@
       "expected_phase": "phase_1",
       "observed_phase": "phase_1",
       "expected_primary_template": null,
-      "observed_primary_template": "reactivator-p1-foundation-2d",
+      "observed_primary_template": "full-body",
       "pass": true,
       "safety_critical": false
     },
@@ -1612,44 +1624,44 @@
     }
   ],
   "ac5_spot_b6": {
-    "populated": false,
+    "populated": true,
     "results": [
       {
         "goal_id": "A1",
         "phase": "phase_1",
-        "any_condition_populated": false,
-        "sample_condition": null
+        "any_condition_populated": true,
+        "sample_condition": "non-comeback / no extended pause"
       },
       {
         "goal_id": "A2",
         "phase": "phase_3",
-        "any_condition_populated": false,
+        "any_condition_populated": true,
         "sample_condition": [
           null,
           null,
-          null,
-          null,
-          null,
-          null,
-          null
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause"
         ]
       },
       {
         "goal_id": "C4",
         "phase": "phase_2",
-        "any_condition_populated": false,
+        "any_condition_populated": true,
         "sample_condition": [
           null,
           null,
           null,
-          null,
-          null,
-          null,
-          null
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause",
+          "non-comeback / no extended pause"
         ]
       }
     ],
-    "note": "B6 DROPPED — every checked phase block has empty `condition` fields. The KB prose carries the qualifier ('For non-comeback A1 users... Full Body 2-day OR 3-day') but the transform did not capture it per the EligibleTemplateOption.condition schema. The engine-side condition-first selection rule (§11 FLAG 2) is wired but data-starved; without a B6 transform fix VF-A1-noncomeback continues to resolve to reactivator-p1-foundation-2d (option 1 by L5 order). Flagged to MD."
+    "note": "B6 OK — `condition` fields populated."
   },
   "ac5_spot_flag5": {
     "pass": true,
