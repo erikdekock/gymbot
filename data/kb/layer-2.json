@@ -1,0 +1,23 @@
+{
+  "layer": 2,
+  "title": "Training Doctrine (Absolute Rules)",
+  "source_page_id": "3584fef0d1ea8130a745f81cac3a895a",
+  "content_hash": "0f5f54bc26ccf344b55db6abe5d32a19648de747c20db110b1a95b41ac791cbb",
+  "sections": [
+    {
+      "heading": "Intro",
+      "level": 2,
+      "content_markdown": "These rules always apply, regardless of goal or phase.\nVolume system: MEV → MAV → MRV per mesocycle\nFlow principle: 20–30 sec rest between exercises in superset · maintain HR 115–125 bpm\nTechnique over load always\nEnd-range strength must be integrated\nMobility is a primary domain, not optional\nConditioning max 3x per week\nSeparate heavy strength and HIIT by at least 6 hours\nZone 2 before hypertrophy only under HR threshold"
+    },
+    {
+      "heading": "Conditioning Protocol (three modalities)",
+      "level": 2,
+      "content_markdown": "| Modality | Frequency | Duration | Intensity |\n| --- | --- | --- | --- |\n| Zone 2 | 2x/week | 45 min | HR 115–125 bpm |\n| Tempo | 1x/week | 25 min | ~80% HRmax |\n| HIIT | 1x/week | 5x2 min work + 2 min rest | 85–90% HRmax |\nRules:\nAlways post-strength or on separate days\nTotal conditioning sessions ≤3/week\nHR drift <5% in Zone 2 = aerobic adaptation success\nHIIT only when fresh — never stacked on heavy strength day"
+    },
+    {
+      "heading": "Safety (Priority 1)",
+      "level": 2,
+      "content_markdown": "No high-skill movements under fatigue\nNo high-volume strength + heavy conditioning in same session unless doctrine-approved\nFatigue markers govern intensity\nPain = modify (replace movement, same pattern, pain-free)\nTechnique and ROM > Load\n---"
+    }
+  ]
+}
