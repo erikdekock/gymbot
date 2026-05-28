@@ -204,6 +204,61 @@ function expandPhaseLabel(label, ordinalIndex) {
 // ---------- eligible_templates (B6) ----------
 
 /**
+ * Map a raw qualifier string (label fragment or "For ... users:" capture)
+ * to the canonical EligibleTemplateOption.condition value the engine reads.
+ * Returns null for qualifiers we don't recognise — per the §11 stop
+ * condition we only extract canonical qualifiers, never guess.
+ */
+function normalizeCondition(raw) {
+  if (!raw) return null;
+  const lc = raw.toLowerCase();
+  if (/non-?comeback|no extended pause/.test(lc)) return "non-comeback / no extended pause";
+  if (/time-constrained/.test(lc)) return "time-constrained";
+  if (/without cross-modal history|no cross-modal history/.test(lc)) return "no cross-modal history";
+  return null;
+}
+
+/**
+ * Derive a block-level condition from an italic phase-label. PD's §11 puts
+ * the non-comeback carve-out qualifier in two places: inline body prose
+ * ("For non-comeback ... users (no extended pause history): X") and the
+ * label itself ("*Non-comeback A2 (trained user)*", "*Non-comeback C4*").
+ * This handles the label case; the inline case is handled per-sentence by
+ * splitBySentenceCondition below.
+ */
+function extractBlockCondition(label) {
+  if (!label) return null;
+  if (/non-?comeback/i.test(label)) return "non-comeback / no extended pause";
+  return null;
+}
+
+/**
+ * Split a body string into condition-tagged spans on sentence-level
+ * qualifier markers. Recognised marker (verbatim from KB prose):
+ *   "For non-comeback ... users (no extended pause history): X."
+ * The text BEFORE the first marker is the default span (no per-option
+ * condition — defers to the block-level condition supplied by the caller).
+ * The text AFTER each marker, up to the next sentence boundary, carries
+ * the matched condition.
+ */
+function splitBySentenceCondition(body) {
+  const markerRe = /\bFor\s+(non-?comeback[^:]*|time-constrained[^:]*)\s*:\s*/gi;
+  const spans = [];
+  let lastIdx = 0;
+  let lastCond = null;
+  let m;
+  while ((m = markerRe.exec(body)) !== null) {
+    if (m.index > lastIdx) {
+      spans.push({ text: body.slice(lastIdx, m.index).trim(), condition: lastCond });
+    }
+    lastCond = normalizeCondition(m[1]);
+    lastIdx = m.index + m[0].length;
+  }
+  spans.push({ text: body.slice(lastIdx).trim(), condition: lastCond });
+  return spans.filter((s) => s.text);
+}
+
+/**
  * Scan a block of L5 option prose for template references and return the
  * resolved, ordered EligibleTemplateOption[]. We use a longest-alias-first
  * substring scan (via `scanTemplateMentions`) instead of punctuation-based
@@ -213,12 +268,13 @@ function expandPhaseLabel(label, ordinalIndex) {
  * Variant-branching syntax — "(N-day or M-day variant)" — is detected here
  * and expands the base name into BOTH variant ids when both are aliased.
  *
- * Condition qualifiers ("for time-constrained users", "with peak-week
- * tapering") are not extracted per-option in the scanner approach; they live
- * in the source prose. The schema's `condition` field is reserved for
- * future tightening (the engine doesn't consume condition in v1.0).
+ * Per-option `condition` qualifiers are extracted (B6 §11): the body is
+ * split into spans by sentence-level "For X users:" markers, and the
+ * caller may pass a `blockCondition` that applies to any span lacking its
+ * own sentence-level marker. PD's §11 FLAG 2 wired the engine to read
+ * this; the transform must populate it.
  */
-function parseOptionListScanner(text, warn) {
+function parseOptionListScanner(text, warn, blockCondition) {
   if (!text) return [];
   let body = text.replace(/^\s*\([^)]*\)\s*/, "").trim();
   // Variant-branching: when a Reactivator Phase-3 reference has the
@@ -239,8 +295,20 @@ function parseOptionListScanner(text, warn) {
     }
   );
 
-  const ids = scanTemplateMentions(body);
-  return ids.map((id, i) => ({ template_id: id, order: i + 1 }));
+  const spans = splitBySentenceCondition(body);
+  const options = [];
+  for (const span of spans) {
+    const ids = scanTemplateMentions(span.text);
+    const condition = span.condition ?? blockCondition ?? null;
+    for (const id of ids) {
+      options.push({
+        template_id: id,
+        order: options.length + 1,
+        ...(condition ? { condition } : {}),
+      });
+    }
+  }
+  return options;
 }
 
 /**
@@ -249,13 +317,19 @@ function parseOptionListScanner(text, warn) {
  * (so the schema's `.min(1)` constraint doesn't fail on an entry where the
  * scanner missed something obvious).
  */
-function parseOptionList(text, warn) {
-  const scanned = parseOptionListScanner(text, warn);
+function parseOptionList(text, warn, blockCondition) {
+  const scanned = parseOptionListScanner(text, warn, blockCondition);
   if (scanned.length > 0) return scanned;
   // Scanner returned nothing — fall back to the splitter so non-empty text
   // doesn't trip the schema's .min(1) constraint. If both return zero, the
-  // caller decides whether to drop the (empty) phase block.
-  return parseOptionListSplitter(text, warn);
+  // caller decides whether to drop the (empty) phase block. The splitter
+  // already extracts its own per-option qualifiers from prose like "for
+  // time-constrained users" — those override the block-level condition
+  // when present, so apply blockCondition only to splitter-produced
+  // options that don't already carry one.
+  const splitter = parseOptionListSplitter(text, warn);
+  if (!blockCondition) return splitter;
+  return splitter.map((o) => (o.condition ? o : { ...o, condition: blockCondition }));
 }
 
 function parseOptionListSplitter(text, warn) {
@@ -468,12 +542,19 @@ function parseEligibleTemplates(md, warn) {
   const rawPhases = [];
   blocks.forEach((b, i) => {
     const expandedEnums = expandPhaseLabel(b.label, i);
-    const opts = parseOptionList(`${b.label}. ${b.text}`, warn);
+    // Block-level condition (B6 §11): an italic label like "Non-comeback
+    // A2 (trained user)" or "Non-comeback C4" gates ALL options parsed
+    // from this block.
+    const blockCondition = extractBlockCondition(b.label);
+    const opts = parseOptionList(`${b.label}. ${b.text}`, warn, blockCondition);
     for (const phaseEnum of expandedEnums) {
       rawPhases.push({ phase: phaseEnum, phase_label: b.label, eligible_templates: opts });
     }
   });
-  // Merge blocks with the same phase enum.
+  // Merge blocks with the same phase enum. Dedup is by (template_id +
+  // condition): the same template_id may legitimately appear once
+  // unconditioned (default) and once condition-gated (carve-out); the
+  // engine reads both via §11 condition-first selection.
   const byPhase = new Map();
   for (const p of rawPhases) {
     if (!byPhase.has(p.phase)) {
@@ -485,14 +566,17 @@ function parseEligibleTemplates(md, warn) {
     } else {
       const existing = byPhase.get(p.phase);
       existing.phase_label = `${existing.phase_label} + ${p.phase_label}`;
-      const seenIds = new Set(existing.eligible_templates.map((o) => o.template_id));
+      const seenKeys = new Set(
+        existing.eligible_templates.map((o) => `${o.template_id}|${o.condition || ""}`)
+      );
       for (const opt of p.eligible_templates) {
-        if (!seenIds.has(opt.template_id)) {
+        const key = `${opt.template_id}|${opt.condition || ""}`;
+        if (!seenKeys.has(key)) {
           existing.eligible_templates.push({
             ...opt,
             order: existing.eligible_templates.length + 1,
           });
-          seenIds.add(opt.template_id);
+          seenKeys.add(key);
         }
       }
     }

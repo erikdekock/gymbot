@@ -2,7 +2,7 @@
   "layer": 5,
   "title": "Coupling Logic",
   "source_page_id": "3584fef0d1ea8130a745f81cac3a895a",
-  "content_hash": "792136544ae39596b12d99c95972588da5abdfab04a929ea663b87c0ed9ba009",
+  "content_hash": "4e04f3b9f799d3c1277d46c47e1e394a53a91ad52f6a5a52463e45126cb4d5c7",
   "version": "1.0",
   "foundation": {
     "canonical_deload": {
@@ -138,7 +138,8 @@
               },
               {
                 "template_id": "full-body",
-                "order": 2
+                "order": 2,
+                "condition": "non-comeback / no extended pause"
               }
             ]
           },
@@ -290,23 +291,28 @@
               },
               {
                 "template_id": "lower-posterior",
-                "order": 3
+                "order": 3,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "upper-push-pull",
-                "order": 4
+                "order": 4,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "lower-anterior",
-                "order": 5
+                "order": 5,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "upper-core",
-                "order": 6
+                "order": 6,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "full-body",
-                "order": 7
+                "order": 7,
+                "condition": "non-comeback / no extended pause"
               }
             ]
           }
@@ -1037,19 +1043,23 @@
               },
               {
                 "template_id": "full-body",
-                "order": 4
+                "order": 4,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "run",
-                "order": 5
+                "order": 5,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "lower-posterior",
-                "order": 6
+                "order": 6,
+                "condition": "non-comeback / no extended pause"
               },
               {
                 "template_id": "upper-push-pull",
-                "order": 7
+                "order": 7,
+                "condition": "non-comeback / no extended pause"
               }
             ]
           },
