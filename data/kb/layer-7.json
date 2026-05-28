@@ -1,0 +1,18 @@
+{
+  "layer": 7,
+  "title": "Recovery & Support Systems",
+  "source_page_id": "3584fef0d1ea8130a745f81cac3a895a",
+  "content_hash": "5a57eaa29bb06e3f091f49987959bbe93bd12e2ecbf03c4cf4cda854f65adb30",
+  "sections": [
+    {
+      "heading": "Intro",
+      "level": 2,
+      "content_markdown": "Recovery is a system, not a byproduct. These five variables are the physiological infrastructure that makes adaptation possible.\n| Variable | Mechanism | Target |\n| --- | --- | --- |\n| Sleep | Endocrine + recovery regulation | ≥7h continuous, same schedule daily |\n| Sauna | Circulation + parasympathetic recovery | 3–4x/week, 20 min + 2 min cold |\n| Hydration | Performance + thermoregulation | ≥4L/day + 2–3g Na |\n| Nutrition | Recomposition energy demand | Per active goal (Layer 4) · protein 2g/kg LBM |\n| Stress | Readiness stability | Breathwork · mobility · low-intensity Zone 2 |"
+    },
+    {
+      "heading": "Decision Rules",
+      "level": 2,
+      "content_markdown": "Sleep <6h → train at MEV only (overrides Plan)\nSauna replaces hydration losses → +500ml + electrolytes post-session\nProtein floor: 2g/kg LBM regardless of goal kcal\nStress markers (HRV ↓, sleep ↓) trigger autoregulation per Layer 3\n---"
+    }
+  ]
+}
