@@ -53,46 +53,136 @@
       [warning] frequency_short: primary count=3 < primary min=5 after honoring secondary min=1
 
   [VF-A5] Hybrid Athlete · C4 Hyrox · 5 days · no inactivity
-    goal=C4 phase=phase_2 hash=dbf2e66752b63430
-    templates: full-body(default,primary) + run(zone_2_base,secondary) + lower-posterior(default,secondary) + upper-push-pull(default,secondary) + full-body(default,primary)
-    Day 0 · full-body · default
-      superset_a_compound_lower    #1 Back Squat                   4×6            RPE7 load:85 kg
-      superset_a_compound_push     #12 Overhead Press (Standing Barbell) 4×6            RPE7 load:42.5 kg
-      superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
-      superset_b_pull              #14 Barbell Row (Bent-Over Row)  3×10           RPE7 load:55 kg
-      superset_c_posterior         #21 Hip Thrust                   3×10           RPE7 load:tbd
-      superset_c_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
-    Day 1 · run · zone_2_base
-    Day 2 · lower-posterior · default
+    goal=C4 phase=phase_1 hash=7bec68c42049a515
+    templates: hybrid-in-comeback-p1-foundation-3d(strength_day_1_hinge_emphasis,primary) + hybrid-in-comeback-p1-foundation-3d(strength_day_2_squat_emphasis,primary) + hybrid-in-comeback-p1-foundation-3d(strength_day_3_upper_emphasis,primary) + hybrid-in-comeback-p1-foundation-3d(strength_day_1_hinge_emphasis,primary) + hybrid-in-comeback-p1-foundation-3d(strength_day_1_hinge_emphasis,primary)
+    Day 0 · hybrid-in-comeback-p1-foundation-3d · strength_day_1_hinge_emphasis
+      superset_a_compound          #25 Cable Pull-Through           3×8-10         RPE7 load:tbd
+      superset_a_accessory         #21 Hip Thrust                   3×10-12        RPE7 load:tbd
+      superset_b_unilateral        #30 Step-Up                      3×8-10         RPE7 load:tbd
+      superset_b_core              #53 Dead Bug                     3×10           RPE7 load:%BW
+    Day 1 · hybrid-in-comeback-p1-foundation-3d · strength_day_2_squat_emphasis
+      superset_a_compound          #31 Goblet Squat                 3×8-10         RPE7 load:85 kg
+      superset_a_accessory         #21 Hip Thrust                   3×10-12        RPE7 load:tbd
+      superset_b_unilateral        #36 Push-Up                      3×8-10         RPE7 load:%BW
+      superset_b_core              #53 Dead Bug                     3×10           RPE7 load:%BW
+    Day 2 · hybrid-in-comeback-p1-foundation-3d · strength_day_3_upper_emphasis
+      superset_a_compound          #38 Inverted Row                 3×8-10         RPE7 load:55 kg
+      superset_a_accessory         #36 Push-Up                      3×10-12        RPE7 load:%BW
+      superset_b_unilateral        #30 Step-Up                      3×8-10         RPE7 load:tbd
+      superset_b_core              #53 Dead Bug                     3×10           RPE7 load:%BW
+    Day 3 · hybrid-in-comeback-p1-foundation-3d · strength_day_1_hinge_emphasis
+      superset_a_compound          #25 Cable Pull-Through           3×8-10         RPE7 load:tbd
+      superset_a_accessory         #21 Hip Thrust                   3×10-12        RPE7 load:tbd
+      superset_b_unilateral        #30 Step-Up                      3×8-10         RPE7 load:tbd
+      superset_b_core              #53 Dead Bug                     3×10           RPE7 load:%BW
+    Day 4 · hybrid-in-comeback-p1-foundation-3d · strength_day_1_hinge_emphasis
+      superset_a_compound          #25 Cable Pull-Through           3×8-10         RPE7 load:tbd
+      superset_a_accessory         #21 Hip Thrust                   3×10-12        RPE7 load:tbd
+      superset_b_unilateral        #30 Step-Up                      3×8-10         RPE7 load:tbd
+      superset_b_core              #53 Dead Bug                     3×10           RPE7 load:%BW
+    alerts:
+      [info] template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+      [info] template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+
+  [VF-A1-cold] Reactivator · A1 Get lean · cold (no reported lifts, starter) · 24mo inactivity
+    goal=A1 phase=phase_1 hash=a86dd26d6bd4efc9
+    templates: reactivator-p1-foundation-2d(day_1_lower_emphasis,primary) + reactivator-p1-foundation-2d(day_2_lower_emphasis,primary)
+    Day 0 · reactivator-p1-foundation-2d · day_1_lower_emphasis
+      block_a_hinge                #26 Glute Bridge                 2×8-10         RPE6.5 load:tbd
+      block_a_squat                #31 Goblet Squat                 2×8-10         RPE6.5 load:tbd
+      block_a_core                 #53 Dead Bug                     2×8-10         RPE6.5 load:%BW
+      block_b_push                 #36 Push-Up                      2×8-10         RPE6.5 load:%BW
+      block_b_pull                 #38 Inverted Row                 2×8-10         RPE6.5 load:tbd
+      block_b_core                 #50 Pallof Press                 2×8-10         RPE6.5 load:tbd
+    Day 1 · reactivator-p1-foundation-2d · day_2_lower_emphasis
+      block_a_hinge                #26 Glute Bridge                 2×8-10         RPE6.5 load:tbd
+      block_a_squat                #31 Goblet Squat                 2×8-10         RPE6.5 load:tbd
+      block_a_core                 #53 Dead Bug                     2×8-10         RPE6.5 load:%BW
+      block_b_push                 #36 Push-Up                      2×8-10         RPE6.5 load:%BW
+      block_b_pull                 #38 Inverted Row                 2×8-10         RPE6.5 load:tbd
+      block_b_core                 #50 Pallof Press                 2×8-10         RPE6.5 load:tbd
+
+  [VF-A1-noncomeback] Non-comeback · A1 Get lean · trained, no extended pause
+    goal=A1 phase=phase_1 hash=adeef0478ac2b09e
+    templates: reactivator-p1-foundation-2d(day_1_lower_emphasis,primary) + reactivator-p1-foundation-2d(day_2_lower_emphasis,primary)
+    Day 0 · reactivator-p1-foundation-2d · day_1_lower_emphasis
+      block_a_hinge                #26 Glute Bridge                 2×8-10         RPE6.5 load:tbd
+      block_a_squat                #31 Goblet Squat                 2×8-10         RPE6.5 load:82.5 kg
+      block_a_core                 #53 Dead Bug                     2×8-10         RPE6.5 load:%BW
+      block_b_push                 #36 Push-Up                      2×8-10         RPE6.5 load:%BW
+      block_b_pull                 #38 Inverted Row                 2×8-10         RPE6.5 load:57.5 kg
+      block_b_core                 #50 Pallof Press                 2×8-10         RPE6.5 load:tbd
+    Day 1 · reactivator-p1-foundation-2d · day_2_lower_emphasis
+      block_a_hinge                #26 Glute Bridge                 2×8-10         RPE6.5 load:tbd
+      block_a_squat                #31 Goblet Squat                 2×8-10         RPE6.5 load:82.5 kg
+      block_a_core                 #53 Dead Bug                     2×8-10         RPE6.5 load:%BW
+      block_b_push                 #36 Push-Up                      2×8-10         RPE6.5 load:%BW
+      block_b_pull                 #38 Inverted Row                 2×8-10         RPE6.5 load:57.5 kg
+      block_b_core                 #50 Pallof Press                 2×8-10         RPE6.5 load:tbd
+    alerts:
+      [warning] frequency_capped: user days_per_week=3 > L5 max=2; capped
+
+  [VF-A2-noncomeback] Returning Athlete persona · A2 Build muscle · trained, no layoff
+    goal=A2 phase=phase_3 hash=21489a6f8f1c2e34
+    templates: lower-posterior(default,primary) + upper-push-pull(default,secondary) + lower-anterior(default,secondary) + upper-core(default,secondary)
+    Day 0 · lower-posterior · default
       superset_a_compound          #5 Conventional Deadlift        4×8            RPE7 load:105 kg
       superset_a_accessory         #21 Hip Thrust                   4×10           RPE7 load:tbd
       superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
       superset_b_core              #48 Plank                        3×45s          RPE7 load:%BW
       superset_c_hamstring         #26 Glute Bridge                 3×12           RPE7 load:tbd
       superset_c_core              #52 Ab Roll-Out                  3×10           RPE7 load:tbd
-    Day 3 · upper-push-pull · default
-      superset_a_press             #9 Bench Press                  4×10           RPE7.5 load:62.5 kg
+    Day 1 · upper-push-pull · default
+      superset_a_press             #9 Bench Press                  4×10           RPE7.5 load:65 kg
       superset_a_pull              #14 Barbell Row (Bent-Over Row)  4×10           RPE7.5 load:55 kg
       superset_b_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
       superset_b_shoulder          #40 Lateral Raise                3×15           RPE7 load:tbd
       superset_c_biceps            #42 Barbell Curl                 3×12           RPE7 load:tbd
       superset_c_triceps           #45 Tricep Pushdown              3×12           RPE7 load:tbd
-    Day 4 · full-body · default
-      superset_a_compound_lower    #1 Back Squat                   4×6            RPE7 load:85 kg
-      superset_a_compound_push     #12 Overhead Press (Standing Barbell) 4×6            RPE7 load:42.5 kg
+    Day 2 · lower-anterior · default
+      superset_a_squat             #1 Back Squat                   4×8            RPE7 load:85 kg
+      superset_a_accessory         #56 Leg Press                    4×12           RPE7 load:85 kg
       superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
-      superset_b_pull              #14 Barbell Row (Bent-Over Row)  3×10           RPE7 load:55 kg
-      superset_c_posterior         #21 Hip Thrust                   3×10           RPE7 load:tbd
-      superset_c_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+      superset_b_core              #51 Hanging Leg Raise            3×12           RPE7 load:tbd
+      superset_c_quad_iso          #58 Quad Isolation (Leg Extension) 3×15           RPE7 load:tbd
+      superset_c_ham_iso           #59 Seated Leg Curl              3×20           RPE7 load:tbd
+    Day 3 · upper-core · default
+      superset_a_press             #9 Bench Press                  4×10           RPE7.5 load:65 kg
+      superset_a_pull              #14 Barbell Row (Bent-Over Row)  4×10           RPE7.5 load:55 kg
+      superset_b_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+      superset_b_core              #52 Ab Roll-Out                  3×10           RPE7 load:tbd
+      superset_c_shoulder          #40 Lateral Raise                3×15           RPE7 load:tbd
+      superset_c_hip_flex          #51 Hanging Leg Raise            3×12           RPE7 load:tbd
     substitutions:
-      slot=superset_c_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
-      slot=superset_c_hamstring from=#32 → to=#26 reason="difficulty: exercise floor=advanced > user ceil=intermediate" path=[l1_slot_pool_walk_in_order]
+      slot=superset_c_hamstring from=#32 → to=#26 reason="skill_gate: advanced eccentric tolerance flag (default unmet)" path=[l1_slot_pool_walk_in_order]
       slot=superset_b_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
-      slot=superset_c_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
+      slot=superset_b_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
     alerts:
-      [info] template hybrid-in-comeback-p1-foundation-3d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
-      [info] template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
-      [info] template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+      [info] template returning-athlete-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+      [info] template returning-athlete-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+
+  [VF-E1-entry] E1 Knee rehab · currently training · no layoff [SAFETY]
+    goal=E1 phase=phase_1 hash=92496a3bdf9a85ef
+    templates: mobility(default,primary) + upper-push-pull(default,secondary)
+    Day 0 · mobility · default
+    Day 1 · upper-push-pull · default
+      superset_a_press             #9 Bench Press                  4×10           RPE7.5 load:60 kg
+      superset_a_pull              #14 Barbell Row (Bent-Over Row)  4×10           RPE7.5 load:52.5 kg
+      superset_b_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+      superset_b_shoulder          #40 Lateral Raise                3×15           RPE7 load:tbd
+      superset_c_biceps            #42 Barbell Curl                 3×12           RPE7 load:tbd
+      superset_c_triceps           #45 Tricep Pushdown              3×12           RPE7 load:tbd
+    substitutions:
+      slot=superset_b_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
+    alerts:
+      [warning] frequency_capped: user days_per_week=3 > L5 max=2; capped
+
+  [VF-F4-entry] F4 Postpartum reconditioning · 4mo postpartum · clearance true [SAFETY]
+    goal=F4 phase=phase_1 hash=623476a15b29dce1
+    templates: mobility(default,primary) + mobility(default,primary) + mobility(default,primary)
+    Day 0 · mobility · default
+    Day 1 · mobility · default
+    Day 2 · mobility · default
 
 --- AC3: VF-A2 knee contra fallback ---
   slot=superset_b_unilateral from=#27 → to=#22
@@ -104,6 +194,24 @@
 --- AC4: Determinism (re-run hash compare) ---
   VF-A1: run1=64a5f4b9e64e35e7 run2=64a5f4b9e64e35e7 identical=true
   VF-A2: run1=e05f62db9aefe42b run2=e05f62db9aefe42b identical=true
-  VF-A5: run1=dbf2e66752b63430 run2=dbf2e66752b63430 identical=true
+  VF-A5: run1=7bec68c42049a515 run2=7bec68c42049a515 identical=true
+  VF-A1-cold: run1=a86dd26d6bd4efc9 run2=a86dd26d6bd4efc9 identical=true
+  VF-A1-noncomeback: run1=adeef0478ac2b09e run2=adeef0478ac2b09e identical=true
+  VF-A2-noncomeback: run1=21489a6f8f1c2e34 run2=21489a6f8f1c2e34 identical=true
+  VF-E1-entry: run1=92496a3bdf9a85ef run2=92496a3bdf9a85ef identical=true
+  VF-F4-entry: run1=623476a15b29dce1 run2=623476a15b29dce1 identical=true
+
+--- AC5 (12.3a-fix): Entry-phase doctrine — L5/L8 Spec §10 ---
+  VF-A1-cold: expected=phase_1 observed=phase_1 → PASS  (primary=reactivator-p1-foundation-2d)
+    Rule 3 — comeback-arc A1, comeback persona, no retained capacity → Phase 1.
+  VF-A1-noncomeback: expected=phase_1 observed=phase_1 → PASS  (primary=reactivator-p1-foundation-2d)
+    Rule 1 default — non-comeback on a comeback-arc goal falls through to Phase 1.
+  VF-A2-noncomeback: expected=phase_3 observed=phase_3 → PASS  (primary=lower-posterior)
+    Rule 4 — A2 non-comeback ONLY: trained-user templates via latest-ordinal-with-coverage. SOLE legitimate skip-to-latest.
+  VF-E1-entry [SAFETY]: expected=phase_1 observed=phase_1 → PASS  (primary=mobility)
+    Rule 2 — clinical-progression goal hard-locked to Phase 1 regardless of training status. SAFETY: must NEVER auto-advance past medical clearance.
+  VF-F4-entry [SAFETY]: expected=phase_1 observed=phase_1 → PASS  (primary=mobility)
+    Rule 2 — clinical-progression goal hard-locked to Phase 1. SAFETY: bypassing clearance + diastasis/doming gates is unacceptable.
+  → AC5 all-fixtures: PASS; safety subset: PASS
 
 Done.

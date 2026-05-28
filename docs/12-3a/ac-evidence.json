@@ -416,21 +416,524 @@
       "name": "VF-A5",
       "description": "Hybrid Athlete · C4 Hyrox · 5 days · no inactivity",
       "goal_id": "C4",
-      "goal_phase": "phase_2",
+      "goal_phase": "phase_1",
       "templates": [
         {
-          "template_id": "full-body",
+          "template_id": "hybrid-in-comeback-p1-foundation-3d",
           "role": "primary",
-          "day_variant": "default"
+          "day_variant": "strength_day_1_hinge_emphasis"
         },
         {
-          "template_id": "run",
-          "role": "secondary",
-          "day_variant": "zone_2_base"
+          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "role": "primary",
+          "day_variant": "strength_day_2_squat_emphasis"
         },
+        {
+          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "role": "primary",
+          "day_variant": "strength_day_3_upper_emphasis"
+        },
+        {
+          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "role": "primary",
+          "day_variant": "strength_day_1_hinge_emphasis"
+        },
+        {
+          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "role": "primary",
+          "day_variant": "strength_day_1_hinge_emphasis"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "hybrid-in-comeback-p1-foundation-3d",
+          "variant": "strength_day_1_hinge_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 25,
+              "name": "Cable Pull-Through",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "%BW"
+            }
+          ]
+        },
+        {
+          "day": 1,
+          "template": "hybrid-in-comeback-p1-foundation-3d",
+          "variant": "strength_day_2_squat_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": "85 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": "%BW"
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "%BW"
+            }
+          ]
+        },
+        {
+          "day": 2,
+          "template": "hybrid-in-comeback-p1-foundation-3d",
+          "variant": "strength_day_3_upper_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 38,
+              "name": "Inverted Row",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": "%BW"
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "%BW"
+            }
+          ]
+        },
+        {
+          "day": 3,
+          "template": "hybrid-in-comeback-p1-foundation-3d",
+          "variant": "strength_day_1_hinge_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 25,
+              "name": "Cable Pull-Through",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "%BW"
+            }
+          ]
+        },
+        {
+          "day": 4,
+          "template": "hybrid-in-comeback-p1-foundation-3d",
+          "variant": "strength_day_1_hinge_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 25,
+              "name": "Cable Pull-Through",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "%BW"
+            }
+          ]
+        }
+      ],
+      "substitutions": [],
+      "alerts": [
+        {
+          "severity": "info",
+          "message": "template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+        },
+        {
+          "severity": "info",
+          "message": "template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+        }
+      ],
+      "hash": "7bec68c42049a515"
+    },
+    {
+      "name": "VF-A1-cold",
+      "description": "Reactivator · A1 Get lean · cold (no reported lifts, starter) · 24mo inactivity",
+      "goal_id": "A1",
+      "goal_phase": "phase_1",
+      "templates": [
+        {
+          "template_id": "reactivator-p1-foundation-2d",
+          "role": "primary",
+          "day_variant": "day_1_lower_emphasis"
+        },
+        {
+          "template_id": "reactivator-p1-foundation-2d",
+          "role": "primary",
+          "day_variant": "day_2_lower_emphasis"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "reactivator-p1-foundation-2d",
+          "variant": "day_1_lower_emphasis",
+          "exercises": [
+            {
+              "slot": "block_a_hinge",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_squat",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_push",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_pull",
+              "id": 38,
+              "name": "Inverted Row",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 1,
+          "template": "reactivator-p1-foundation-2d",
+          "variant": "day_2_lower_emphasis",
+          "exercises": [
+            {
+              "slot": "block_a_hinge",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_squat",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_push",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_pull",
+              "id": 38,
+              "name": "Inverted Row",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [],
+      "alerts": [],
+      "hash": "a86dd26d6bd4efc9"
+    },
+    {
+      "name": "VF-A1-noncomeback",
+      "description": "Non-comeback · A1 Get lean · trained, no extended pause",
+      "goal_id": "A1",
+      "goal_phase": "phase_1",
+      "templates": [
+        {
+          "template_id": "reactivator-p1-foundation-2d",
+          "role": "primary",
+          "day_variant": "day_1_lower_emphasis"
+        },
+        {
+          "template_id": "reactivator-p1-foundation-2d",
+          "role": "primary",
+          "day_variant": "day_2_lower_emphasis"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "reactivator-p1-foundation-2d",
+          "variant": "day_1_lower_emphasis",
+          "exercises": [
+            {
+              "slot": "block_a_hinge",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_squat",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "82.5 kg"
+            },
+            {
+              "slot": "block_a_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_push",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_pull",
+              "id": 38,
+              "name": "Inverted Row",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "57.5 kg"
+            },
+            {
+              "slot": "block_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 1,
+          "template": "reactivator-p1-foundation-2d",
+          "variant": "day_2_lower_emphasis",
+          "exercises": [
+            {
+              "slot": "block_a_hinge",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            },
+            {
+              "slot": "block_a_squat",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "82.5 kg"
+            },
+            {
+              "slot": "block_a_core",
+              "id": 53,
+              "name": "Dead Bug",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_push",
+              "id": 36,
+              "name": "Push-Up",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "%BW"
+            },
+            {
+              "slot": "block_b_pull",
+              "id": 38,
+              "name": "Inverted Row",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": "57.5 kg"
+            },
+            {
+              "slot": "block_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "2×8-10",
+              "rpe": 6.5,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [],
+      "alerts": [
+        {
+          "severity": "warning",
+          "message": "frequency_capped: user days_per_week=3 > L5 max=2; capped"
+        }
+      ],
+      "hash": "adeef0478ac2b09e"
+    },
+    {
+      "name": "VF-A2-noncomeback",
+      "description": "Returning Athlete persona · A2 Build muscle · trained, no layoff",
+      "goal_id": "A2",
+      "goal_phase": "phase_3",
+      "templates": [
         {
           "template_id": "lower-posterior",
-          "role": "secondary",
+          "role": "primary",
           "day_variant": "default"
         },
         {
@@ -439,75 +942,19 @@
           "day_variant": "default"
         },
         {
-          "template_id": "full-body",
-          "role": "primary",
+          "template_id": "lower-anterior",
+          "role": "secondary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "upper-core",
+          "role": "secondary",
           "day_variant": "default"
         }
       ],
       "sessions": [
         {
           "day": 0,
-          "template": "full-body",
-          "variant": "default",
-          "exercises": [
-            {
-              "slot": "superset_a_compound_lower",
-              "id": 1,
-              "name": "Back Squat",
-              "scheme": "4×6",
-              "rpe": 7,
-              "load": "85 kg"
-            },
-            {
-              "slot": "superset_a_compound_push",
-              "id": 12,
-              "name": "Overhead Press (Standing Barbell)",
-              "scheme": "4×6",
-              "rpe": 7,
-              "load": "42.5 kg"
-            },
-            {
-              "slot": "superset_b_unilateral",
-              "id": 27,
-              "name": "Bulgarian Split Squat",
-              "scheme": "3×10/side",
-              "rpe": 7,
-              "load": null
-            },
-            {
-              "slot": "superset_b_pull",
-              "id": 14,
-              "name": "Barbell Row (Bent-Over Row)",
-              "scheme": "3×10",
-              "rpe": 7,
-              "load": "55 kg"
-            },
-            {
-              "slot": "superset_c_posterior",
-              "id": 21,
-              "name": "Hip Thrust",
-              "scheme": "3×10",
-              "rpe": 7,
-              "load": null
-            },
-            {
-              "slot": "superset_c_vertical_pull",
-              "id": 18,
-              "name": "Chin-up",
-              "scheme": "3×10",
-              "rpe": 7,
-              "load": null
-            }
-          ]
-        },
-        {
-          "day": 1,
-          "template": "run",
-          "variant": "zone_2_base",
-          "exercises": []
-        },
-        {
-          "day": 2,
           "template": "lower-posterior",
           "variant": "default",
           "exercises": [
@@ -562,7 +1009,7 @@
           ]
         },
         {
-          "day": 3,
+          "day": 1,
           "template": "upper-push-pull",
           "variant": "default",
           "exercises": [
@@ -572,7 +1019,7 @@
               "name": "Bench Press",
               "scheme": "4×10",
               "rpe": 7.5,
-              "load": "62.5 kg"
+              "load": "65 kg"
             },
             {
               "slot": "superset_a_pull",
@@ -617,25 +1064,25 @@
           ]
         },
         {
-          "day": 4,
-          "template": "full-body",
+          "day": 2,
+          "template": "lower-anterior",
           "variant": "default",
           "exercises": [
             {
-              "slot": "superset_a_compound_lower",
+              "slot": "superset_a_squat",
               "id": 1,
               "name": "Back Squat",
-              "scheme": "4×6",
+              "scheme": "4×8",
               "rpe": 7,
               "load": "85 kg"
             },
             {
-              "slot": "superset_a_compound_push",
-              "id": 12,
-              "name": "Overhead Press (Standing Barbell)",
-              "scheme": "4×6",
+              "slot": "superset_a_accessory",
+              "id": 56,
+              "name": "Leg Press",
+              "scheme": "4×12",
               "rpe": 7,
-              "load": "42.5 kg"
+              "load": "85 kg"
             },
             {
               "slot": "superset_b_unilateral",
@@ -646,26 +1093,81 @@
               "load": null
             },
             {
-              "slot": "superset_b_pull",
+              "slot": "superset_b_core",
+              "id": 51,
+              "name": "Hanging Leg Raise",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_quad_iso",
+              "id": 58,
+              "name": "Quad Isolation (Leg Extension)",
+              "scheme": "3×15",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_ham_iso",
+              "id": 59,
+              "name": "Seated Leg Curl",
+              "scheme": "3×20",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 3,
+          "template": "upper-core",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_press",
+              "id": 9,
+              "name": "Bench Press",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "65 kg"
+            },
+            {
+              "slot": "superset_a_pull",
               "id": 14,
               "name": "Barbell Row (Bent-Over Row)",
-              "scheme": "3×10",
-              "rpe": 7,
+              "scheme": "4×10",
+              "rpe": 7.5,
               "load": "55 kg"
             },
             {
-              "slot": "superset_c_posterior",
-              "id": 21,
-              "name": "Hip Thrust",
+              "slot": "superset_b_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
               "scheme": "3×10",
               "rpe": 7,
               "load": null
             },
             {
-              "slot": "superset_c_vertical_pull",
-              "id": 18,
-              "name": "Chin-up",
+              "slot": "superset_b_core",
+              "id": 52,
+              "name": "Ab Roll-Out",
               "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_shoulder",
+              "id": 40,
+              "name": "Lateral Raise",
+              "scheme": "3×15",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_hip_flex",
+              "id": 51,
+              "name": "Hanging Leg Raise",
+              "scheme": "3×12",
               "rpe": 7,
               "load": null
             }
@@ -674,21 +1176,11 @@
       ],
       "substitutions": [
         {
-          "slot": "superset_c_vertical_pull",
-          "from_exercise_id": 17,
-          "to_exercise_id": 18,
-          "failure_type": "skill_gate",
-          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
-          "fallback_path": [
-            "l1_slot_pool_walk_in_order"
-          ]
-        },
-        {
           "slot": "superset_c_hamstring",
           "from_exercise_id": 32,
           "to_exercise_id": 26,
-          "failure_type": "difficulty",
-          "reason": "difficulty: exercise floor=advanced > user ceil=intermediate",
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: advanced eccentric tolerance flag (default unmet)",
           "fallback_path": [
             "l1_slot_pool_walk_in_order"
           ]
@@ -704,7 +1196,7 @@
           ]
         },
         {
-          "slot": "superset_c_vertical_pull",
+          "slot": "superset_b_vertical_pull",
           "from_exercise_id": 17,
           "to_exercise_id": 18,
           "failure_type": "skill_gate",
@@ -717,18 +1209,160 @@
       "alerts": [
         {
           "severity": "info",
-          "message": "template hybrid-in-comeback-p1-foundation-3d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+          "message": "template returning-athlete-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
         },
         {
           "severity": "info",
-          "message": "template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
-        },
-        {
-          "severity": "info",
-          "message": "template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+          "message": "template returning-athlete-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
         }
       ],
-      "hash": "dbf2e66752b63430"
+      "hash": "21489a6f8f1c2e34"
+    },
+    {
+      "name": "VF-E1-entry",
+      "description": "E1 Knee rehab · currently training · no layoff [SAFETY]",
+      "goal_id": "E1",
+      "goal_phase": "phase_1",
+      "templates": [
+        {
+          "template_id": "mobility",
+          "role": "primary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "upper-push-pull",
+          "role": "secondary",
+          "day_variant": "default"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "mobility",
+          "variant": "default",
+          "exercises": []
+        },
+        {
+          "day": 1,
+          "template": "upper-push-pull",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_press",
+              "id": 9,
+              "name": "Bench Press",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "60 kg"
+            },
+            {
+              "slot": "superset_a_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "52.5 kg"
+            },
+            {
+              "slot": "superset_b_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_shoulder",
+              "id": 40,
+              "name": "Lateral Raise",
+              "scheme": "3×15",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_biceps",
+              "id": 42,
+              "name": "Barbell Curl",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_triceps",
+              "id": 45,
+              "name": "Tricep Pushdown",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [
+        {
+          "slot": "superset_b_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        }
+      ],
+      "alerts": [
+        {
+          "severity": "warning",
+          "message": "frequency_capped: user days_per_week=3 > L5 max=2; capped"
+        }
+      ],
+      "hash": "92496a3bdf9a85ef"
+    },
+    {
+      "name": "VF-F4-entry",
+      "description": "F4 Postpartum reconditioning · 4mo postpartum · clearance true [SAFETY]",
+      "goal_id": "F4",
+      "goal_phase": "phase_1",
+      "templates": [
+        {
+          "template_id": "mobility",
+          "role": "primary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "mobility",
+          "role": "primary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "mobility",
+          "role": "primary",
+          "day_variant": "default"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "mobility",
+          "variant": "default",
+          "exercises": []
+        },
+        {
+          "day": 1,
+          "template": "mobility",
+          "variant": "default",
+          "exercises": []
+        },
+        {
+          "day": 2,
+          "template": "mobility",
+          "variant": "default",
+          "exercises": []
+        }
+      ],
+      "substitutions": [],
+      "alerts": [],
+      "hash": "623476a15b29dce1"
     }
   ],
   "ac3": {
@@ -816,9 +1450,86 @@
       "identical": true
     },
     "VF-A5": {
-      "hash_run_1": "dbf2e66752b63430",
-      "hash_run_2": "dbf2e66752b63430",
+      "hash_run_1": "7bec68c42049a515",
+      "hash_run_2": "7bec68c42049a515",
+      "identical": true
+    },
+    "VF-A1-cold": {
+      "hash_run_1": "a86dd26d6bd4efc9",
+      "hash_run_2": "a86dd26d6bd4efc9",
+      "identical": true
+    },
+    "VF-A1-noncomeback": {
+      "hash_run_1": "adeef0478ac2b09e",
+      "hash_run_2": "adeef0478ac2b09e",
+      "identical": true
+    },
+    "VF-A2-noncomeback": {
+      "hash_run_1": "21489a6f8f1c2e34",
+      "hash_run_2": "21489a6f8f1c2e34",
+      "identical": true
+    },
+    "VF-E1-entry": {
+      "hash_run_1": "92496a3bdf9a85ef",
+      "hash_run_2": "92496a3bdf9a85ef",
+      "identical": true
+    },
+    "VF-F4-entry": {
+      "hash_run_1": "623476a15b29dce1",
+      "hash_run_2": "623476a15b29dce1",
       "identical": true
     }
-  }
+  },
+  "ac5": [
+    {
+      "name": "VF-A1-cold",
+      "description": "Reactivator · A1 Get lean · cold (no reported lifts, starter) · 24mo inactivity",
+      "notes": "Rule 3 — comeback-arc A1, comeback persona, no retained capacity → Phase 1.",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "pass": true,
+      "safety_critical": false,
+      "primary_template": "reactivator-p1-foundation-2d"
+    },
+    {
+      "name": "VF-A1-noncomeback",
+      "description": "Non-comeback · A1 Get lean · trained, no extended pause",
+      "notes": "Rule 1 default — non-comeback on a comeback-arc goal falls through to Phase 1.",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "pass": true,
+      "safety_critical": false,
+      "primary_template": "reactivator-p1-foundation-2d"
+    },
+    {
+      "name": "VF-A2-noncomeback",
+      "description": "Returning Athlete persona · A2 Build muscle · trained, no layoff",
+      "notes": "Rule 4 — A2 non-comeback ONLY: trained-user templates via latest-ordinal-with-coverage. SOLE legitimate skip-to-latest.",
+      "expected_phase": "phase_3",
+      "observed_phase": "phase_3",
+      "pass": true,
+      "safety_critical": false,
+      "primary_template": "lower-posterior"
+    },
+    {
+      "name": "VF-E1-entry",
+      "description": "E1 Knee rehab · currently training · no layoff [SAFETY]",
+      "notes": "Rule 2 — clinical-progression goal hard-locked to Phase 1 regardless of training status. SAFETY: must NEVER auto-advance past medical clearance.",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "pass": true,
+      "safety_critical": true,
+      "primary_template": "mobility"
+    },
+    {
+      "name": "VF-F4-entry",
+      "description": "F4 Postpartum reconditioning · 4mo postpartum · clearance true [SAFETY]",
+      "notes": "Rule 2 — clinical-progression goal hard-locked to Phase 1. SAFETY: bypassing clearance + diastasis/doming gates is unacceptable.",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "pass": true,
+      "safety_critical": true,
+      "primary_template": "mobility"
+    }
+  ]
 }

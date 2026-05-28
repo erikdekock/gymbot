@@ -85,6 +85,142 @@ const FIXTURES = {
   },
 };
 
+/**
+ * 12.3a-fix new fixtures — entry-phase doctrine (L5/L8 Spec §10).
+ *
+ * Five fixtures cover the doctrine branches the alpha set didn't reach.
+ * Two of them (VF-E1-entry, VF-F4-entry) are SAFETY fixtures: clinical
+ * goals MUST resolve to phase_1, never phase_3, regardless of training
+ * status.
+ */
+const DOCTRINE_FIXTURES = {
+  "VF-A1-cold": {
+    description: "Reactivator · A1 Get lean · cold (no reported lifts, starter) · 24mo inactivity",
+    expected_phase: "phase_1",
+    notes: "Rule 3 — comeback-arc A1, comeback persona, no retained capacity → Phase 1.",
+    prelude: {
+      experience_level: "starter",
+      archetype_flags: {
+        recent_inactivity_months: 24,
+        age: 42,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 2,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 80,
+      reported_lifts: { squat: null, deadlift: null, bench: null, ohp: null, row: null },
+      contraindications: [],
+      goal_id: "A1",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A1",
+    },
+  },
+  "VF-A1-noncomeback": {
+    description: "Non-comeback · A1 Get lean · trained, no extended pause",
+    expected_phase: "phase_1",
+    notes: "Rule 1 default — non-comeback on a comeback-arc goal falls through to Phase 1.",
+    prelude: {
+      experience_level: "experienced",
+      archetype_flags: {
+        recent_inactivity_months: 0,
+        age: 32,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 3,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 78,
+      reported_lifts: { squat: 110, deadlift: 140, bench: 90, ohp: 60, row: 75 },
+      contraindications: [],
+      goal_id: "A1",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: null,
+    },
+  },
+  "VF-A2-noncomeback": {
+    description: "Returning Athlete persona · A2 Build muscle · trained, no layoff",
+    expected_phase: "phase_3",
+    notes: "Rule 4 — A2 non-comeback ONLY: trained-user templates via latest-ordinal-with-coverage. SOLE legitimate skip-to-latest.",
+    prelude: {
+      experience_level: "experienced",
+      archetype_flags: {
+        recent_inactivity_months: 0,
+        age: 30,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 4,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 82,
+      reported_lifts: { squat: 130, deadlift: 160, bench: 100, ohp: 65, row: 85 },
+      contraindications: [],
+      goal_id: "A2",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A2",
+    },
+  },
+  "VF-E1-entry": {
+    description: "E1 Knee rehab · currently training · no layoff [SAFETY]",
+    expected_phase: "phase_1",
+    notes: "Rule 2 — clinical-progression goal hard-locked to Phase 1 regardless of training status. SAFETY: must NEVER auto-advance past medical clearance.",
+    prelude: {
+      experience_level: "experienced",
+      archetype_flags: {
+        recent_inactivity_months: 0,
+        age: 34,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 3,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 76,
+      reported_lifts: { squat: 100, deadlift: 130, bench: 80, ohp: 55, row: 70 },
+      contraindications: ["left_knee_post_surgery"],
+      goal_id: "E1",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: null,
+    },
+  },
+  "VF-F4-entry": {
+    description: "F4 Postpartum reconditioning · 4mo postpartum · clearance true [SAFETY]",
+    expected_phase: "phase_1",
+    notes: "Rule 2 — clinical-progression goal hard-locked to Phase 1. SAFETY: bypassing clearance + diastasis/doming gates is unacceptable.",
+    prelude: {
+      experience_level: "active",
+      archetype_flags: {
+        recent_inactivity_months: 4,
+        age: 33,
+        postpartum_months: 4,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 3,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 68,
+      reported_lifts: { squat: 70, deadlift: 90, bench: 50, ohp: 35, row: 50 },
+      contraindications: [],
+      goal_id: "F4",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: null,
+    },
+  },
+};
+
 const MALFORMED = {
   description: "Deliberately malformed: days_per_week=0, missing reported_lifts.squat key",
   prelude: {
@@ -133,9 +269,11 @@ function runFixture(name, fx) {
   return { name, description: fx.description, input, program, hash };
 }
 
+const ALL_FIXTURES = { ...FIXTURES, ...DOCTRINE_FIXTURES };
+
 function main() {
   const wantJson = process.argv.includes("--json");
-  const out = { ac1: {}, ac2: [], ac3: {}, ac4: {} };
+  const out = { ac1: {}, ac2: [], ac3: {}, ac4: {}, ac5: [] };
 
   // AC1: converter produces valid input for all three; throws on malformed.
   for (const [name, fx] of Object.entries(FIXTURES)) {
@@ -153,11 +291,12 @@ function main() {
     out.ac1.malformed = { status: "THREW_AS_EXPECTED", error: e.message };
   }
 
-  // AC2: engine produces a complete first-week program for all three.
+  // AC2: engine produces a complete first-week program for all fixtures
+  // (alpha set + doctrine set).
   const runs = {};
-  for (const name of Object.keys(FIXTURES)) {
+  for (const name of Object.keys(ALL_FIXTURES)) {
     try {
-      const result = runFixture(name, FIXTURES[name]);
+      const result = runFixture(name, ALL_FIXTURES[name]);
       runs[name] = result;
       out.ac2.push({
         name,
@@ -197,14 +336,35 @@ function main() {
   }
 
   // AC4: determinism. Re-run each fixture and confirm identical SHA256.
-  for (const name of Object.keys(FIXTURES)) {
-    const r1 = runFixture(name, FIXTURES[name]);
-    const r2 = runFixture(name, FIXTURES[name]);
+  for (const name of Object.keys(ALL_FIXTURES)) {
+    const r1 = runFixture(name, ALL_FIXTURES[name]);
+    const r2 = runFixture(name, ALL_FIXTURES[name]);
     out.ac4[name] = {
       hash_run_1: r1.hash,
       hash_run_2: r2.hash,
       identical: r1.hash === r2.hash,
     };
+  }
+
+  // AC5 (12.3a-fix): entry-phase doctrine. The 5 doctrine fixtures produce
+  // the expected phase per L5/L8 Spec §10. The two clinical safety fixtures
+  // MUST land on phase_1.
+  for (const [name, fx] of Object.entries(DOCTRINE_FIXTURES)) {
+    const result = runs[name];
+    const observed = result?.program?.goal?.goal_phase ?? null;
+    const expected = fx.expected_phase;
+    const ok = observed === expected;
+    const safety = /SAFETY/.test(fx.description);
+    out.ac5.push({
+      name,
+      description: fx.description,
+      notes: fx.notes,
+      expected_phase: expected,
+      observed_phase: observed,
+      pass: ok,
+      safety_critical: safety,
+      primary_template: result?.program?.templates_selected?.[0]?.template_id ?? null,
+    });
   }
 
   if (wantJson) {
@@ -267,6 +427,21 @@ function main() {
   for (const [name, r] of Object.entries(out.ac4)) {
     console.log(`  ${name}: run1=${r.hash_run_1} run2=${r.hash_run_2} identical=${r.identical}`);
   }
+
+  console.log("\n--- AC5 (12.3a-fix): Entry-phase doctrine — L5/L8 Spec §10 ---");
+  for (const r of out.ac5) {
+    const tag = r.pass ? "PASS" : "FAIL";
+    const safety = r.safety_critical ? " [SAFETY]" : "";
+    console.log(
+      `  ${r.name}${safety}: expected=${r.expected_phase} observed=${r.observed_phase} → ${tag}` +
+        (r.primary_template ? `  (primary=${r.primary_template})` : "")
+    );
+    console.log(`    ${r.notes}`);
+  }
+  const ac5AllPass = out.ac5.every((r) => r.pass);
+  const ac5SafetyPass = out.ac5.every((r) => !r.safety_critical || r.pass);
+  console.log(`  → AC5 all-fixtures: ${ac5AllPass ? "PASS" : "FAIL"}; safety subset: ${ac5SafetyPass ? "PASS" : "FAIL"}`);
+
   console.log("\nDone.");
 }
 
