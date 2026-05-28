@@ -1,48 +1,83 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import Wordmark from '../../onboarding/_components/Wordmark'
 
 export default function TermsPrivacyAbout() {
   const router = useRouter()
 
   return (
-    <div className="screen" style={{ overflowY: 'auto' }}>
-      <div className="topbar">
-        <button className="topbar-back" onClick={() => router.back()}>← Back</button>
-        <span className="topbar-title">Terms, privacy & about</span>
-        <div style={{ width: 60 }} />
-      </div>
+    <div className="rep-surface">
+      <div className="rep-screen">
+        <div className="rep-screen__top" style={{ overflow: 'hidden' }}>
+          <button className="rep-back" onClick={() => router.back()}>
+            ← Back
+          </button>
+          <Wordmark size="small" />
+          <h1 className="rep-heading" style={{ marginTop: 16 }}>
+            Terms &amp; privacy
+          </h1>
 
-      <div style={{ padding: '0 20px 64px' }}>
+          <div className="rep-reading">
+            <p className="rep-reading__lead">
+              These are alpha concept terms, written in plain language to set
+              expectations during early access. They will be replaced with formal
+              legal copy before public release.
+            </p>
 
-        {/* TERMS */}
-        <p className="section-label" style={{ paddingLeft: 0, marginBottom: 12 }}>TERMS</p>
-        <div style={{ fontSize: 14, color: 'var(--gb-text-secondary)', lineHeight: 1.7, marginBottom: 32 }}>
-          <p>GymBot is alpha software. By using it you agree that:</p>
-          <ul style={{ paddingLeft: 20, margin: '8px 0' }}>
-            <li>The app may have bugs, break, or change without notice.</li>
-            <li>You won't hold GymBot liable for data loss, downtime, or any other issues.</li>
-            <li>You'll give feedback when something isn't working — that's the deal.</li>
-          </ul>
-          <p style={{ marginTop: 12 }}>The alpha will end at some point. You'll get advance notice and a final chance to export your data.</p>
-        </div>
+            <h4>You&apos;re in early</h4>
+            <p>
+              Reprise is alpha software. It may break, be slow, or change without
+              notice. Features will come and go as we learn what works. The alpha
+              will end at some point — you&apos;ll get advance notice and a final
+              chance to export your data.
+            </p>
 
-        {/* PRIVACY */}
-        <p className="section-label" style={{ paddingLeft: 0, marginBottom: 12 }}>PRIVACY</p>
-        <div style={{ fontSize: 14, color: 'var(--gb-text-secondary)', lineHeight: 1.7, marginBottom: 32 }}>
-          <p><strong style={{ color: 'var(--gb-text-primary)' }}>What we store:</strong> your email (for login), your training data (sessions, sets, weights, RPE, notes), and basic metadata (sign-up date, login times).</p>
-          <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--gb-text-primary)' }}>What we don't do:</strong> track you across other apps, share your data with third parties, or use it to train external AI.</p>
-          <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--gb-text-primary)' }}>Where it lives:</strong> Supabase (hosted database). The GymBot admin can technically see all data — used only to improve the product.</p>
-          <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--gb-text-primary)' }}>Your rights:</strong> delete your account and all data any time from the Profile screen. Export all your data as JSON any time. Weekly backups purge your data within ~7 days of account deletion.</p>
-          <p style={{ marginTop: 12 }}><strong style={{ color: 'var(--gb-text-primary)' }}>Login:</strong> magic link via email. Anyone with access to your email can access your account. Use a personal email you control.</p>
-        </div>
+            <h4>Your data</h4>
+            <p>
+              We store your email (for login), your training data (sessions, sets,
+              weights, RPE, notes), and basic metadata (sign-up date, login times).
+              Nothing else. We don&apos;t track you across other apps, and we
+              don&apos;t share your data with third parties.
+            </p>
+            <p>
+              Data lives in Supabase, a hosted database. The Reprise admin can
+              technically see it — used only to improve the product, never shared.
+              You can <strong>delete your account and all training data</strong> at
+              any time from the profile screen. Deletion is immediate; backups are
+              purged within roughly seven days. You can{' '}
+              <strong>export everything as JSON</strong> any time.
+            </p>
 
-        {/* ABOUT */}
-        <p className="section-label" style={{ paddingLeft: 0, marginBottom: 12 }}>ABOUT</p>
-        <div style={{ fontSize: 14, color: 'var(--gb-text-secondary)', lineHeight: 1.7 }}>
-          <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--gb-text-primary)', letterSpacing: '0.1em', marginBottom: 8 }}>GYMBOT</p>
-          <p>Version {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0-alpha'}</p>
-          <p style={{ marginTop: 4 }}>Built by the GymBot team.</p>
-          <p style={{ marginTop: 12, fontSize: 12, color: 'var(--gb-text-quiet)' }}>Last updated: May 2026</p>
+            <h4>Communication</h4>
+            <p>
+              Login is by magic link sent to your email. Anyone with access to your
+              inbox can access your Reprise account — use a personal email you
+              control. Feedback goes through the in-app feedback button; that&apos;s
+              the support channel for now, and anything you send reaches the team
+              directly. We don&apos;t send marketing email.
+            </p>
+
+            <h4>No medical advice</h4>
+            <p>
+              Reprise is a training app, not a medical service. Nothing it suggests
+              is medical advice. If you have a clinical condition, an injury, or
+              any concern that calls for a professional, see one. Reprise is
+              designed to defer to you on safety.
+            </p>
+
+            <h4>Training at your own risk</h4>
+            <p>
+              You&apos;re responsible for your own training decisions. Listen to
+              your body. Stop if something hurts. Reprise can&apos;t be held liable
+              for injury, data loss, downtime, or other issues during alpha.
+              That&apos;s the deal for being here early.
+            </p>
+          </div>
+
+          <p className="rep-helper" style={{ marginTop: 16 }}>
+            Reprise · Version {process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0-alpha'}
+            {' · '}Last updated May 2026.
+          </p>
         </div>
       </div>
     </div>

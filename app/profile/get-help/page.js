@@ -5,8 +5,8 @@ import Toast from '../../../components/Toast'
 
 const FAQS = [
   {
-    q: 'What is GymBot?',
-    a: 'GymBot is a personal training app that answers one question: am I on track toward my goal? You set a goal, we plan your week, you log your sessions, and we show you whether you\'re moving in the right direction. No social feed, no gimmicks, no thousand-feature dashboards.',
+    q: 'What is Reprise?',
+    a: 'Reprise is a personal training app that answers one question: am I on track toward my goal? You set a goal, we plan your week, you log your sessions, and we show you whether you\'re moving in the right direction. No social feed, no gimmicks, no thousand-feature dashboards.',
   },
   {
     q: 'How is my data used?',
@@ -37,7 +37,7 @@ export default function GetHelp() {
   async function sendNote() {
     if (!subject.trim() || !message.trim()) return
     setSending(true)
-    window.location.href = `mailto:ahwdekock@gmail.com?subject=[GymBot help] ${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`
+    window.location.href = `mailto:ahwdekock@gmail.com?subject=[Reprise help] ${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`
     setSending(false)
     setToast({ message: "Thanks — we'll get back to you soon.", type: 'success' })
     setSubject('')

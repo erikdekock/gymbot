@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
+import Wordmark from '../onboarding/_components/Wordmark'
 
 const supabase = createClient()
 
@@ -30,42 +31,44 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-screen" style={{ justifyContent: 'space-between', paddingTop: 64, paddingBottom: 48 }}>
-      <div>
-        <p className="auth-wordmark">GYMBOT</p>
-        <div style={{ marginTop: 48 }}>
-          <h1 className="auth-tagline">Welcome back.</h1>
-          <p style={{ fontSize: 15, color: 'var(--gb-text-secondary)', marginTop: 8 }}>
-            Enter your email and we will send you a link.
-          </p>
+    <div className="rep-surface">
+      <div className="rep-screen">
+        <div className="rep-screen__top">
+          <Wordmark size="primary" />
+          <div style={{ marginTop: 48 }}>
+            <h1 className="rep-heading">Welcome back.</h1>
+            <p className="rep-helper">
+              Enter your email and we&apos;ll send you a link.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {error && <p className="auth-error">{error}</p>}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <label style={{ fontSize: 13, color: 'var(--gb-text-secondary)' }}>Email</label>
-          <input
-            className="auth-input"
-            type="email"
-            placeholder="your email address"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setError('') }}
-            autoComplete="email"
-            inputMode="email"
-          />
+        <div className="rep-screen__bottom">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <label className="rep-field-label" htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              className={`rep-input ${error ? 'rep-input--error' : ''}`}
+              type="email"
+              placeholder="your email address"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError('') }}
+              autoComplete="email"
+              inputMode="email"
+            />
+            {error && <p className="rep-input-error">{error}</p>}
+          </div>
+          <button
+            className="rep-btn rep-btn--primary"
+            disabled={!isValidEmail || loading}
+            onClick={handleSubmit}
+          >
+            {loading ? 'Sending…' : 'Send me a link'}
+          </button>
+          <button className="rep-btn tertiary" onClick={() => router.back()}>
+            Back
+          </button>
         </div>
-        <button
-          className="auth-btn"
-          style={{ marginTop: 8 }}
-          disabled={!isValidEmail || loading}
-          onClick={handleSubmit}
-        >
-          {loading ? 'Sending…' : 'Send me a link'}
-        </button>
-        <button className="auth-btn-ghost" onClick={() => router.back()}>
-          Back
-        </button>
       </div>
     </div>
   )

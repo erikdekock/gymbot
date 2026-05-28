@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
+import Wordmark from '../onboarding/_components/Wordmark'
 
 const supabase = createClient()
 
@@ -51,61 +52,58 @@ export default function Welcome() {
   }
 
   return (
-    <div className="auth-screen" style={{ justifyContent: 'space-between', paddingTop: 64, paddingBottom: 48 }}>
-      <div>
-        <p className="auth-wordmark">GYMBOT</p>
-        <div style={{ marginTop: 48 }}>
-          <h1 className="auth-tagline">Personal training,<br />simplified.</h1>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {error && <p className="auth-error">{error}</p>}
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <label style={{ fontSize: 13, color: 'var(--gb-text-secondary)' }}>Email</label>
-          <input
-            className="auth-input"
-            type="email"
-            placeholder="your email address"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setError('') }}
-            autoComplete="email"
-            inputMode="email"
-          />
+    <div className="rep-surface">
+      <div className="rep-screen">
+        <div className="rep-screen__top">
+          <Wordmark size="primary" />
+          <div style={{ marginTop: 48 }}>
+            <h1 className="rep-heading">Return to the work.</h1>
+          </div>
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={e => { setAgreed(e.target.checked); setError('') }}
-            style={{ marginTop: 2, flexShrink: 0, accentColor: 'var(--gb-accent)' }}
-          />
-          <span style={{ fontSize: 13, color: 'var(--gb-text-secondary)', lineHeight: 1.4 }}>
-            I agree to the{' '}
-            <a
-              href="/terms-alpha"
-              target="_blank"
-              style={{ color: 'var(--gb-text-tertiary)', textDecoration: 'underline' }}
-            >
-              terms and privacy notice
-            </a>
-          </span>
-        </label>
+        <div className="rep-screen__bottom">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <label className="rep-field-label" htmlFor="welcome-email">Email</label>
+            <input
+              id="welcome-email"
+              className={`rep-input ${error && !isValidEmail ? 'rep-input--error' : ''}`}
+              type="email"
+              placeholder="your email address"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError('') }}
+              autoComplete="email"
+              inputMode="email"
+            />
+            {error && <p className="rep-input-error">{error}</p>}
+          </div>
 
-        <button
-          className="auth-btn"
-          style={{ marginTop: 8 }}
-          disabled={!canSubmit}
-          onClick={handleSubmit}
-        >
-          {loading ? 'Sending…' : 'Send me the link'}
-        </button>
+          <label className="rep-check">
+            <input
+              className="rep-check__input"
+              type="checkbox"
+              checked={agreed}
+              onChange={e => { setAgreed(e.target.checked); setError('') }}
+            />
+            <span className="rep-check__label">
+              I agree to the{' '}
+              <a href="/terms-alpha" target="_blank" rel="noopener noreferrer">
+                terms and privacy notice
+              </a>
+            </span>
+          </label>
 
-        <button className="auth-btn-ghost" onClick={() => router.push('/login')}>
-          I already have an account
-        </button>
+          <button
+            className="rep-btn rep-btn--primary"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+          >
+            {loading ? 'Sending…' : 'Send me the link'}
+          </button>
+
+          <button className="rep-btn tertiary" onClick={() => router.push('/login')}>
+            I already have an account
+          </button>
+        </div>
       </div>
     </div>
   )

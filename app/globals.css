@@ -844,3 +844,189 @@ body {
 }
 .rep-back:hover { color: var(--graphite-10); }
 .rep-back:active { color: var(--graphite-10); }
+
+/* ============================================================
+   v1.1.1 extensions — 15a Brand-launch (auth + post-auth home)
+   Locked 28 May 2026 per UX/UI Phase 1 spec. .rep-check, .rep-reading,
+   .rep-input-error (+ eyebrow), .rep-btn.tertiary canonical from here.
+   .rep-surface + .rep-input added to fill mechanical-swap gaps.
+   ============================================================ */
+
+/* Standalone surface wrapper — parallel to .rep-onboarding, for surfaces
+   that don't live under the onboarding layout (auth, post-auth home). */
+.rep-surface {
+  background-color: var(--paper-95);
+  color: var(--graphite-10);
+  font-family: var(--rep-font-sans);
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.rep-surface :focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+.rep-surface :focus:not(:focus-visible) { outline: none; }
+
+/* Text/email input — graphite text on cream, paper-80 hairline frame,
+   sage focus. Mirrors .rep-num-input but full-width and left-aligned. */
+.rep-input {
+  font-family: var(--rep-font-sans);
+  font-size: 1rem;
+  background: transparent;
+  border: 1px solid var(--paper-80);
+  border-radius: var(--rep-radius-md);
+  color: var(--graphite-10);
+  padding: var(--rep-space-3) var(--rep-space-4);
+  width: 100%;
+  min-height: 48px;
+  outline: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+.rep-input::placeholder { color: var(--graphite-30); }
+.rep-input:focus { border-color: var(--sage); }
+.rep-input--error { border-color: var(--error); }
+
+/* Input field label eyebrow — uppercase Plex Mono, small, letterspaced. */
+.rep-field-label {
+  font-family: var(--rep-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--graphite-30);
+  margin: 0 0 var(--rep-space-2);
+  display: block;
+}
+
+/* §1 Checkbox — 20×20 outlined square, sage ✓ on check.
+   Used on /welcome (agree-to-notice) and /terms-alpha (gate). */
+.rep-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rep-space-3);
+  cursor: pointer;
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  color: var(--graphite-30);
+  line-height: 1.45;
+}
+.rep-check__input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin: 1px 0 0;
+  border: 1.5px solid var(--paper-70);
+  border-radius: var(--rep-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.rep-check__input:hover { border-color: var(--graphite-30); }
+.rep-check__input:checked { border-color: var(--sage); }
+.rep-check__input:checked::before {
+  content: '✓';
+  font-family: var(--rep-font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sage);
+  line-height: 1;
+}
+.rep-check__label { flex: 1; }
+.rep-check__label a {
+  color: var(--graphite-10);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--paper-70);
+}
+.rep-check__label a:hover { text-decoration-color: var(--graphite-30); }
+
+/* §2 Reading block — scrollable region between hairlines, Big Shoulders
+   subheads, italic graphite-30 lead-in. Used on /terms-alpha + /profile/terms. */
+.rep-reading {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border-top: 1px solid var(--paper-80);
+  border-bottom: 1px solid var(--paper-80);
+  padding: var(--rep-space-4) 0;
+  margin: var(--rep-space-3) 0;
+  font-family: var(--rep-font-sans);
+  font-size: 0.9375rem;
+  color: var(--graphite-20);
+  line-height: 1.55;
+  -webkit-overflow-scrolling: touch;
+}
+.rep-reading__lead {
+  font-style: italic;
+  color: var(--graphite-30);
+  font-size: 0.875rem;
+  margin: 0 0 var(--rep-space-4);
+}
+.rep-reading h4 {
+  font-family: var(--font-display), 'Big Shoulders Display', Impact, sans-serif;
+  font-weight: 900;
+  font-size: 0.9375rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite-10);
+  margin: var(--rep-space-6) 0 var(--rep-space-2);
+}
+.rep-reading h4:first-of-type { margin-top: 0; }
+.rep-reading p { margin: 0 0 var(--rep-space-3); }
+.rep-reading p:last-child { margin-bottom: 0; }
+.rep-reading ul {
+  margin: var(--rep-space-2) 0 var(--rep-space-3);
+  padding-left: 1.25rem;
+}
+.rep-reading li { margin-bottom: var(--rep-space-2); }
+.rep-reading li:last-child { margin-bottom: 0; }
+.rep-reading strong { color: var(--graphite-10); font-weight: 600; }
+
+/* §3 Inline input error — italic 12px in --error.
+   --eyebrow variant: uppercase Plex Mono label for screen-class errors. */
+.rep-input-error {
+  font-family: var(--rep-font-sans);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--error);
+  margin: var(--rep-space-1) 0 0;
+}
+.rep-input-error--eyebrow {
+  font-style: normal;
+  font-family: var(--rep-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 var(--rep-space-3);
+}
+
+/* §4 Tertiary text-link button. Disabled stamp already on .rep-btn:disabled. */
+.rep-btn.tertiary {
+  background: transparent;
+  border: none;
+  color: var(--graphite-30);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--paper-70);
+  font-family: var(--rep-font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  min-height: 44px;
+  width: auto;
+  padding: var(--rep-space-2) 0;
+}
+.rep-btn.tertiary:not(:disabled):hover {
+  color: var(--graphite-10);
+  text-decoration-color: var(--graphite-30);
+}
