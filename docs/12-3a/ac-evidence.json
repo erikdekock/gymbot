@@ -1623,6 +1623,108 @@
       "safety_critical": false
     }
   ],
+  "ac6_clinical_entry_trained": [
+    {
+      "goal_id": "E1",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "E2",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "E3",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "E4",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "E5",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "E6",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "F1",
+      "phase_type": "single_block",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": null,
+      "observed_phase": null,
+      "primary_template": "full-body",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "F2",
+      "phase_type": "single_block",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": null,
+      "observed_phase": null,
+      "primary_template": "full-body",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "F3",
+      "phase_type": "single_block",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": null,
+      "observed_phase": null,
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    },
+    {
+      "goal_id": "F4",
+      "phase_type": "phased",
+      "retained_capacity_profile": "experience=experienced, lifts present",
+      "expected_phase": "phase_1",
+      "observed_phase": "phase_1",
+      "primary_template": "mobility",
+      "pass": true,
+      "error": null
+    }
+  ],
   "ac5_spot_b6": {
     "populated": true,
     "results": [

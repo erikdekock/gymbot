@@ -229,6 +229,21 @@
   → B6: OK
   B6 OK — `condition` fields populated.
 
+--- AC6 (12.3a-fix): VF-clinical-entry-trained — parametric clinical guard ---
+    Retained-capacity profile (experienced + reported lifts present) per clinical goal.
+    Hardcoded set; catches engine-side membership drift in CLINICAL_PROGRESSION_GOALS.
+  E1 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  E2 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  E3 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  E4 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  E5 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  E6 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  F1 (single_block): expected_phase=null observed=null → PASS  primary=full-body
+  F2 (single_block): expected_phase=null observed=null → PASS  primary=full-body
+  F3 (single_block): expected_phase=null observed=null → PASS  primary=mobility
+  F4 (phased): expected_phase=phase_1 observed=phase_1 → PASS  primary=mobility
+  → AC6: PASS — 10/10 clinical goals land on safe phase.
+
 --- AC5 SPOT-CHECK 2 (FLAG-5 retained-capacity gate) ---
   VF-A1 (comeback + lifts) → phase_2; VF-A1-cold (comeback, no lifts) → phase_1
   → FLAG-5: PASS

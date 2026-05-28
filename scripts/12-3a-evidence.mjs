@@ -279,11 +279,61 @@ function runFixture(name, fx) {
   return { name, description: fx.description, input, program, hash };
 }
 
+/**
+ * VF-clinical-entry-trained — parametric safety fixture per PD §11
+ * follow-up. For EACH canonical clinical-progression goal, assert that a
+ * retained-capacity profile (experienced + reported lifts present)
+ * resolves to a SAFE phase (phase_1 for phased entries; null for
+ * single-block entries — F1–F3 are non-phase-aware in the L5 KB and
+ * resolvePhase short-circuits before the clinical hard-lock). The goal
+ * list is hardcoded here, not pulled from the engine's
+ * CLINICAL_PROGRESSION_GOALS set, so membership drift in the engine
+ * (e.g. someone fat-fingering E1 out of the clinical set into the
+ * comeback-arc set) fails this fixture without silently shifting the
+ * assertion baseline.
+ */
+const CANONICAL_CLINICAL_GOALS = [
+  { goal_id: "E1", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "E2", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "E3", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "E4", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "E5", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "E6", phase_type: "phased",       expected_phase: "phase_1" },
+  { goal_id: "F1", phase_type: "single_block", expected_phase: null },
+  { goal_id: "F2", phase_type: "single_block", expected_phase: null },
+  { goal_id: "F3", phase_type: "single_block", expected_phase: null },
+  { goal_id: "F4", phase_type: "phased",       expected_phase: "phase_1" },
+];
+
+function makeRetainedCapacityClinicalPrelude(goalId) {
+  return {
+    experience_level: "experienced",
+    archetype_flags: {
+      recent_inactivity_months: 0,
+      age: 34,
+      postpartum_months: goalId === "F4" ? 4 : null,
+      pregnancy_gestational_week:
+        goalId === "F1" ? 8 : goalId === "F2" ? 20 : goalId === "F3" ? 34 : null,
+    },
+    training_history_cross_modal: false,
+    days_per_week: 3,
+    equipment_available: ["full_gym"],
+    bodyweight_kg: 76,
+    reported_lifts: { squat: 100, deadlift: 130, bench: 80, ohp: 55, row: 70 },
+    contraindications: goalId === "E1" ? ["left_knee_post_surgery"] : [],
+    goal_id: goalId,
+    goal_provisional: false,
+    provisional_goal_source: null,
+    user_words_goal: null,
+    detected_archetype: null,
+  };
+}
+
 const ALL_FIXTURES = { ...FIXTURES, ...DOCTRINE_FIXTURES };
 
 function main() {
   const wantJson = process.argv.includes("--json");
-  const out = { ac1: {}, ac2: [], ac3: {}, ac4: {}, ac5: [] };
+  const out = { ac1: {}, ac2: [], ac3: {}, ac4: {}, ac5: [], ac6_clinical_entry_trained: [] };
 
   // AC1: converter produces valid input for all three; throws on malformed.
   for (const [name, fx] of Object.entries(FIXTURES)) {
@@ -436,6 +486,35 @@ function main() {
       : "B6 OK — `condition` fields populated.",
   };
 
+  // AC6 (PD §11 follow-up): VF-clinical-entry-trained parametric guard.
+  // For every canonical clinical goal, a retained-capacity profile must
+  // resolve to a SAFE phase. Catches membership drift in
+  // CLINICAL_PROGRESSION_GOALS that the per-fixture VF-E1-entry /
+  // VF-F4-entry assertions only spot-check.
+  for (const c of CANONICAL_CLINICAL_GOALS) {
+    let observedPhase = "<engine-error>";
+    let observedTemplate = null;
+    let error = null;
+    try {
+      const input = convertPreludeToEngineInput(makeRetainedCapacityClinicalPrelude(c.goal_id));
+      const program = buildFirstWeekProgram(input);
+      observedPhase = program.goal.goal_phase;
+      observedTemplate = program.templates_selected?.[0]?.template_id ?? null;
+    } catch (e) {
+      error = e.message;
+    }
+    out.ac6_clinical_entry_trained.push({
+      goal_id: c.goal_id,
+      phase_type: c.phase_type,
+      retained_capacity_profile: "experience=experienced, lifts present",
+      expected_phase: c.expected_phase,
+      observed_phase: observedPhase,
+      primary_template: observedTemplate,
+      pass: observedPhase === c.expected_phase,
+      error,
+    });
+  }
+
   // SPOT-CHECK 2 (FLAG-5 gate) — confirm the comeback-arc Phase-2 bump
   // fires BECAUSE reported_lifts present (or experience ≥ active), not
   // unconditionally. Evidence: VF-A1 (comeback + lifts) → phase_2;
@@ -540,6 +619,20 @@ function main() {
   }
   console.log(`  → B6: ${out.ac5_spot_b6.populated ? "OK" : "DROPPED — flag to MD"}`);
   console.log(`  ${out.ac5_spot_b6.note}`);
+
+  console.log("\n--- AC6 (12.3a-fix): VF-clinical-entry-trained — parametric clinical guard ---");
+  console.log("    Retained-capacity profile (experienced + reported lifts present) per clinical goal.");
+  console.log("    Hardcoded set; catches engine-side membership drift in CLINICAL_PROGRESSION_GOALS.");
+  for (const r of out.ac6_clinical_entry_trained) {
+    const tag = r.pass ? "PASS" : "FAIL";
+    const tpl = r.primary_template ? `  primary=${r.primary_template}` : "";
+    const err = r.error ? `  error="${r.error}"` : "";
+    console.log(
+      `  ${r.goal_id} (${r.phase_type}): expected_phase=${r.expected_phase} observed=${r.observed_phase} → ${tag}${tpl}${err}`
+    );
+  }
+  const ac6AllPass = out.ac6_clinical_entry_trained.every((r) => r.pass);
+  console.log(`  → AC6: ${ac6AllPass ? "PASS" : "FAIL"} — ${out.ac6_clinical_entry_trained.filter((r) => r.pass).length}/${out.ac6_clinical_entry_trained.length} clinical goals land on safe phase.`);
 
   console.log("\n--- AC5 SPOT-CHECK 2 (FLAG-5 retained-capacity gate) ---");
   console.log(
