@@ -1,0 +1,109 @@
+========================================================================
+12.3a AC EVIDENCE
+========================================================================
+
+--- AC1: Converter validation ---
+  VF-A1: PASS
+  VF-A2: PASS
+  VF-A5: PASS
+  malformed: THREW_AS_EXPECTED — [engine-input-contract] $.user_profile.days_per_week: must be int 2..6
+
+--- AC2: Engine output per fixture ---
+
+  [VF-A1] Mark · Reactivator · A1 Get lean · 3 days · 36mo inactivity
+    goal=A1 phase=phase_2 hash=64a5f4b9e64e35e7
+    templates: reactivator-p2-loaded-3d(day_1_hinge_emphasis,primary) + reactivator-p2-loaded-3d(day_2_squat_emphasis,primary) + reactivator-p2-loaded-3d(day_3_upper_emphasis,primary)
+    Day 0 · reactivator-p2-loaded-3d · day_1_hinge_emphasis
+      superset_a_compound          #7 Romanian Deadlift (RDL)      3×8            RPE7 load:50 kg
+      superset_a_accessory         #21 Hip Thrust                   3×10           RPE7 load:tbd
+      superset_b_upper             #37 Dumbbell Row (One-Arm)       3×8-10         RPE7 load:30 kg
+      superset_b_core              #50 Pallof Press                 3×10-12        RPE7 load:tbd
+      superset_c_unilateral        #30 Step-Up                      2×10-12        RPE7 load:tbd
+    Day 1 · reactivator-p2-loaded-3d · day_2_squat_emphasis
+      superset_a_compound          #31 Goblet Squat                 3×8            RPE7 load:40 kg
+      superset_a_accessory         #21 Hip Thrust                   3×10           RPE7 load:tbd
+      superset_b_upper             #34 Dumbbell Bench Press         3×8-10         RPE7 load:35 kg
+      superset_b_core              #52 Ab Roll-Out                  3×10-12        RPE7 load:tbd
+      superset_c_unilateral        #30 Step-Up                      2×10-12        RPE7 load:tbd
+    Day 2 · reactivator-p2-loaded-3d · day_3_upper_emphasis
+      superset_a_compound          #34 Dumbbell Bench Press         3×8            RPE7 load:35 kg
+      superset_a_accessory         #37 Dumbbell Row (One-Arm)       3×10           RPE7 load:30 kg
+      superset_b_unilateral        #30 Step-Up                      3×10/side      RPE7 load:tbd
+      superset_b_core              #50 Pallof Press                 3×10-12        RPE7 load:tbd
+      superset_c_iso               #21 Hip Thrust                   2×10-12        RPE7 load:tbd
+
+  [VF-A2] Returning Athlete · C2 race long-distance · 4 days · left_knee_post_surgery · 8mo inactivity
+    goal=C2 phase=null hash=e05f62db9aefe42b
+    templates: run(zone_2_base,primary) + run(long_run,primary) + run(zone_2_base,primary) + lower-posterior(default,secondary)
+    Day 0 · run · zone_2_base
+    Day 1 · run · long_run
+    Day 2 · run · zone_2_base
+    Day 3 · lower-posterior · default
+      superset_a_compound          #5 Conventional Deadlift        4×8            RPE7 load:85 kg
+      superset_a_accessory         #21 Hip Thrust                   4×10           RPE7 load:tbd
+      superset_b_unilateral        #22 Single-Leg Hip Thrust        3×10/side      RPE7 load:tbd
+      superset_b_core              #48 Plank                        3×45s          RPE7 load:%BW
+      superset_c_hamstring         #26 Glute Bridge                 3×12           RPE7 load:tbd
+      superset_c_core              #52 Ab Roll-Out                  3×10           RPE7 load:tbd
+    substitutions:
+      slot=superset_b_unilateral from=#27 → to=#22 reason="contraindication: left_knee_post_surgery biases squat" path=[contra_failure → L1_slot_pool (re-filtered against CONTRA_MAP)]
+      slot=superset_c_hamstring from=#32 → to=#26 reason="skill_gate: advanced eccentric tolerance flag (default unmet)" path=[l1_slot_pool_walk_in_order]
+    alerts:
+      [warning] frequency_short: user days_per_week=4 < L5 min=5; using min
+      [warning] frequency_short: primary count=3 < primary min=5 after honoring secondary min=1
+
+  [VF-A5] Hybrid Athlete · C4 Hyrox · 5 days · no inactivity
+    goal=C4 phase=phase_2 hash=dbf2e66752b63430
+    templates: full-body(default,primary) + run(zone_2_base,secondary) + lower-posterior(default,secondary) + upper-push-pull(default,secondary) + full-body(default,primary)
+    Day 0 · full-body · default
+      superset_a_compound_lower    #1 Back Squat                   4×6            RPE7 load:85 kg
+      superset_a_compound_push     #12 Overhead Press (Standing Barbell) 4×6            RPE7 load:42.5 kg
+      superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
+      superset_b_pull              #14 Barbell Row (Bent-Over Row)  3×10           RPE7 load:55 kg
+      superset_c_posterior         #21 Hip Thrust                   3×10           RPE7 load:tbd
+      superset_c_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+    Day 1 · run · zone_2_base
+    Day 2 · lower-posterior · default
+      superset_a_compound          #5 Conventional Deadlift        4×8            RPE7 load:105 kg
+      superset_a_accessory         #21 Hip Thrust                   4×10           RPE7 load:tbd
+      superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
+      superset_b_core              #48 Plank                        3×45s          RPE7 load:%BW
+      superset_c_hamstring         #26 Glute Bridge                 3×12           RPE7 load:tbd
+      superset_c_core              #52 Ab Roll-Out                  3×10           RPE7 load:tbd
+    Day 3 · upper-push-pull · default
+      superset_a_press             #9 Bench Press                  4×10           RPE7.5 load:62.5 kg
+      superset_a_pull              #14 Barbell Row (Bent-Over Row)  4×10           RPE7.5 load:55 kg
+      superset_b_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+      superset_b_shoulder          #40 Lateral Raise                3×15           RPE7 load:tbd
+      superset_c_biceps            #42 Barbell Curl                 3×12           RPE7 load:tbd
+      superset_c_triceps           #45 Tricep Pushdown              3×12           RPE7 load:tbd
+    Day 4 · full-body · default
+      superset_a_compound_lower    #1 Back Squat                   4×6            RPE7 load:85 kg
+      superset_a_compound_push     #12 Overhead Press (Standing Barbell) 4×6            RPE7 load:42.5 kg
+      superset_b_unilateral        #27 Bulgarian Split Squat        3×10/side      RPE7 load:tbd
+      superset_b_pull              #14 Barbell Row (Bent-Over Row)  3×10           RPE7 load:55 kg
+      superset_c_posterior         #21 Hip Thrust                   3×10           RPE7 load:tbd
+      superset_c_vertical_pull     #18 Chin-up                      3×10           RPE7 load:tbd
+    substitutions:
+      slot=superset_c_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
+      slot=superset_c_hamstring from=#32 → to=#26 reason="difficulty: exercise floor=advanced > user ceil=intermediate" path=[l1_slot_pool_walk_in_order]
+      slot=superset_b_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
+      slot=superset_c_vertical_pull from=#17 → to=#18 reason="skill_gate: bodyweight pull-up capacity >= 1 (default unmet)" path=[l1_slot_pool_walk_in_order]
+    alerts:
+      [info] template hybrid-in-comeback-p1-foundation-3d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+      [info] template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+      [info] template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)
+
+--- AC3: VF-A2 knee contra fallback ---
+  slot=superset_b_unilateral from=#27 → to=#22
+    reason: contraindication: left_knee_post_surgery biases squat
+    path: [contra_failure → L1_slot_pool (re-filtered against CONTRA_MAP)]
+  PROOF excluded_27_bss=true
+  PROOF fallback_via_slot_pool=true
+
+--- AC4: Determinism (re-run hash compare) ---
+  VF-A1: run1=64a5f4b9e64e35e7 run2=64a5f4b9e64e35e7 identical=true
+  VF-A2: run1=e05f62db9aefe42b run2=e05f62db9aefe42b identical=true
+  VF-A5: run1=dbf2e66752b63430 run2=dbf2e66752b63430 identical=true
+
+Done.

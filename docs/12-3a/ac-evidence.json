@@ -1,0 +1,824 @@
+{
+  "ac1": {
+    "VF-A1": {
+      "status": "PASS",
+      "engine_input": {
+        "user_profile": {
+          "experience_level": "reactivator",
+          "days_per_week": 3,
+          "equipment_available": [
+            "full_gym"
+          ],
+          "bodyweight_kg": 82,
+          "reported_lifts": {
+            "squat": 80,
+            "deadlift": 100,
+            "bench": 70,
+            "ohp": 45,
+            "row": 60
+          },
+          "contraindications": [],
+          "detected_archetype": "A1",
+          "recent_inactivity_months": 36,
+          "age": 38,
+          "training_history_cross_modal": false,
+          "flags": {
+            "comeback_persona": true
+          }
+        },
+        "goal": {
+          "goal_id": "A1",
+          "goal_provisional": false,
+          "current_phase": null
+        }
+      }
+    },
+    "VF-A2": {
+      "status": "PASS",
+      "engine_input": {
+        "user_profile": {
+          "experience_level": "experienced",
+          "days_per_week": 4,
+          "equipment_available": [
+            "full_gym"
+          ],
+          "bodyweight_kg": 78,
+          "reported_lifts": {
+            "squat": 100,
+            "deadlift": 130,
+            "bench": 80,
+            "ohp": 55,
+            "row": 70
+          },
+          "contraindications": [
+            "left_knee_post_surgery"
+          ],
+          "detected_archetype": "A2",
+          "recent_inactivity_months": 8,
+          "age": 34,
+          "training_history_cross_modal": false,
+          "flags": {
+            "comeback_persona": true
+          }
+        },
+        "goal": {
+          "goal_id": "C2",
+          "goal_provisional": false,
+          "current_phase": null
+        }
+      }
+    },
+    "VF-A5": {
+      "status": "PASS",
+      "engine_input": {
+        "user_profile": {
+          "experience_level": "active",
+          "days_per_week": 5,
+          "equipment_available": [
+            "full_gym"
+          ],
+          "bodyweight_kg": 80,
+          "reported_lifts": {
+            "squat": 120,
+            "deadlift": 150,
+            "bench": 90,
+            "ohp": 60,
+            "row": 80
+          },
+          "contraindications": [],
+          "detected_archetype": "A5",
+          "recent_inactivity_months": 0,
+          "age": 35,
+          "training_history_cross_modal": true,
+          "flags": {
+            "comeback_persona": false
+          }
+        },
+        "goal": {
+          "goal_id": "C4",
+          "goal_provisional": false,
+          "current_phase": null
+        }
+      }
+    },
+    "malformed": {
+      "status": "THREW_AS_EXPECTED",
+      "error": "[engine-input-contract] $.user_profile.days_per_week: must be int 2..6"
+    }
+  },
+  "ac2": [
+    {
+      "name": "VF-A1",
+      "description": "Mark · Reactivator · A1 Get lean · 3 days · 36mo inactivity",
+      "goal_id": "A1",
+      "goal_phase": "phase_2",
+      "templates": [
+        {
+          "template_id": "reactivator-p2-loaded-3d",
+          "role": "primary",
+          "day_variant": "day_1_hinge_emphasis"
+        },
+        {
+          "template_id": "reactivator-p2-loaded-3d",
+          "role": "primary",
+          "day_variant": "day_2_squat_emphasis"
+        },
+        {
+          "template_id": "reactivator-p2-loaded-3d",
+          "role": "primary",
+          "day_variant": "day_3_upper_emphasis"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "reactivator-p2-loaded-3d",
+          "variant": "day_1_hinge_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 7,
+              "name": "Romanian Deadlift (RDL)",
+              "scheme": "3×8",
+              "rpe": 7,
+              "load": "50 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_upper",
+              "id": 37,
+              "name": "Dumbbell Row (One-Arm)",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": "30 kg"
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "2×10-12",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 1,
+          "template": "reactivator-p2-loaded-3d",
+          "variant": "day_2_squat_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 31,
+              "name": "Goblet Squat",
+              "scheme": "3×8",
+              "rpe": 7,
+              "load": "40 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_upper",
+              "id": 34,
+              "name": "Dumbbell Bench Press",
+              "scheme": "3×8-10",
+              "rpe": 7,
+              "load": "35 kg"
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 52,
+              "name": "Ab Roll-Out",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "2×10-12",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 2,
+          "template": "reactivator-p2-loaded-3d",
+          "variant": "day_3_upper_emphasis",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 34,
+              "name": "Dumbbell Bench Press",
+              "scheme": "3×8",
+              "rpe": 7,
+              "load": "35 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 37,
+              "name": "Dumbbell Row (One-Arm)",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "30 kg"
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 30,
+              "name": "Step-Up",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 50,
+              "name": "Pallof Press",
+              "scheme": "3×10-12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_iso",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "2×10-12",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [],
+      "alerts": [],
+      "hash": "64a5f4b9e64e35e7"
+    },
+    {
+      "name": "VF-A2",
+      "description": "Returning Athlete · C2 race long-distance · 4 days · left_knee_post_surgery · 8mo inactivity",
+      "goal_id": "C2",
+      "goal_phase": null,
+      "templates": [
+        {
+          "template_id": "run",
+          "role": "primary",
+          "day_variant": "zone_2_base"
+        },
+        {
+          "template_id": "run",
+          "role": "primary",
+          "day_variant": "long_run"
+        },
+        {
+          "template_id": "run",
+          "role": "primary",
+          "day_variant": "zone_2_base"
+        },
+        {
+          "template_id": "lower-posterior",
+          "role": "secondary",
+          "day_variant": "default"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "run",
+          "variant": "zone_2_base",
+          "exercises": []
+        },
+        {
+          "day": 1,
+          "template": "run",
+          "variant": "long_run",
+          "exercises": []
+        },
+        {
+          "day": 2,
+          "template": "run",
+          "variant": "zone_2_base",
+          "exercises": []
+        },
+        {
+          "day": 3,
+          "template": "lower-posterior",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 5,
+              "name": "Conventional Deadlift",
+              "scheme": "4×8",
+              "rpe": 7,
+              "load": "85 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "4×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 22,
+              "name": "Single-Leg Hip Thrust",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 48,
+              "name": "Plank",
+              "scheme": "3×45s",
+              "rpe": 7,
+              "load": "%BW"
+            },
+            {
+              "slot": "superset_c_hamstring",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_core",
+              "id": 52,
+              "name": "Ab Roll-Out",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [
+        {
+          "slot": "superset_b_unilateral",
+          "from_exercise_id": 27,
+          "to_exercise_id": 22,
+          "failure_type": "contraindication",
+          "reason": "contraindication: left_knee_post_surgery biases squat",
+          "fallback_path": [
+            "contra_failure → L1_slot_pool (re-filtered against CONTRA_MAP)"
+          ]
+        },
+        {
+          "slot": "superset_c_hamstring",
+          "from_exercise_id": 32,
+          "to_exercise_id": 26,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: advanced eccentric tolerance flag (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        }
+      ],
+      "alerts": [
+        {
+          "severity": "warning",
+          "message": "frequency_short: user days_per_week=4 < L5 min=5; using min"
+        },
+        {
+          "severity": "warning",
+          "message": "frequency_short: primary count=3 < primary min=5 after honoring secondary min=1"
+        }
+      ],
+      "hash": "e05f62db9aefe42b"
+    },
+    {
+      "name": "VF-A5",
+      "description": "Hybrid Athlete · C4 Hyrox · 5 days · no inactivity",
+      "goal_id": "C4",
+      "goal_phase": "phase_2",
+      "templates": [
+        {
+          "template_id": "full-body",
+          "role": "primary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "run",
+          "role": "secondary",
+          "day_variant": "zone_2_base"
+        },
+        {
+          "template_id": "lower-posterior",
+          "role": "secondary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "upper-push-pull",
+          "role": "secondary",
+          "day_variant": "default"
+        },
+        {
+          "template_id": "full-body",
+          "role": "primary",
+          "day_variant": "default"
+        }
+      ],
+      "sessions": [
+        {
+          "day": 0,
+          "template": "full-body",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "85 kg"
+            },
+            {
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "42.5 kg"
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 1,
+          "template": "run",
+          "variant": "zone_2_base",
+          "exercises": []
+        },
+        {
+          "day": 2,
+          "template": "lower-posterior",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_compound",
+              "id": 5,
+              "name": "Conventional Deadlift",
+              "scheme": "4×8",
+              "rpe": 7,
+              "load": "105 kg"
+            },
+            {
+              "slot": "superset_a_accessory",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "4×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_core",
+              "id": 48,
+              "name": "Plank",
+              "scheme": "3×45s",
+              "rpe": 7,
+              "load": "%BW"
+            },
+            {
+              "slot": "superset_c_hamstring",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_core",
+              "id": 52,
+              "name": "Ab Roll-Out",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 3,
+          "template": "upper-push-pull",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_press",
+              "id": 9,
+              "name": "Bench Press",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "62.5 kg"
+            },
+            {
+              "slot": "superset_a_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_b_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_shoulder",
+              "id": 40,
+              "name": "Lateral Raise",
+              "scheme": "3×15",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_biceps",
+              "id": 42,
+              "name": "Barbell Curl",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_triceps",
+              "id": 45,
+              "name": "Tricep Pushdown",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        },
+        {
+          "day": 4,
+          "template": "full-body",
+          "variant": "default",
+          "exercises": [
+            {
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "85 kg"
+            },
+            {
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
+              "rpe": 7,
+              "load": "42.5 kg"
+            },
+            {
+              "slot": "superset_b_unilateral",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            }
+          ]
+        }
+      ],
+      "substitutions": [
+        {
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_c_hamstring",
+          "from_exercise_id": 32,
+          "to_exercise_id": 26,
+          "failure_type": "difficulty",
+          "reason": "difficulty: exercise floor=advanced > user ceil=intermediate",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_b_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        }
+      ],
+      "alerts": [
+        {
+          "severity": "info",
+          "message": "template hybrid-in-comeback-p1-foundation-3d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+        },
+        {
+          "severity": "info",
+          "message": "template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+        },
+        {
+          "severity": "info",
+          "message": "template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+        }
+      ],
+      "hash": "dbf2e66752b63430"
+    }
+  ],
+  "ac3": {
+    "lower_posterior_session": {
+      "day": 3,
+      "template": "lower-posterior",
+      "variant": "default",
+      "exercises": [
+        {
+          "slot": "superset_a_compound",
+          "id": 5,
+          "name": "Conventional Deadlift",
+          "scheme": "4×8",
+          "rpe": 7,
+          "load": "85 kg"
+        },
+        {
+          "slot": "superset_a_accessory",
+          "id": 21,
+          "name": "Hip Thrust",
+          "scheme": "4×10",
+          "rpe": 7,
+          "load": null
+        },
+        {
+          "slot": "superset_b_unilateral",
+          "id": 22,
+          "name": "Single-Leg Hip Thrust",
+          "scheme": "3×10/side",
+          "rpe": 7,
+          "load": null
+        },
+        {
+          "slot": "superset_b_core",
+          "id": 48,
+          "name": "Plank",
+          "scheme": "3×45s",
+          "rpe": 7,
+          "load": "%BW"
+        },
+        {
+          "slot": "superset_c_hamstring",
+          "id": 26,
+          "name": "Glute Bridge",
+          "scheme": "3×12",
+          "rpe": 7,
+          "load": null
+        },
+        {
+          "slot": "superset_c_core",
+          "id": 52,
+          "name": "Ab Roll-Out",
+          "scheme": "3×10",
+          "rpe": 7,
+          "load": null
+        }
+      ]
+    },
+    "contra_substitutions": [
+      {
+        "slot": "superset_b_unilateral",
+        "from_exercise_id": 27,
+        "to_exercise_id": 22,
+        "failure_type": "contraindication",
+        "reason": "contraindication: left_knee_post_surgery biases squat",
+        "fallback_path": [
+          "contra_failure → L1_slot_pool (re-filtered against CONTRA_MAP)"
+        ]
+      }
+    ],
+    "proof": {
+      "excluded_27_bss": true,
+      "fallback_via_slot_pool": true
+    }
+  },
+  "ac4": {
+    "VF-A1": {
+      "hash_run_1": "64a5f4b9e64e35e7",
+      "hash_run_2": "64a5f4b9e64e35e7",
+      "identical": true
+    },
+    "VF-A2": {
+      "hash_run_1": "e05f62db9aefe42b",
+      "hash_run_2": "e05f62db9aefe42b",
+      "identical": true
+    },
+    "VF-A5": {
+      "hash_run_1": "dbf2e66752b63430",
+      "hash_run_2": "dbf2e66752b63430",
+      "identical": true
+    }
+  }
+}
