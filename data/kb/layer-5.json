@@ -2,309 +2,2741 @@
   "layer": 5,
   "title": "Coupling Logic",
   "source_page_id": "3584fef0d1ea8130a745f81cac3a895a",
-  "content_hash": "5c2a661acf2b7f94f1e7f621c0b211bc9876b53cc5a97bc918e57bc6591aa63b",
-  "sections": [
+  "content_hash": "9daf50db7368c97fc3799b36e42cfa855df2b5ec3e929a356e2c0edd08356a23",
+  "version": "1.0",
+  "foundation": {
+    "canonical_deload": {
+      "volume_drop_pct": 40,
+      "load_drop_pct": 10,
+      "default_trigger": "Every 4th week of a mesocycle (3 weeks load progression → 1 week deload).",
+      "raw": "**Definition**: -40% volume, -10% load, hold technique. Same exercises as the prior week; sets dropped by ~40%; loads scaled back ~10%. Same template selection, same slot rules. Conditioning intensity reduced (Zone 2 only; no tempo/intervals).\n**Default trigger**: Every 4th week of a mesocycle (3 weeks load progression → 1 week deload). Templates with their own deload signals (RPE >8 on Superset A for 3 sessions, etc.) trigger deload earlier and reset the mesocycle counter.\n**Template-specific overrides**: If a Layer 1 template's Decision rules name a different deload behavior, that template's rule wins for that template's sessions. The canonical applies to the rest of the user's week."
+    },
+    "macrocycle": {
+      "pattern": "MEV -> MAV -> MRV",
+      "weeks_total": 12,
+      "mesocycles": 3,
+      "mesocycle_weeks": 4,
+      "load_step_pct": 5,
+      "raw": "**Standard 12-week macrocycle**: 3 mesocycles of 4 weeks each. Each mesocycle: wk1 MEV (minimum effective volume entry) → wk2 MAV (maximum adaptive volume mid) → wk3 MRV (maximum recoverable volume peak) → wk4 deload (canonical). Goal-specific macrocycle structures override (e.g., C-cluster race blocks follow event-week-counting periodization; F-cluster pregnancy phases follow gestational milestones; E-cluster rehab phases follow symptom-graduation criteria).\n**Volume progression within mesocycle**: Sets scale wk1→wk3 per Layer 2 doctrine (MEV→MAV→MRV). Loads scale modestly (+5% per week if RPE held at target). Decision rules in Layer 1 templates intercept before MRV is reached if recovery markers deteriorate.\n**Mesocycle entry rule**: A new mesocycle starts from the wk1 MEV baseline regardless of where the prior mesocycle ended. If the prior mesocycle's wk4 was a forced deload (decision-rule-triggered, not scheduled), the new mesocycle's wk1 may start at a reduced baseline (~85% of prior MEV) — Program Designer's call based on recovery markers."
+    },
+    "frequency_defaults": [
+      {
+        "days": "2",
+        "default_template_ids": [
+          "reactivator-p1-foundation-2d",
+          "full-body"
+        ],
+        "raw": "Reactivator Phase 1 entry, F1 Pregnancy T1, F3 Pregnancy late T3, F6 Senior fitness entry, maintenance phases of A4/D1. Default templates: Full Body OR Reactivator Phase 1 (2-day)."
+      },
+      {
+        "days": "3",
+        "default_template_ids": [
+          "lower-posterior",
+          "upper-push-pull",
+          "lower-anterior"
+        ],
+        "raw": "Most goal entry points outside specialist tracks. Default split: hinge-emphasis / squat-emphasis / upper-emphasis (or Lower P / Upper PP / Lower A as named templates)."
+      },
+      {
+        "days": "4",
+        "default_template_ids": [
+          "lower-posterior",
+          "upper-push-pull",
+          "lower-anterior",
+          "upper-core"
+        ],
+        "raw": "Hypertrophy emphasis, strength-focused intermediate, hybrid Phase 2+. Default: Lower P / Upper PP / Lower A / Upper + Core (4-day split)."
+      },
+      {
+        "days": "5+",
+        "default_template_ids": [],
+        "raw": "Performance-mode (Hyrox prep peak, race prep peak, B2 strength peak block). Splits depend on goal; conditioning sessions count toward the total."
+      }
+    ],
+    "conditioning_patterns": [
+      {
+        "subtype": "polarized_base",
+        "default_goal_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "D2"
+        ],
+        "raw": "**Polarized base (Seiler)**: ~80% Zone 2, ~20% threshold/VO2max. Default for off-season and base phases (C1/C2/C3/D2)."
+      },
+      {
+        "subtype": "pyramidal_event",
+        "default_goal_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C5"
+        ],
+        "raw": "**Pyramidal (event-prep)**: ~70% Zone 2, ~20% tempo, ~10% intervals. Default for 8-12 weeks pre-event (C1, C2, C3, C5)."
+      },
+      {
+        "subtype": "hyrox_specific",
+        "default_goal_ids": [
+          "C4"
+        ],
+        "raw": "**Hyrox-specific (Mangine)**: 2-3 strength sessions/week + 2-3 conditioning sessions/week + 1 simulation/week in peak phase. Default for C4.\nLayer 5 references these patterns; it does not redefine them. If new conditioning research is needed for a goal, flag to KB Editor in the next cycle — do not invent in Layer 5."
+      }
+    ],
+    "combo_session": {
+      "available_template_ids": [
+        "hybrid-in-comeback-p2-loaded-4d"
+      ],
+      "eligible_goal_ids": [
+        "A5",
+        "C4",
+        "B3"
+      ],
+      "raw": "Combo session = single-pair strength compound (Superset A only) → ~20 min Zone 2 transition → strength finisher (Superset C only). ~60 min total. **Available templates**: Hybrid-in-comeback Phase 2 Loaded (1×/week). **Eligible goals**: A5 Hybrid-in-comeback Phase 2, C4 Hybrid athlete Phase 2 reentry, B3 Strength endurance with hybrid context. **Not eligible**: trained-user goals without hybrid context, any rehab phase, any pregnancy phase."
+    },
+    "special_weeks": [
+      {
+        "kind": "race_event",
+        "behaviour": "Maintenance only. No new stimulus. Mobility priority. Last hard session ≥4 days pre-event. Eligible: any C-cluster goal in peak/event-week. Eligible: G5 Stage prep — show week.",
+        "eligibility": "Maintenance only. No new stimulus. Mobility priority. Last hard session ≥4 days pre-event. Eligible: any C-cluster goal in peak/event-week. Eligible: G5 Stage prep — show week.",
+        "raw": "**Race week / event week**: Maintenance only. No new stimulus. Mobility priority. Last hard session ≥4 days pre-event. Eligible: any C-cluster goal in peak/event-week. Eligible: G5 Stage prep — show week."
+      },
+      {
+        "kind": "deload",
+        "behaviour": "Canonical (-40% volume, -10% load) unless template specifies otherwise. Applied wk4 of standard macrocycle OR decision-rule-triggered.",
+        "eligibility": "Canonical (-40% volume, -10% load) unless template specifies otherwise. Applied wk4 of standard macrocycle OR decision-rule-triggered.",
+        "raw": "**Deload week**: Canonical (-40% volume, -10% load) unless template specifies otherwise. Applied wk4 of standard macrocycle OR decision-rule-triggered."
+      },
+      {
+        "kind": "recovery",
+        "behaviour": "MEV-only, mobility daily, no conditioning above Zone 2. Restart cycle wk1 MEV after recovery week.",
+        "eligibility": "MEV-only, mobility daily, no conditioning above Zone 2. Restart cycle wk1 MEV after recovery week.",
+        "raw": "**Recovery week (post-illness, life-event, travel disruption)**: MEV-only, mobility daily, no conditioning above Zone 2. Restart cycle wk1 MEV after recovery week."
+      },
+      {
+        "kind": "symptom_flare",
+        "behaviour": "Drop to the prior phase's template for that week. Re-graduate via the phase's transition criterion before progressing again.",
+        "eligibility": "Drop to the prior phase's template for that week. Re-graduate via the phase's transition criterion before progressing again.",
+        "raw": "**Symptom-flare week (E-cluster rehab phases)**: Drop to the prior phase's template for that week. Re-graduate via the phase's transition criterion before progressing again."
+      }
+    ]
+  },
+  "coupling_entries": [
     {
-      "heading": "Intro",
-      "level": 2,
-      "content_markdown": "Layer 5 is the matching engine's rulebook. It translates **Layer 4 goal direction × user state (available days, equipment, phase, history) × current macrocycle position** into a concrete weekly schedule built from Layer 1 templates filled with Layer 8 entries. Layer 5 does NOT contain new training doctrine — it operationalizes what Layers 1, 2, 3, 4, 7, and 8 already define.\n**Read order**: Foundation (this section, conventions and shared rules) → per-goal coupling entry → Special weeks (overrides applied last).",
-      "entries": []
+      "goal_id": "A1",
+      "name": "A1 · Get lean",
+      "cluster": "A",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1 Foundation",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p1-foundation-2d",
+                "order": 1
+              },
+              {
+                "template_id": "full-body",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2 Loaded",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              },
+              {
+                "template_id": "lower-posterior",
+                "order": 2
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 3
+              },
+              {
+                "template_id": "full-body",
+                "order": 4
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3 Capacity",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "reactivator-p3-capacity-4d",
+                "order": 2
+              },
+              {
+                "template_id": "lower-posterior",
+                "order": 3
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 4
+              },
+              {
+                "template_id": "lower-anterior",
+                "order": 5
+              },
+              {
+                "template_id": "upper-core",
+                "order": 6
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "comeback persona phasing — see Comeback Templates in Layer 1",
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 2,
+          "strict": true,
+          "raw": "Phase 1 = 2 days/week strict."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week (user choice + recovery capacity)."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = none."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = optional Zone 2 walk (recovery-tier, HR <125)."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "polarized_base",
+          "raw": "Phase 3 = optional Zone 2 sessions 30-40 min, 1-2×/week, polarized base pattern."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 A1 Achievement markers (Signal/Window/Next step). Phase 1→2 = 4 consecutive clean sessions. Phase 2→3 = compound lifts at user-defined baseline OR 4 weeks RPE 7 without back-off. Phase 3 = goal target reached (body composition signal).",
+      "special_weeks_applicable": [
+        "deload",
+        "recovery"
+      ],
+      "special_weeks_raw": "Standard deload at mesocycle wk4. Recovery week if life-event disrupts pattern for >1 week.",
+      "source_section": "A · Body Composition"
     },
     {
-      "heading": "Foundation",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "A2",
+      "name": "A2 · Build muscle / lean bulk",
+      "cluster": "A",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Returning Athlete Phase 1 Re-entry",
+            "eligible_templates": [
+              {
+                "template_id": "returning-athlete-p1-reentry-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Returning Athlete Phase 2-3",
+            "eligible_templates": [
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Non-comeback A2 (trained user)",
+            "eligible_templates": [
+              {
+                "template_id": "lower-posterior",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              },
+              {
+                "template_id": "lower-anterior",
+                "order": 3
+              },
+              {
+                "template_id": "upper-core",
+                "order": 4
+              },
+              {
+                "template_id": "full-body",
+                "order": 5
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "comeback persona phasing where applicable — Returning Athlete persona, OR Reactivator A2 secondary",
+      "frequency_coupling": [
         {
-          "key": null,
-          "heading": "Canonical deload",
-          "content_markdown": "**Definition**: -40% volume, -10% load, hold technique. Same exercises as the prior week; sets dropped by ~40%; loads scaled back ~10%. Same template selection, same slot rules. Conditioning intensity reduced (Zone 2 only; no tempo/intervals).\n**Default trigger**: Every 4th week of a mesocycle (3 weeks load progression → 1 week deload). Templates with their own deload signals (RPE >8 on Superset A for 3 sessions, etc.) trigger deload earlier and reset the mesocycle counter.\n**Template-specific overrides**: If a Layer 1 template's Decision rules name a different deload behavior, that template's rule wins for that template's sessions. The canonical applies to the rest of the user's week."
-        },
-        {
-          "key": null,
-          "heading": "Macrocycle structure (MEV → MAV → MRV)",
-          "content_markdown": "**Standard 12-week macrocycle**: 3 mesocycles of 4 weeks each. Each mesocycle: wk1 MEV (minimum effective volume entry) → wk2 MAV (maximum adaptive volume mid) → wk3 MRV (maximum recoverable volume peak) → wk4 deload (canonical). Goal-specific macrocycle structures override (e.g., C-cluster race blocks follow event-week-counting periodization; F-cluster pregnancy phases follow gestational milestones; E-cluster rehab phases follow symptom-graduation criteria).\n**Volume progression within mesocycle**: Sets scale wk1→wk3 per Layer 2 doctrine (MEV→MAV→MRV). Loads scale modestly (+5% per week if RPE held at target). Decision rules in Layer 1 templates intercept before MRV is reached if recovery markers deteriorate.\n**Mesocycle entry rule**: A new mesocycle starts from the wk1 MEV baseline regardless of where the prior mesocycle ended. If the prior mesocycle's wk4 was a forced deload (decision-rule-triggered, not scheduled), the new mesocycle's wk1 may start at a reduced baseline (~85% of prior MEV) — Program Designer's call based on recovery markers."
-        },
-        {
-          "key": null,
-          "heading": "Frequency coupling defaults",
-          "content_markdown": "**2 days/week**: Reactivator Phase 1 entry, F1 Pregnancy T1, F3 Pregnancy late T3, F6 Senior fitness entry, maintenance phases of A4/D1. Default templates: Full Body OR Reactivator Phase 1 (2-day).\n**3 days/week**: Most goal entry points outside specialist tracks. Default split: hinge-emphasis / squat-emphasis / upper-emphasis (or Lower P / Upper PP / Lower A as named templates).\n**4 days/week**: Hypertrophy emphasis, strength-focused intermediate, hybrid Phase 2+. Default: Lower P / Upper PP / Lower A / Upper + Core (4-day split).\n**5+ days/week**: Performance-mode (Hyrox prep peak, race prep peak, B2 strength peak block). Splits depend on goal; conditioning sessions count toward the total."
-        },
-        {
-          "key": null,
-          "heading": "Conditioning subtype scheduling (canonical patterns)",
-          "content_markdown": "Three reference patterns, drawn from established periodization literature already cited in Layer 4 Sources (Seiler 2010 polarized; Joyner & Coyle 2008 endurance physiology; Magness 2014 running periodization; Mangine 2020 HIIT/strength integration):\n**Polarized base (Seiler)**: ~80% Zone 2, ~20% threshold/VO2max. Default for off-season and base phases (C1/C2/C3/D2).\n**Pyramidal (event-prep)**: ~70% Zone 2, ~20% tempo, ~10% intervals. Default for 8-12 weeks pre-event (C1, C2, C3, C5).\n**Hyrox-specific (Mangine)**: 2-3 strength sessions/week + 2-3 conditioning sessions/week + 1 simulation/week in peak phase. Default for C4.\nLayer 5 references these patterns; it does not redefine them. If new conditioning research is needed for a goal, flag to KB Editor in the next cycle — do not invent in Layer 5."
-        },
-        {
-          "key": null,
-          "heading": "Combo session triggering",
-          "content_markdown": "Combo session = single-pair strength compound (Superset A only) → ~20 min Zone 2 transition → strength finisher (Superset C only). ~60 min total. **Available templates**: Hybrid-in-comeback Phase 2 Loaded (1×/week). **Eligible goals**: A5 Hybrid-in-comeback Phase 2, C4 Hybrid athlete Phase 2 reentry, B3 Strength endurance with hybrid context. **Not eligible**: trained-user goals without hybrid context, any rehab phase, any pregnancy phase."
-        },
-        {
-          "key": null,
-          "heading": "Special weeks (overrides)",
-          "content_markdown": "**Race week / event week**: Maintenance only. No new stimulus. Mobility priority. Last hard session ≥4 days pre-event. Eligible: any C-cluster goal in peak/event-week. Eligible: G5 Stage prep — show week.\n**Deload week**: Canonical (-40% volume, -10% load) unless template specifies otherwise. Applied wk4 of standard macrocycle OR decision-rule-triggered.\n**Recovery week (post-illness, life-event, travel disruption)**: MEV-only, mobility daily, no conditioning above Zone 2. Restart cycle wk1 MEV after recovery week.\n**Symptom-flare week (E-cluster rehab phases)**: Drop to the prior phase's template for that week. Re-graduate via the phase's transition criterion before progressing again."
-        },
-        {
-          "key": null,
-          "heading": "Conventions",
-          "content_markdown": "**Coupling entries reference Layer 4 goal codes (A1, B2, etc.) and Layer 1 template names exactly.** Phase notation matches Layer 4 Achievement markers' phase taxonomy where it exists; otherwise the entry is single-block.\n**\"Eligible templates\" lists templates that the matching engine may select.** Multiple eligible templates per goal-phase is normal (e.g., for A1 Reactivator Phase 1 the engine picks between specific phase templates based on user time-availability and equipment).\n**Decision rules in Layer 1 templates remain authoritative for within-template behavior.** Layer 5 governs which template is selected and how the week is shaped; the template governs how that session executes.\n**Phase transitions reference Layer 4 Achievement markers.** Layer 5 does not duplicate phase-transition criteria; it points to them.\n---"
+          "phase": null,
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "3-4 days/week standard."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "None mandatory."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1-2×/week if user wishes to maintain aerobic base; do not exceed Zone 2 during hypertrophy block."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 A2 Achievement markers. Rate of gain check at wk4 and wk8. Block end at 10-16 weeks.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload at mesocycle wk4. Mini-cut transition if body fat trends high (route to A1 or A3).",
+      "source_section": "A · Body Composition"
     },
     {
-      "heading": "A · Body Composition",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "A3",
+      "name": "A3 · Body recomposition",
+      "cluster": "A",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "upper-core",
+            "order": 4
+          },
+          {
+            "template_id": "full-body",
+            "order": 5
+          },
+          {
+            "template_id": "returning-athlete-p2-loaded-4d",
+            "order": 6
+          },
+          {
+            "template_id": "returning-athlete-p3-capacity-4d",
+            "order": 7
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal, no phase taxonomy in Layer 4) Lower P / Upper PP / Lower A / Upper + Core 4-day split (primary). Full Body 3-day (time-constrained). Returning Athlete Phase 2-3 (comeback-history user).",
+      "frequency_coupling": [
         {
-          "key": "A1",
-          "heading": "A1 · Get lean",
-          "content_markdown": "**Eligible templates**: (comeback persona phasing — see Comeback Templates in Layer 1)\n*Phase 1 Foundation*: Reactivator Phase 1 Foundation (2-day). For non-comeback A1 users (no extended pause history): Full Body 2-day OR 3-day.\n*Phase 2 Loaded*: Reactivator Phase 2 Loaded (3-day) OR Lower P / Upper PP / Full Body 3-day mix.\n*Phase 3 Capacity*: Reactivator Phase 3 Capacity (3-day or 4-day variant) OR full Lower P / Upper PP / Lower A / Upper + Core 4-day split.\n**Frequency coupling**: Phase 1 = 2 days/week strict. Phase 2 = 3 days/week. Phase 3 = 3-4 days/week (user choice + recovery capacity).\n**Conditioning subtypes**: Phase 1 = none. Phase 2 = optional Zone 2 walk (recovery-tier, HR <125). Phase 3 = optional Zone 2 sessions 30-40 min, 1-2×/week, polarized base pattern.\n**Phase transitions**: Per Layer 4 A1 Achievement markers (Signal/Window/Next step). Phase 1→2 = 4 consecutive clean sessions. Phase 2→3 = compound lifts at user-defined baseline OR 4 weeks RPE 7 without back-off. Phase 3 = goal target reached (body composition signal).\n**Special weeks**: Standard deload at mesocycle wk4. Recovery week if life-event disrupts pattern for >1 week."
-        },
-        {
-          "key": "A2",
-          "heading": "A2 · Build muscle / lean bulk",
-          "content_markdown": "**Eligible templates**: (comeback persona phasing where applicable — Returning Athlete persona, OR Reactivator A2 secondary)\n*Returning Athlete Phase 1 Re-entry*: Returning Athlete Phase 1 Re-entry (3-day).\n*Returning Athlete Phase 2-3*: Returning Athlete Phase 2 Loaded (4-day) OR Phase 3 Capacity (4-day).\n*Non-comeback A2 (trained user)*: Lower P / Upper PP / Lower A / Upper + Core 4-day split. Full Body 2-day or 3-day for time-constrained users.\n**Frequency coupling**: 3-4 days/week standard. 2-day Full Body acceptable for time-constrained users (lower expected progression rate).\n**Conditioning subtypes**: None mandatory. Optional Zone 2 1-2×/week if user wishes to maintain aerobic base; do not exceed Zone 2 during hypertrophy block.\n**Phase transitions**: Per Layer 4 A2 Achievement markers. Rate of gain check at wk4 and wk8. Block end at 10-16 weeks.\n**Special weeks**: Standard deload at mesocycle wk4. Mini-cut transition if body fat trends high (route to A1 or A3)."
-        },
-        {
-          "key": "A3",
-          "heading": "A3 · Body recomposition",
-          "content_markdown": "**Eligible templates**: (single-block goal, no phase taxonomy in Layer 4)\nLower P / Upper PP / Lower A / Upper + Core 4-day split (primary). Full Body 3-day (time-constrained). Returning Athlete Phase 2-3 (comeback-history user).\n**Frequency coupling**: 3-4 days/week. Recomp benefits from higher session frequency for muscle stimulus while in slight deficit; do not drop below 3 days.\n**Conditioning subtypes**: Optional Zone 2 1-2×/week. Avoid tempo/intervals during recomp (interference with hypertrophy in deficit).\n**Phase transitions**: Per Layer 4 A3 Achievement markers. Rolling 4-week measurement check; 12-24 week typical block duration.\n**Special weeks**: Standard deload. If stalling for 6+ weeks, route to dedicated cut (A1/A4) or bulk (A2) per A3 Achievement markers' Next step."
-        },
-        {
-          "key": "A4",
-          "heading": "A4 · Sustainable fat loss",
-          "content_markdown": "**Eligible templates**:\nLower P / Upper PP / Lower A 3-day split (primary). Full Body 3-day (time-constrained). Reactivator Phase 2-3 (comeback-history user).\n**Frequency coupling**: 3 days/week standard. 4 days/week if user has capacity AND deficit is moderate. Higher frequency NOT recommended on aggressive deficits.\n**Conditioning subtypes**: Zone 2 2-3×/week, 30-45 min. Adds calorie expenditure without compromising recovery in deficit. Polarized base pattern (Seiler).\n**Phase transitions**: Per Layer 4 A4 Achievement markers. Sustainability check at wk12, wk24, and at goal-reached.\n**Special weeks**: Standard deload. Extended maintenance phase (≥12 weeks) mandatory before any further fat-loss block."
-        },
-        {
-          "key": "A5",
-          "heading": "A5 · Major weight loss",
-          "content_markdown": "**Eligible templates**: (comeback persona phasing — Hybrid-in-comeback for users with cross-modal history; Reactivator otherwise)\n*Phase 1 Foundation*: Hybrid-in-comeback Phase 1 Foundation (3-day strength + 2-day Z2) OR Reactivator Phase 1 Foundation (2-day) for users without cross-modal history.\n*Phase 2 Loaded*: Hybrid-in-comeback Phase 2 Loaded (4-day mixed, includes combo session) OR Reactivator Phase 2 Loaded (3-day).\n*Phase 3 Capacity*: Hybrid-in-comeback Phase 3 Capacity (4-day balanced) OR Reactivator Phase 3 Capacity (3-4 day).\n**Frequency coupling**: Phase 1 = 2-3 days strength + 2 days conditioning. Phase 2 = 4 mixed days/week. Phase 3 = 4 days/week balanced.\n**Conditioning subtypes**: Phase 1 = Zone 2 walk/bike/easy row only, 30-40 min. Phase 2 = Zone 2 default + 1× tempo per week. Phase 3 = full conditioning subtype range per user goal.\n**Combo session**: Available in Phase 2 (1×/week per Hybrid-in-comeback Phase 2 template).\n**Phase transitions**: Per Layer 4 A5 Achievement markers. Milestone-based (typically -20 kg or -15% body weight). 6-18 month total typical.\n**Special weeks**: Standard deload. Long-term maintenance phase post-goal mandatory (extended, ≥12 weeks).\n---"
+          "phase": null,
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "3-4 days/week."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1-2×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Avoid tempo/intervals during recomp (interference with hypertrophy in deficit)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 A3 Achievement markers. Rolling 4-week measurement check; 12-24 week typical block duration.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. If stalling for 6+ weeks, route to dedicated cut (A1/A4) or bulk (A2) per A3 Achievement markers' Next step.",
+      "source_section": "A · Body Composition"
     },
     {
-      "heading": "B · Strength Performance",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "A4",
+      "name": "A4 · Sustainable fat loss",
+      "cluster": "A",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "full-body",
+            "order": 4
+          },
+          {
+            "template_id": "reactivator-p2-loaded-3d",
+            "order": 5
+          },
+          {
+            "template_id": "reactivator-p3-capacity-3d",
+            "order": 6
+          }
+        ]
+      },
+      "eligible_templates_context": "Lower P / Upper PP / Lower A 3-day split (primary). Full Body 3-day (time-constrained). Reactivator Phase 2-3 (comeback-history user).",
+      "frequency_coupling": [
         {
-          "key": "B1",
-          "heading": "B1 · General strength",
-          "content_markdown": "**Eligible templates**: (single-block goal; trained-user track)\nLower P / Upper PP / Lower A / Upper + Core 4-day split (primary). Lower P / Upper PP / Lower A 3-day. Full Body 3-day for time-constrained. Reactivator/Returning Athlete Phase 3 for comeback-history users transitioning out of comeback.\n**Frequency coupling**: 3-4 days/week. 3-day for general fitness emphasis; 4-day for accelerated progress.\n**Conditioning subtypes**: Optional Zone 2 1-2×/week to maintain aerobic base. No tempo/intervals during strength block (interference).\n**Phase transitions**: Per Layer 4 B1 Achievement markers (key lift targets: e.g., bodyweight bench, 1.5× BW squat, 2× BW deadlift, scaled per user). Single-test confirmation across 2-week window.\n**Special weeks**: Standard deload. Mesocycle progression: MEV → MAV → MRV → deload."
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "3 days/week standard."
         },
         {
-          "key": "B2",
-          "heading": "B2 · Strength peak",
-          "content_markdown": "**Eligible templates**: (single-block goal; peak-cycle programming)\nLower P / Upper PP / Lower A / Upper + Core 4-day split with peak-week tapering. Full Body 3-day for very experienced peakers (rare).\n**Frequency coupling**: 4 days/week peak block standard. Peak week reduces to 3 days max with single top-set per primary lift.\n**Conditioning subtypes**: None during peak block. Optional Zone 2 1×/week ONLY for maintenance.\n**Phase transitions**: Per Layer 4 B2 Achievement markers. Single-test on planned peak day. Counts only with planned peak structure (taper preceded, RPE progression respected).\n**Special weeks**: Mandatory peak-week taper (Race week pattern adapted: -50% volume, hold load, single top-set scheduled for peak day). Mandatory deload (1-2 weeks) post-peak before any further block."
-        },
-        {
-          "key": "B3",
-          "heading": "B3 · Strength endurance",
-          "content_markdown": "**Eligible templates**: (single-block goal; can include hybrid elements)\nFull Body 2-3 day OR Lower P / Upper PP / Lower A 3-day with higher rep ranges per template adjustments. Hybrid-in-comeback Phase 2 Loaded for users entering B3 from a comeback context (includes combo session for capacity-building).\n**Frequency coupling**: 3 days/week standard. 4 days/week with combo session if hybrid context.\n**Conditioning subtypes**: Optional Zone 2 1-2×/week. Tempo work allowed (B3 is endurance-oriented, less interference risk).\n**Phase transitions**: Per Layer 4 B3 Achievement markers (target rep capacity or functional task at duration).\n**Special weeks**: Standard deload. Test week scheduled at end of block (test-day = single-test or 2-week confirmation per the marker).\n---"
+          "phase": null,
+          "min_days": 4,
+          "max_days": 4,
+          "strict": false,
+          "raw": "4 days/week if user has capacity AND deficit is moderate."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 2-3×/week, 30-45 min."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Adds calorie expenditure without compromising recovery in deficit."
+        },
+        {
+          "phase": null,
+          "subtype": "polarized_base",
+          "raw": "Polarized base pattern (Seiler)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 A4 Achievement markers. Sustainability check at wk12, wk24, and at goal-reached.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Extended maintenance phase (≥12 weeks) mandatory before any further fat-loss block.",
+      "source_section": "A · Body Composition"
     },
     {
-      "heading": "C · Sport & Activity Performance",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "A5",
+      "name": "A5 · Major weight loss",
+      "cluster": "A",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1 Foundation",
+            "eligible_templates": [
+              {
+                "template_id": "hybrid-in-comeback-p1-foundation-3d",
+                "order": 1
+              },
+              {
+                "template_id": "reactivator-p1-foundation-2d",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2 Loaded",
+            "eligible_templates": [
+              {
+                "template_id": "hybrid-in-comeback-p2-loaded-4d",
+                "order": 1
+              },
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3 Capacity",
+            "eligible_templates": [
+              {
+                "template_id": "hybrid-in-comeback-p3-capacity-4d",
+                "order": 1
+              },
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 2
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "comeback persona phasing — Hybrid-in-comeback for users with cross-modal history; Reactivator otherwise",
+      "frequency_coupling": [
         {
-          "key": "C1",
-          "heading": "C1 · Race prep — short distance (5K–10K)",
-          "content_markdown": "**Eligible templates**: (single-block goal with macrocycle phasing operationalized below)\nRun template (Zone 2 / tempo / intervals / long run subtypes selected per macrocycle phase). Strength: Lower P / Full Body 1-2× per week for maintenance.\n**Frequency coupling**: 4-5 sessions/week typical. 3-4 run sessions + 1-2 strength sessions.\n**Conditioning subtypes**:\n*Base phase (wk -12 to -8)*: Polarized base (Seiler) — Z2 80%, tempo 20%. Long run 1×/week.\n*Build phase (wk -8 to -3)*: Pyramidal — Z2 70%, tempo 20%, intervals 10%. Long run 1×/week, distance progressive.\n*Peak phase (wk -3 to -1)*: Volume drops, intensity holds. Tune-up session at wk -2 (per Achievement markers).\n*Race week*: Special week pattern (Race week override).\n**Phase transitions**: Per Layer 4 C1 Achievement markers. Race day = single-test. Tune-up at wk -2 confirms readiness.\n**Special weeks**: Race week override (above). Recovery week (1 week active recovery) mandatory post-race."
+          "phase": "phase_2",
+          "min_days": 4,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 2 = 4 mixed days/week."
         },
         {
-          "key": "C2",
-          "heading": "C2 · Race prep — long distance (half marathon to ultra)",
-          "content_markdown": "**Eligible templates**:\nRun template (subtypes selected per phase). Strength: Lower P / Full Body 1× per week for maintenance.\n**Frequency coupling**: 5-6 sessions/week typical for half marathon+; ultra-prep adds back-to-back long sessions in build phase. Strength 1-2×/week.\n**Conditioning subtypes**:\n*Base phase (wk -16 to -10)*: Polarized base. Long run 1×/week, distance modest progression.\n*Build phase (wk -10 to -4)*: Pyramidal. Long run distance progresses 10% rule per mesocycle.\n*Peak phase (wk -4 to -1)*: Volume reduces, longest long run at wk -3 to -4.\n*Race week*: Race week override.\n**Phase transitions**: Per Layer 4 C2 Achievement markers. Long-run distance peak confirms readiness.\n**Special weeks**: Race week override. Extended recovery (2-4 weeks active recovery) mandatory post-race for half marathon+; longer for ultra."
-        },
-        {
-          "key": "C3",
-          "heading": "C3 · Trail running / mountain racing",
-          "content_markdown": "**Eligible templates**:\nRun template (with elevation emphasis). Strength: Lower P / Full Body 1-2×/week.\n**Frequency coupling**: 4-5 sessions/week. Mix of road and trail. Strength includes Nordic Hamstring Curl (#32) for descent eccentric loading.\n**Conditioning subtypes**:\n*Base phase*: Polarized. Trail sessions 1-2×/week for technical skill maintenance.\n*Build phase*: Pyramidal with hill-specific intervals. Cumulative weekly elevation gain progressive.\n*Peak phase*: Technical session at wk -2 (race-similar terrain). Volume drops, technique holds.\n**Phase transitions**: Per Layer 4 C3 Achievement markers (race completion OR cumulative elevation reached for non-racing users).\n**Special weeks**: Race week override. Recovery week post-race."
-        },
-        {
-          "key": "C4",
-          "heading": "C4 · Hybrid athlete (Hyrox-style)",
-          "content_markdown": "**Eligible templates**: (Hybrid-in-comeback persona phasing where applicable)\n*Hybrid-in-comeback Phase 1 / 2 / 3*: For users returning from extended pause with cross-modal history.\n*Non-comeback C4*: Full Body 2-3×/week + Run template 2-3×/week. Lower P + Upper PP for split-strength variation.\n**Frequency coupling**: 5-6 sessions/week typical (Hyrox demands cross-modal volume). Phase-dependent for comeback users; trained-user C4 = full 6-day mixed week.\n**Conditioning subtypes**: Hyrox-specific (Mangine 2020). Station simulations introduced in build phase. Practice-event at wk -3 (flag via race-simulation checkbox per Layer 4 C4 Detection field).\n**Combo session**: Available in Phase 2 (Hybrid-in-comeback Phase 2 template, 1×/week).\n**Phase transitions**: Per Layer 4 C4 Achievement markers. Event time at target OR practice-event simulation at target.\n**Special weeks**: Race week override (event week). Mid-camp readiness check at wk -4 (per C4 Achievement markers)."
-        },
-        {
-          "key": "C5",
-          "heading": "C5 · Cycling event prep",
-          "content_markdown": "**Eligible templates**:\nRun template (substituted with cycling-specific protocol; Bike subtype defined by Layer 5 conditioning pattern). Strength: Lower P 1×/week + Full Body 1×/week for maintenance.\n**Frequency coupling**: 4-6 sessions/week. Heavy on bike volume (3-5 rides/week including 1 long ride). Strength 1-2×/week.\n**Conditioning subtypes**:\n*Base phase*: Polarized. Long ride 1×/week, distance modest progression. FTP test at start.\n*Build phase*: Pyramidal with threshold work. Long ride distance progressive. FTP test mid-block.\n*Peak phase*: FTP test at wk -3 confirms readiness. Volume reduces wk -2 to -1.\n*Race week*: Race week override.\n**Phase transitions**: Per Layer 4 C5 Achievement markers. Event completion at target time/power. FTP test wk -3 as primary readiness indicator.\n**Special weeks**: Race week override. Recovery week post-event."
-        },
-        {
-          "key": "C6",
-          "heading": "C6 · Combat sports prep",
-          "content_markdown": "**Eligible templates**:\nLower P / Upper PP 2×/week + Full Body 1×/week + sport-specific conditioning (boxing/MMA/grappling skill sessions, NOT scheduled by Layer 5 — assumed external).\n**Frequency coupling**: 3 strength + sport-specific volume per coach (Layer 5 does not schedule sport-specific). Strength volume reduces in fight week.\n**Conditioning subtypes**: Sport-specific intervals + 1× Zone 2 row or run for capacity. Tempo work used sparingly to avoid interference with skill sessions.\n**Phase transitions**: Per Layer 4 C6 Achievement markers. Competition day = single-test. Mid-camp readiness check at wk -4.\n**Special weeks**: Race week override (fight week). Post-event extended recovery (mental + physical), debrief week."
-        },
-        {
-          "key": "C7",
-          "heading": "C7 · Racquet sports",
-          "content_markdown": "**Eligible templates**:\nLower P 1×/week + Upper PP 1×/week + sport-play sessions (not scheduled by Layer 5). Upper + Core 1×/week for shoulder/torso emphasis in-season.\n**Frequency coupling**: 2-3 strength + sport-play per user/coach. In-season strength volume reduces to maintain freshness for matches.\n**Conditioning subtypes**: Sport-play IS the conditioning. Optional Zone 2 1×/week off-season; minimal in-season.\n**Phase transitions**: Per Layer 4 C7 Achievement markers. Tournament results OR off-court performance markers.\n**Special weeks**: Tournament week pattern (like Race week — maintenance, no new stimulus). Post-tournament recovery if multi-day event."
-        },
-        {
-          "key": "C8",
-          "heading": "C8 · Climbing / bouldering",
-          "content_markdown": "**Eligible templates**:\nUpper PP / Upper + Core 1-2×/week + climbing sessions (not scheduled by Layer 5 — climbing volume per user/coach). Lower P 1×/week minimum for posterior chain support.\n**Frequency coupling**: 2-3 strength + 2-4 climbing sessions per user. Hangboard sessions count as strength-adjacent.\n**Conditioning subtypes**: Climbing IS the conditioning. Optional Zone 2 1×/week for general aerobic base.\n**Phase transitions**: Per Layer 4 C8 Achievement markers. Grade send + hangboard target reached.\n**Special weeks**: Standard deload. Project-send focus week (reduced strength volume, climbing prioritized) — apply pattern when user reports project attempts."
-        },
-        {
-          "key": "C9",
-          "heading": "C9 · Team sport season prep",
-          "content_markdown": "**Eligible templates**:\n*Pre-season*: Lower P / Upper PP / Lower A / Upper + Core 4-day split + sport conditioning.\n*In-season*: Full Body 2×/week (maintenance-focused) + sport practice/games.\n*Off-season*: Lower P / Upper PP / Lower A / Upper + Core 4-day split (full strength + capacity build).\n**Frequency coupling**: Pre-season = 4-5 sessions/week. In-season = 2 strength + games/practice (volume reduces). Off-season = 4-5 sessions/week.\n**Conditioning subtypes**: Sport-specific volume per coach (not scheduled by Layer 5). Sprint + agility tests per Achievement markers; cap intensity at RPE 7 during in-season.\n**Phase transitions**: Per Layer 4 C9 Achievement markers. Pre-season readiness suite (sprint, agility, conditioning tests at target). In-season = rolling 4-week monitoring.\n**Special weeks**: In-season weekly monitoring loop. Tournament/championship week = Race week pattern.\n---"
+          "phase": "phase_3",
+          "min_days": 4,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 4 days/week balanced."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = Zone 2 walk/bike/easy row only, 30-40 min."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 default + 1× tempo per week."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = full conditioning subtype range per user goal."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 A5 Achievement markers. Milestone-based (typically -20 kg or -15% body weight). 6-18 month total typical.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Long-term maintenance phase post-goal mandatory (extended, ≥12 weeks).\n---",
+      "combo_session": {
+        "available": true,
+        "phase": "phase_2",
+        "template_ref": "hybrid-in-comeback-p2-loaded-4d",
+        "raw": "Available in Phase 2 (1×/week per Hybrid-in-comeback Phase 2 template)."
+      },
+      "source_section": "A · Body Composition"
     },
     {
-      "heading": "D · Health & Longevity",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "B1",
+      "name": "B1 · General strength",
+      "cluster": "B",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "upper-core",
+            "order": 4
+          },
+          {
+            "template_id": "full-body",
+            "order": 5
+          },
+          {
+            "template_id": "returning-athlete-p3-capacity-4d",
+            "order": 6
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal; trained-user track) Lower P / Upper PP / Lower A / Upper + Core 4-day split (primary). Lower P / Upper PP / Lower A 3-day. Full Body 3-day for time-constrained. Reactivator/Returning Athlete Phase 3 for comeback-history users transitioning out of comeback.",
+      "frequency_coupling": [
         {
-          "key": "D1",
-          "heading": "D1 · General health maintenance",
-          "content_markdown": "**Eligible templates**: (single-block goal, indefinite)\nFull Body 2-3 day (primary). Lower P / Upper PP / Lower A 3-day for users wanting more structure. Mobility template 1-2×/week as compatible secondary.\n**Frequency coupling**: 2-3 days/week standard. ≥75% session completion target per Achievement markers.\n**Conditioning subtypes**: Zone 2 2-3×/week (per general health guidelines + Productvisie's Moment 4 ritual support). Optional tempo 1×/week for users wanting cardiometabolic emphasis (route to D2).\n**Phase transitions**: Per Layer 4 D1 Achievement markers. Rolling 12-week assessment.\n**Special weeks**: Standard deload. Quarterly check-in prompt per Achievement markers."
-        },
-        {
-          "key": "D2",
-          "heading": "D2 · Cardiovascular health focus",
-          "content_markdown": "**Eligible templates**:\nRun template (Zone 2 emphasis). Strength: Full Body 1-2×/week OR Lower P / Upper PP 2×/week.\n**Frequency coupling**: 3-5 sessions/week. 2-3 Zone 2 sessions + 1-2 strength.\n**Conditioning subtypes**: Polarized base (Seiler) as default. Zone 2 60-80% of conditioning volume. HRV and resting HR tracked.\n**Phase transitions**: Per Layer 4 D2 Achievement markers. 12-week rolling window. Resting HR -5 bpm or HRV up.\n**Special weeks**: Standard deload. Wearable data check at wk12 prompt."
-        },
-        {
-          "key": "D3",
-          "heading": "D3 · Metabolic health",
-          "content_markdown": "**Eligible templates**:\nFull Body 2-3 day OR Lower P / Upper PP / Lower A 3-day. Mobility template 1×/week as compatible secondary.\n**Frequency coupling**: 3 days/week strength + 2-3 days/week conditioning (post-meal walks per Reynolds 2016 are explicitly named in Achievement markers but not formally scheduled by Layer 5 — these are user-managed).\n**Conditioning subtypes**: Zone 2 + optional tempo. Walking post-meal flagged in Layer 4 Sources; user discretion on integration.\n**Phase transitions**: Per Layer 4 D3 Achievement markers. Clinical markers per medical cycle (3-6 months).\n**Special weeks**: Standard deload. Bloodwork-check prompt per Achievement markers."
-        },
-        {
-          "key": "D4",
-          "heading": "D4 · Bone density",
-          "content_markdown": "**Eligible templates**:\nLower P / Upper PP / Lower A 3-day or 4-day split (compound loading critical for bone density per LIFTMOR protocol). Full Body 2-3 day for time-constrained users.\n**Frequency coupling**: 3-4 days/week strength essential. Heavy compounds prioritized (deadlift, overhead press, jumping chin-up per LIFTMOR target loads).\n**Conditioning subtypes**: Optional Zone 2 1-2×/week. Walking/running provides impact loading (bone-positive); minimal swimming/cycling (low-impact, less bone-positive).\n**Phase transitions**: Per Layer 4 D4 Achievement markers. DEXA scan annual; proxy markers rolling 12-week.\n**Special weeks**: Standard deload. Annual DEXA prompt."
-        },
-        {
-          "key": "D5",
-          "heading": "D5 · Mobility & joint health",
-          "content_markdown": "**Eligible templates**:\nMobility template (primary). Lower P / Upper PP 1-2×/week as compatible secondary if user wants strength alongside. Full Body 2×/week alternative for users mixing emphasis.\n**Frequency coupling**: 1-2× Mobility sessions/week standalone + 1-2× strength sessions/week if desired. Mobility 20-min add-on to strength days alternative.\n**Conditioning subtypes**: Optional Zone 2 1×/week for general aerobic base. Not central to D5.\n**Phase transitions**: Per Layer 4 D5 Achievement markers. ROM tests every 4 weeks.\n**Special weeks**: Standard deload. ROM test prompt every 4 weeks.\n---"
+          "phase": null,
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "3-4 days/week."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1-2×/week to maintain aerobic base."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "No tempo/intervals during strength block (interference)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 B1 Achievement markers (key lift targets: e.g., bodyweight bench, 1.5× BW squat, 2× BW deadlift, scaled per user). Single-test confirmation across 2-week window.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Mesocycle progression: MEV → MAV → MRV → deload.",
+      "source_section": "B · Strength Performance"
     },
     {
-      "heading": "E · Rehabilitation",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "B2",
+      "name": "B2 · Strength peak",
+      "cluster": "B",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "upper-core",
+            "order": 4
+          },
+          {
+            "template_id": "full-body",
+            "order": 5
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal; peak-cycle programming) Lower P / Upper PP / Lower A / Upper + Core 4-day split with peak-week tapering. Full Body 3-day for very experienced peakers (rare).",
+      "frequency_coupling": [
         {
-          "key": "E1",
-          "heading": "E1 · Knee rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1 (Acute/Sub-acute, pain-managed)*: Mobility template + isolated rehab protocol (NOT scheduled by Layer 5 — assumed under physiotherapist guidance for first 2-4 weeks). Optional Upper PP 1-2×/week for non-knee load.\n*Phase 2 (Loaded reintroduction)*: Reactivator Phase 2 Loaded with knee-aware overlay (swap Walking Lunge → Reverse Lunge or Step-Up; cap depth on Goblet Squat).\n*Phase 3 (Return to capacity)*: Reactivator Phase 3 Capacity OR (if Returning Athlete persona) Returning Athlete Phase 2-3 with knee-friendlier slot biases.\n**Frequency coupling**: Phase 1 = 1-2 sessions/week + rehab protocol. Phase 2 = 2-3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = none or bike-easy only. Phase 2 = Zone 2 walking/bike. Phase 3 = Zone 2 1-2×/week; no impact running without clearance.\n**Phase transitions**: Per Layer 4 E1 Achievement markers. Symmetry test (single-leg squat 70°, single-leg hop within 10%) + 4 weeks pain-free.\n**Special weeks**: Symptom-flare week override (drop to prior phase). Coordination with physiotherapist on milestone confirmations."
-        },
-        {
-          "key": "E2",
-          "heading": "E2 · Lower back rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1*: Mobility template + McGill big-3 protocol (named in Layer 4, executed as core protocol — Layer 5 references this). No spinal loading. Upper PP 1×/week non-back-loaded.\n*Phase 2 (Loaded reintroduction)*: Reactivator Phase 2 Loaded with hinge-pattern progression (Cable Pull-Through → loaded RDL); cap Ab Roll-Out volume.\n*Phase 3 (Return to capacity)*: Reactivator Phase 3 OR (if Returning Athlete persona) Returning Athlete Phase 2-3 with hinge-aware slot biases.\n**Frequency coupling**: Phase 1 = 2-3 sessions/week (Mobility-heavy + protocol). Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = walking only. Phase 2 = Zone 2 bike/walk. Phase 3 = Zone 2 1-2×/week.\n**Phase transitions**: Per Layer 4 E2 Achievement markers. 4 weeks pain-free in daily activities + McGill big-3 endurance test at functional levels + loaded hinge tolerated.\n**Special weeks**: Symptom-flare week override."
-        },
-        {
-          "key": "E3",
-          "heading": "E3 · Shoulder rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1*: Mobility template + scapular protocol (rotator cuff + serratus emphasis). Lower P 1-2×/week non-shoulder-loaded. NO overhead loading.\n*Phase 2*: Reactivator Phase 2 Loaded with shoulder-aware overlay (Cluster 2 #34 DB Bench Press neutral-grip, NO overhead press; #39 Face Pull + #41 Rear Delt Fly mandatory accessory; cap pull-up to assisted/inverted row variants).\n*Phase 3*: Reactivator Phase 3 OR Returning Athlete Phase 2-3 with overhead reintroduction (light load progression per protocol).\n**Frequency coupling**: Phase 1 = 2-3 sessions/week (Mobility + Lower P). Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = Zone 2 walking/bike/row (no high-stroke-rate row pulls). Phase 2 = Zone 2 1-2×/week. Phase 3 = full conditioning subtype range per user goal.\n**Phase transitions**: Per Layer 4 E3 Achievement markers. Full pain-free ROM + symmetric strength within 10% + overhead patterns reintroduced without symptom return.\n**Special weeks**: Symptom-flare week override."
-        },
-        {
-          "key": "E4",
-          "heading": "E4 · Hip rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1*: Mobility template + hip-specific protocol (Glute Bridge #26, Dead Bug #53, supine 90/90). Upper PP 1-2×/week.\n*Phase 2*: Reactivator Phase 2 Loaded with hip-friendly slot overlay (Step-Up #30 preferred over Walking Lunge; loaded Hip Thrust #21; Cable Pull-Through #25).\n*Phase 3*: Reactivator Phase 3 OR Returning Athlete Phase 2-3.\n**Frequency coupling**: Phase 1 = 2-3 sessions/week. Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = walking. Phase 2 = Zone 2 walking/bike. Phase 3 = Zone 2 1-2×/week.\n**Phase transitions**: Per Layer 4 E4 Achievement markers. 4 weeks pain-free + loaded hinge and single-leg squat tolerated.\n**Special weeks**: Symptom-flare week override."
-        },
-        {
-          "key": "E5",
-          "heading": "E5 · Achilles / calf rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1*: Mobility template + calf eccentric protocol (heel raise progression, NOT scheduled by Layer 5 — assumed protocol). Upper PP 1-2×/week non-calf-loaded.\n*Phase 2*: Reactivator Phase 2 Loaded with running-deferred overlay (NO running in Phase 2; bike substituted). Step-Up and Reverse Lunge in unilateral slots.\n*Phase 3*: Reactivator Phase 3 with walk-run progression introduced per E5 protocol.\n**Frequency coupling**: Phase 1 = 2-3 sessions/week. Phase 2 = 3 days/week. Phase 3 = 3-4 days/week including walk-run.\n**Conditioning subtypes**: Phase 1 = bike only. Phase 2 = Zone 2 bike. Phase 3 = walk-run progression (per E5 Achievement markers).\n**Phase transitions**: Per Layer 4 E5 Achievement markers. 25+ rep single-leg heel raise symmetric + pain-free running progression.\n**Special weeks**: Symptom-flare week override."
-        },
-        {
-          "key": "E6",
-          "heading": "E6 · Wrist / elbow rehab",
-          "content_markdown": "**Eligible templates**:\n*Phase 1*: Mobility template + eccentric protocol (Tyler twist or similar, NOT scheduled by Layer 5). Lower P 1-2×/week non-grip-loaded.\n*Phase 2*: Reactivator Phase 2 Loaded with grip-progressive overlay (neutral-grip variants preferred; cap pull-up to assisted if grip is limit).\n*Phase 3*: Reactivator Phase 3 OR Returning Athlete Phase 2-3 with full grip patterns reintroduced.\n**Frequency coupling**: Phase 1 = 2-3 sessions/week. Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: All phases = Zone 2 bike/row (per grip tolerance) or walking.\n**Phase transitions**: Per Layer 4 E6 Achievement markers. 4 weeks pain-free + sport-specific demand tolerated.\n**Special weeks**: Symptom-flare week override."
-        },
-        {
-          "key": "E7",
-          "heading": "E7 · Return-to-training after extended pause",
-          "content_markdown": "**Eligible templates**: (note: E7 closely overlaps with A1/A2 comeback persona phasing — primary scheduling defers to A1 or A2 if user has set those as primary goal)\n*Phase 1*: Reactivator Phase 1 Foundation (2-day) OR Hybrid-in-comeback Phase 1 (3-day strength + 2-day Z2) per user history.\n*Phase 2*: Reactivator Phase 2 Loaded OR Returning Athlete Phase 1 Re-entry (3-day).\n*Phase 3*: Reactivator Phase 3 OR Returning Athlete Phase 2-3.\n**Frequency coupling**: Phase 1 = 2 days/week. Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = optional Zone 2 walk only. Phase 2 = Zone 2 1×/week. Phase 3 = up to Zone 2 + tempo per goal direction.\n**Phase transitions**: Per Layer 4 E7 Achievement markers. 4 consecutive weeks of full programmed sessions without injury or excessive soreness + capacity at ~70-80% of pre-pause baseline.\n**Special weeks**: Standard deload. Recovery week if symptoms re-emerge.\n---"
+          "phase": null,
+          "min_days": 4,
+          "max_days": 4,
+          "strict": false,
+          "raw": "4 days/week peak block standard."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "None during peak block."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1×/week ONLY for maintenance."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 B2 Achievement markers. Single-test on planned peak day. Counts only with planned peak structure (taper preceded, RPE progression respected).",
+      "special_weeks_applicable": [
+        "deload",
+        "race_event"
+      ],
+      "special_weeks_raw": "Mandatory peak-week taper (Race week pattern adapted: -50% volume, hold load, single top-set scheduled for peak day). Mandatory deload (1-2 weeks) post-peak before any further block.",
+      "source_section": "B · Strength Performance"
     },
     {
-      "heading": "F · Life-Stage Specific",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "B3",
+      "name": "B3 · Strength endurance",
+      "cluster": "B",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 3
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 4
+          },
+          {
+            "template_id": "hybrid-in-comeback-p2-loaded-4d",
+            "order": 5
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal; can include hybrid elements) Full Body 2-3 day OR Lower P / Upper PP / Lower A 3-day with higher rep ranges per template adjustments. Hybrid-in-comeback Phase 2 Loaded for users entering B3 from a comeback context (includes combo session for capacity-building).",
+      "frequency_coupling": [
         {
-          "key": "F1",
-          "heading": "F1 · Pregnancy — early (T1)",
-          "content_markdown": "**Eligible templates**: (gestational phase = Layer 4 phase = Layer 5 phase, 1:1 mapping)\nFull Body 2-3 day (light load, no overhead heavy, no supine work beyond T1 midpoint). Mobility template 1-2×/week. NO Reactivator/Returning Athlete templates (those assume non-pregnant context).\n**Frequency coupling**: 2-3 sessions/week. User's baseline activity governs starting point.\n**Conditioning subtypes**: Zone 2 walking/easy bike/easy swim. NO intervals, NO tempo above conversational pace.\n**Phase transitions**: Per Layer 4 F1 Achievement markers. Phase = T1 end (~wk 12-14). Transitions automatically to F2 at gestational marker.\n**Special weeks**: Symptom-flare week (nausea, fatigue, bleeding) → drop to Mobility-only week. Medical-advice override always wins."
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "3 days/week standard."
         },
         {
-          "key": "F2",
-          "heading": "F2 · Pregnancy — mid (T2 + early T3)",
-          "content_markdown": "**Eligible templates**:\nFull Body 2-3 day adapted (no supine heavy, no overhead heavy, no contact). Mobility template 1-2×/week. Lower P with hip-thrust emphasis acceptable up to gestational comfort.\n**Frequency coupling**: 2-3 sessions/week. Adaptations per gestational week.\n**Conditioning subtypes**: Zone 2 walking/easy bike/easy swim. Conversational pace.\n**Phase transitions**: Per Layer 4 F2 Achievement markers. Phase = end of T2 / start of T3 (~wk 28).\n**Special weeks**: Symptom-flare week override. Medical advice override."
-        },
-        {
-          "key": "F3",
-          "heading": "F3 · Pregnancy — late (late T3)",
-          "content_markdown": "**Eligible templates**:\nMobility template (primary). Full Body 2-day light load OR walking-only per comfort. NO loaded compounds in final weeks.\n**Frequency coupling**: 2 sessions/week typical, often dropping to 1 + daily walking by late T3.\n**Conditioning subtypes**: Walking only.\n**Phase transitions**: Per Layer 4 F3 Achievement markers. Phase = delivery.\n**Special weeks**: Pre-delivery week is naturally a maintenance week."
-        },
-        {
-          "key": "F4",
-          "heading": "F4 · Postpartum reconditioning",
-          "content_markdown": "**Eligible templates**: (Phase 1 / 2 / 3 = Layer 4 F4 phase definitions; medical clearance gates apply)\n*Phase 1*: Mobility template + postpartum-specific protocol (pelvic floor + deep core reconnection, NOT scheduled by Layer 5 — assumed under PT guidance). Walking only conditioning.\n*Phase 2*: Reactivator Phase 2 Loaded with postpartum overlay (NO loaded compounds until Phase 2 entry medical clearance; pelvic floor symptom check before progressing; doming check during loaded patterns).\n*Phase 3*: Reactivator Phase 3 OR (with hybrid history) Hybrid-in-comeback Phase 3. Full strength and conditioning per user goal.\n**Frequency coupling**: Phase 1 = 2-3 days/week (Mobility-heavy). Phase 2 = 3 days/week. Phase 3 = 3-4 days/week.\n**Conditioning subtypes**: Phase 1 = walking only. Phase 2 = Zone 2 walking/bike. Phase 3 = full conditioning subtype range per user goal.\n**Phase transitions**: Per Layer 4 F4 Achievement markers. Each phase has 4-week stable window before progression. Phase gating includes pelvic floor symptom absence + diastasis check.\n**Special weeks**: Symptom-flare week (pelvic floor, doming) → drop to prior phase. Medical-advice override always wins."
-        },
-        {
-          "key": "F5",
-          "heading": "F5 · Menopause / perimenopause-aware training",
-          "content_markdown": "**Eligible templates**: (single-block goal, indefinite per Layer 4 Achievement markers)\nLower P / Upper PP / Lower A / Upper + Core 4-day split (strength preservation priority) OR Full Body 3-day. Mobility template 1-2×/week as compatible secondary.\n**Frequency coupling**: 3-4 days/week. Strength volume preserved; bone-density emphasis (D4 overlap).\n**Conditioning subtypes**: Zone 2 2-3×/week. Optional tempo 1×/week if user wants cardiometabolic emphasis. Recovery markers monitored carefully per symptom-affected phases.\n**Phase transitions**: Per Layer 4 F5 Achievement markers. Rolling quarterly review; no graduation.\n**Special weeks**: Standard deload. Quarterly symptom-and-training check prompt."
-        },
-        {
-          "key": "F6",
-          "heading": "F6 · Senior fitness (60+)",
-          "content_markdown": "**Eligible templates**: (single-block goal, indefinite)\nFull Body 2-3 day (primary). Mobility template 1-2×/week as compatible secondary. Reactivator Phase 1-2 templates acceptable as entry-level for very deconditioned seniors.\n**Frequency coupling**: 2-3 days/week. Reactivator-style 2-day entry for deconditioned users; 3-day for active seniors.\n**Conditioning subtypes**: Zone 2 walking 2-3×/week. Balance work included per Achievement markers (single-leg stand, sit-to-stand) — Layer 1 Mobility template covers these.\n**Phase transitions**: Per Layer 4 F6 Achievement markers. Rolling quarterly review; no graduation.\n**Special weeks**: Standard deload. Quarterly balance + functional self-test prompt."
-        },
-        {
-          "key": "F7",
-          "heading": "F7 · Youth athletics (12–16)",
-          "content_markdown": "**Eligible templates**: (single-block goal, phase-based per Layer 4 annual review)\nFull Body 2-3 day age-appropriate (load scaled per training age). NO heavy compounds before adolescent growth plate maturity per coach/parent guidance. Mobility template 1×/week.\n**Frequency coupling**: 2-3 strength sessions/week + sport practice (not scheduled by Layer 5).\n**Conditioning subtypes**: Sport practice IS the conditioning. Optional Zone 2 1×/week for aerobic base.\n**Phase transitions**: Per Layer 4 F7 Achievement markers. Annual review (school/season cycle). Movement competency at each phase end.\n**Special weeks**: Season transitions = special week. Adapt to school exam periods per coach/parent input.\n---"
+          "phase": null,
+          "min_days": 4,
+          "max_days": 4,
+          "strict": false,
+          "breakdown": "4 days/week with combo session if hybrid context.",
+          "raw": "4 days/week with combo session if hybrid context."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1-2×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Tempo work allowed (B3 is endurance-oriented, less interference risk)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 B3 Achievement markers (target rep capacity or functional task at duration).",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Test week scheduled at end of block (test-day = single-test or 2-week confirmation per the marker).\n---",
+      "source_section": "B · Strength Performance"
     },
     {
-      "heading": "G · Aesthetic & Body-shape Focus",
-      "level": 2,
-      "content_markdown": "",
-      "entries": [
+      "goal_id": "C1",
+      "name": "C1 · Race prep — short distance (5K–10K)",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "run",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "full-body",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal with macrocycle phasing operationalized below) Run template (Zone 2 / tempo / intervals / long run subtypes selected per macrocycle phase). Strength: Lower P / Full Body 1-2× per week for maintenance.",
+      "frequency_coupling": [
         {
-          "key": "G1",
-          "heading": "G1 · Glute development",
-          "content_markdown": "**Eligible templates**: (single-block goal)\nLower P / Upper PP / Lower A / Upper + Core 4-day split with glute-emphasis slot biases. Lower P 2×/week if user wants accelerated focus. Full Body 3-day for time-constrained users.\n**Frequency coupling**: 3-4 days/week. Hip Thrust #21 + Cable Pull-Through #25 + RDL #7 prioritized in slot selection.\n**Conditioning subtypes**: Optional Zone 2 1-2×/week. Avoid extensive running during dedicated G1 block (interference with glute hypertrophy).\n**Phase transitions**: Per Layer 4 G1 Achievement markers. 12-16 week focused block; measurement + photo every 4 weeks.\n**Special weeks**: Standard deload. Measurement + photo prompt at wk 4, 8, 12."
-        },
-        {
-          "key": "G2",
-          "heading": "G2 · Arm focus / upper body aesthetic",
-          "content_markdown": "**Eligible templates**:\nUpper PP / Upper + Core emphasized (2× per week). Lower P / Lower A maintenance (1× each per week). Full Body 3-day for time-constrained users with arm-emphasis slot biases.\n**Frequency coupling**: 4 days/week typical for dedicated arm block. Upper hits per week prioritized over lower.\n**Conditioning subtypes**: Optional Zone 2 1-2×/week. Same hypertrophy-interference caution as A2.\n**Phase transitions**: Per Layer 4 G2 Achievement markers. 12-16 week focused block; arm measurement + photo every 4 weeks.\n**Special weeks**: Standard deload. Measurement prompt."
-        },
-        {
-          "key": "G3",
-          "heading": "G3 · Athletic look",
-          "content_markdown": "**Eligible templates**:\nLower P / Upper PP / Lower A / Upper + Core 4-day split (composite goal — strength + hypertrophy + aesthetic). Returning Athlete Phase 3 for comeback-history users.\n**Frequency coupling**: 4 days/week standard. 5-day split for advanced users.\n**Conditioning subtypes**: Zone 2 1-2×/week minimum (athletic look includes conditioning aesthetic). Optional tempo 1×/week.\n**Phase transitions**: Per Layer 4 G3 Achievement markers. 16-24 week composite block; photo + measurements at milestones.\n**Special weeks**: Standard deload. Milestone photo prompt."
-        },
-        {
-          "key": "G4",
-          "heading": "G4 · Posture / desk-worker re-balancing",
-          "content_markdown": "**Eligible templates**:\nMobility template (primary, 1-2×/week). Upper + Core 1-2×/week with postural emphasis (Face Pull #39, Rear Delt Fly #41 prioritized; Lateral Raise #40 deprioritized). Lower P 1×/week.\n**Frequency coupling**: 3-4 days/week. Mobility-heavy. Strength volume serves postural patterns.\n**Conditioning subtypes**: Optional Zone 2 walking 2-3×/week (counters sitting).\n**Phase transitions**: Per Layer 4 G4 Achievement markers. 12-week initial markers; maintenance ongoing.\n**Special weeks**: Standard deload. Postural self-check prompt wk 8 and 12."
-        },
-        {
-          "key": "G5",
-          "heading": "G5 · Stage prep — amateur natural",
-          "content_markdown": "**Eligible templates**:\nLower P / Upper PP / Lower A / Upper + Core 4-day split with hypertrophy bias in off-season; transitioning to higher volume + deficit-adjusted conditioning in prep.\n**Frequency coupling**: 4-5 days/week strength + 2-3 days/week conditioning during prep. Off-season 4 days/week strength + 1-2 days/week conditioning.\n**Conditioning subtypes**: Zone 2 2-3×/week during prep (calorie expenditure). Off-season optional Zone 2 1×/week.\n**Phase transitions**: Per Layer 4 G5 Achievement markers. Stage day = single-test. Mid-prep check at wk -8.\n**Special weeks**: Race week pattern (show week). Post-show MANDATORY structured reverse diet + recovery period (8-16 weeks, per Achievement markers Next step).\n---"
+          "phase": null,
+          "min_days": 4,
+          "max_days": 5,
+          "strict": false,
+          "breakdown": "4-5 sessions/week typical.",
+          "raw": "4-5 sessions/week typical."
         }
-      ]
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "polarized_base",
+          "raw": "*Base phase (wk -12 to -8)*: Polarized base (Seiler) — Z2 80%, tempo 20%."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long run 1×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "pyramidal_event",
+          "raw": "*Build phase (wk -8 to -3)*: Pyramidal — Z2 70%, tempo 20%, intervals 10%."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long run 1×/week, distance progressive."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Peak phase (wk -3 to -1)*: Volume drops, intensity holds."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Tune-up session at wk -2 (per Achievement markers)."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Race week*: Special week pattern (Race week override)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C1 Achievement markers. Race day = single-test. Tune-up at wk -2 confirms readiness.",
+      "special_weeks_applicable": [
+        "race_event",
+        "recovery"
+      ],
+      "special_weeks_raw": "Race week override (above). Recovery week (1 week active recovery) mandatory post-race.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C2",
+      "name": "C2 · Race prep — long distance (half marathon to ultra)",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "run",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "full-body",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Run template (subtypes selected per phase). Strength: Lower P / Full Body 1× per week for maintenance.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 5,
+          "max_days": 6,
+          "strict": false,
+          "breakdown": "5-6 sessions/week typical for half marathon+; ultra-prep adds back-to-back long sessions in build phase.",
+          "raw": "5-6 sessions/week typical for half marathon+; ultra-prep adds back-to-back long sessions in build phase."
+        },
+        {
+          "phase": null,
+          "min_days": 1,
+          "max_days": 2,
+          "strict": false,
+          "raw": "Strength 1-2×/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "polarized_base",
+          "raw": "*Base phase (wk -16 to -10)*: Polarized base."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long run 1×/week, distance modest progression."
+        },
+        {
+          "phase": null,
+          "subtype": "pyramidal_event",
+          "raw": "*Build phase (wk -10 to -4)*: Pyramidal."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long run distance progresses 10% rule per mesocycle."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Peak phase (wk -4 to -1)*: Volume reduces, longest long run at wk -3 to -4."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Race week*: Race week override."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C2 Achievement markers. Long-run distance peak confirms readiness.",
+      "special_weeks_applicable": [
+        "race_event",
+        "recovery"
+      ],
+      "special_weeks_raw": "Race week override. Extended recovery (2-4 weeks active recovery) mandatory post-race for half marathon+; longer for ultra.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C3",
+      "name": "C3 · Trail running / mountain racing",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "run",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "full-body",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Run template (with elevation emphasis). Strength: Lower P / Full Body 1-2×/week.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 4,
+          "max_days": 5,
+          "strict": false,
+          "breakdown": "4-5 sessions/week.",
+          "raw": "4-5 sessions/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Base phase*: Polarized."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Trail sessions 1-2×/week for technical skill maintenance."
+        },
+        {
+          "phase": null,
+          "subtype": "pyramidal_event",
+          "raw": "*Build phase*: Pyramidal with hill-specific intervals."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Cumulative weekly elevation gain progressive."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Peak phase*: Technical session at wk -2 (race-similar terrain)."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Volume drops, technique holds."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C3 Achievement markers (race completion OR cumulative elevation reached for non-racing users).",
+      "special_weeks_applicable": [
+        "race_event",
+        "recovery"
+      ],
+      "special_weeks_raw": "Race week override. Recovery week post-race.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C4",
+      "name": "C4 · Hybrid athlete (Hyrox-style)",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Hybrid-in-comeback Phase 1 / 2 / 3",
+            "eligible_templates": [
+              {
+                "template_id": "hybrid-in-comeback-p1-foundation-3d",
+                "order": 1
+              },
+              {
+                "template_id": "hybrid-in-comeback-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "hybrid-in-comeback-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Non-comeback C4",
+            "eligible_templates": [
+              {
+                "template_id": "full-body",
+                "order": 1
+              },
+              {
+                "template_id": "run",
+                "order": 2
+              },
+              {
+                "template_id": "lower-posterior",
+                "order": 3
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 4
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "Hybrid-in-comeback persona phasing where applicable",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 5,
+          "max_days": 6,
+          "strict": false,
+          "breakdown": "5-6 sessions/week typical (Hyrox demands cross-modal volume).",
+          "raw": "5-6 sessions/week typical (Hyrox demands cross-modal volume)."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "hyrox_specific",
+          "raw": "Hyrox-specific (Mangine 2020)."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Station simulations introduced in build phase."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Practice-event at wk -3 (flag via race-simulation checkbox per Layer 4 C4 Detection field)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C4 Achievement markers. Event time at target OR practice-event simulation at target.",
+      "special_weeks_applicable": [
+        "race_event"
+      ],
+      "special_weeks_raw": "Race week override (event week). Mid-camp readiness check at wk -4 (per C4 Achievement markers).",
+      "combo_session": {
+        "available": true,
+        "phase": "phase_2",
+        "template_ref": "hybrid-in-comeback-p2-loaded-4d",
+        "raw": "Available in Phase 2 (Hybrid-in-comeback Phase 2 template, 1×/week)."
+      },
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C5",
+      "name": "C5 · Cycling event prep",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "run",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "full-body",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Run template (substituted with cycling-specific protocol; Bike subtype defined by Layer 5 conditioning pattern). Strength: Lower P 1×/week + Full Body 1×/week for maintenance.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 4,
+          "max_days": 6,
+          "strict": false,
+          "breakdown": "4-6 sessions/week.",
+          "raw": "4-6 sessions/week."
+        },
+        {
+          "phase": null,
+          "min_days": 1,
+          "max_days": 2,
+          "strict": false,
+          "raw": "Strength 1-2×/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Base phase*: Polarized."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long ride 1×/week, distance modest progression."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "FTP test at start."
+        },
+        {
+          "phase": null,
+          "subtype": "pyramidal_event",
+          "raw": "*Build phase*: Pyramidal with threshold work."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Long ride distance progressive."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "FTP test mid-block."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Peak phase*: FTP test at wk -3 confirms readiness."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Volume reduces wk -2 to -1."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "*Race week*: Race week override."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C5 Achievement markers. Event completion at target time/power. FTP test wk -3 as primary readiness indicator.",
+      "special_weeks_applicable": [
+        "race_event",
+        "recovery"
+      ],
+      "special_weeks_raw": "Race week override. Recovery week post-event.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C6",
+      "name": "C6 · Combat sports prep",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "full-body",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Lower P / Upper PP 2×/week + Full Body 1×/week + sport-specific conditioning (boxing/MMA/grappling skill sessions, NOT scheduled by Layer 5 — assumed external).",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "3 strength + sport-specific volume per coach (Layer 5 does not schedule sport-specific). Strength volume reduces in fight week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Sport-specific intervals + 1× Zone 2 row or run for capacity."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Tempo work used sparingly to avoid interference with skill sessions."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C6 Achievement markers. Competition day = single-test. Mid-camp readiness check at wk -4.",
+      "special_weeks_applicable": [
+        "race_event"
+      ],
+      "special_weeks_raw": "Race week override (fight week). Post-event extended recovery (mental + physical), debrief week.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C7",
+      "name": "C7 · Racquet sports",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "upper-core",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Lower P 1×/week + Upper PP 1×/week + sport-play sessions (not scheduled by Layer 5). Upper + Core 1×/week for shoulder/torso emphasis in-season.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "2-3 strength + sport-play per user/coach. In-season strength volume reduces to maintain freshness for matches."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Sport-play IS the conditioning."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1×/week off-season; minimal in-season."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C7 Achievement markers. Tournament results OR off-court performance markers.",
+      "special_weeks_applicable": [
+        "race_event"
+      ],
+      "special_weeks_raw": "Tournament week pattern (like Race week — maintenance, no new stimulus). Post-tournament recovery if multi-day event.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C8",
+      "name": "C8 · Climbing / bouldering",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "upper-push-pull",
+            "order": 1
+          },
+          {
+            "template_id": "upper-core",
+            "order": 2
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Upper PP / Upper + Core 1-2×/week + climbing sessions (not scheduled by Layer 5 — climbing volume per user/coach). Lower P 1×/week minimum for posterior chain support.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "2-3 strength + 2-4 climbing sessions per user. Hangboard sessions count as strength-adjacent."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Climbing IS the conditioning."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1×/week for general aerobic base."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C8 Achievement markers. Grade send + hangboard target reached.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Project-send focus week (reduced strength volume, climbing prioritized) — apply pattern when user reports project attempts.",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "C9",
+      "name": "C9 · Team sport season prep",
+      "cluster": "C",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Pre-season",
+            "eligible_templates": [
+              {
+                "template_id": "lower-posterior",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              },
+              {
+                "template_id": "lower-anterior",
+                "order": 3
+              },
+              {
+                "template_id": "upper-core",
+                "order": 4
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "In-season",
+            "eligible_templates": [
+              {
+                "template_id": "full-body",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Off-season",
+            "eligible_templates": [
+              {
+                "template_id": "lower-posterior",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              },
+              {
+                "template_id": "lower-anterior",
+                "order": 3
+              },
+              {
+                "template_id": "upper-core",
+                "order": 4
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 4,
+          "max_days": 5,
+          "strict": false,
+          "breakdown": "Pre-season = 4-5 sessions/week.",
+          "raw": "Pre-season = 4-5 sessions/week."
+        },
+        {
+          "phase": null,
+          "min_days": 4,
+          "max_days": 5,
+          "strict": false,
+          "breakdown": "Off-season = 4-5 sessions/week.",
+          "raw": "Off-season = 4-5 sessions/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Sport-specific volume per coach (not scheduled by Layer 5)."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Sprint + agility tests per Achievement markers; cap intensity at RPE 7 during in-season."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 C9 Achievement markers. Pre-season readiness suite (sprint, agility, conditioning tests at target). In-season = rolling 4-week monitoring.",
+      "special_weeks_applicable": [
+        "race_event"
+      ],
+      "special_weeks_raw": "In-season weekly monitoring loop. Tournament/championship week = Race week pattern.\n---",
+      "source_section": "C · Sport & Activity Performance"
+    },
+    {
+      "goal_id": "D1",
+      "name": "D1 · General health maintenance",
+      "cluster": "D",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 3
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 4
+          },
+          {
+            "template_id": "mobility",
+            "order": 5
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal, indefinite) Full Body 2-3 day (primary). Lower P / Upper PP / Lower A 3-day for users wanting more structure. Mobility template 1-2×/week as compatible secondary.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "raw": "2-3 days/week standard."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 2-3×/week (per general health guidelines + Productvisie's Moment 4 ritual support)."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional tempo 1×/week for users wanting cardiometabolic emphasis (route to D2)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 D1 Achievement markers. Rolling 12-week assessment.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Quarterly check-in prompt per Achievement markers.",
+      "source_section": "D · Health & Longevity"
+    },
+    {
+      "goal_id": "D2",
+      "name": "D2 · Cardiovascular health focus",
+      "cluster": "D",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "run",
+            "order": 1
+          },
+          {
+            "template_id": "full-body",
+            "order": 2
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 3
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 4
+          }
+        ]
+      },
+      "eligible_templates_context": "Run template (Zone 2 emphasis). Strength: Full Body 1-2×/week OR Lower P / Upper PP 2×/week.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 5,
+          "strict": false,
+          "breakdown": "3-5 sessions/week.",
+          "raw": "3-5 sessions/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "polarized_base",
+          "raw": "Polarized base (Seiler) as default."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 60-80% of conditioning volume."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "HRV and resting HR tracked."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 D2 Achievement markers. 12-week rolling window. Resting HR -5 bpm or HRV up.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Wearable data check at wk12 prompt.",
+      "source_section": "D · Health & Longevity"
+    },
+    {
+      "goal_id": "D3",
+      "name": "D3 · Metabolic health",
+      "cluster": "D",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 3
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 4
+          },
+          {
+            "template_id": "mobility",
+            "order": 5
+          }
+        ]
+      },
+      "eligible_templates_context": "Full Body 2-3 day OR Lower P / Upper PP / Lower A 3-day. Mobility template 1×/week as compatible secondary.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "3 days/week strength + 2-3 days/week conditioning (post-meal walks per Reynolds 2016 are explicitly named in Achievement markers but not formally scheduled by Layer 5 — these are user-managed)."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 + optional tempo."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Walking post-meal flagged in Layer 4 Sources; user discretion on integration."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 D3 Achievement markers. Clinical markers per medical cycle (3-6 months).",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Bloodwork-check prompt per Achievement markers.",
+      "source_section": "D · Health & Longevity"
+    },
+    {
+      "goal_id": "D4",
+      "name": "D4 · Bone density",
+      "cluster": "D",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "full-body",
+            "order": 4
+          }
+        ]
+      },
+      "eligible_templates_context": "Lower P / Upper PP / Lower A 3-day or 4-day split (compound loading critical for bone density per LIFTMOR protocol). Full Body 2-3 day for time-constrained users.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "3-4 days/week strength essential."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1-2×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Walking/running provides impact loading (bone-positive); minimal swimming/cycling (low-impact, less bone-positive)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 D4 Achievement markers. DEXA scan annual; proxy markers rolling 12-week.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Annual DEXA prompt.",
+      "source_section": "D · Health & Longevity"
+    },
+    {
+      "goal_id": "D5",
+      "name": "D5 · Mobility & joint health",
+      "cluster": "D",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "mobility",
+            "order": 1
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 2
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 3
+          },
+          {
+            "template_id": "full-body",
+            "order": 4
+          }
+        ]
+      },
+      "eligible_templates_context": "Mobility template (primary). Lower P / Upper PP 1-2×/week as compatible secondary if user wants strength alongside. Full Body 2×/week alternative for users mixing emphasis.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "1-2× Mobility sessions/week standalone + 1-2× strength sessions/week if desired. Mobility 20-min add-on to strength days alternative."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional Zone 2 1×/week for general aerobic base."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Not central to D5."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 D5 Achievement markers. ROM tests every 4 weeks.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. ROM test prompt every 4 weeks.\n---",
+      "source_section": "D · Health & Longevity"
+    },
+    {
+      "goal_id": "E1",
+      "name": "E1 · Knee rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1 (Acute/Sub-acute, pain-managed)",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2 (Loaded reintroduction)",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3 (Return to capacity)",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 1,
+          "max_days": 2,
+          "strict": false,
+          "breakdown": "1-2 sessions/week + rehab protocol.",
+          "raw": "Phase 1 = 1-2 sessions/week + rehab protocol."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 2-3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = none or bike-easy only."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 walking/bike."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = Zone 2 1-2×/week; no impact running without clearance."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E1 Achievement markers. Symmetry test (single-leg squat 70°, single-leg hop within 10%) + 4 weeks pain-free.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override (drop to prior phase). Coordination with physiotherapist on milestone confirmations.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E2",
+      "name": "E2 · Lower back rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2 (Loaded reintroduction)",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3 (Return to capacity)",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week (Mobility-heavy + protocol).",
+          "raw": "Phase 1 = 2-3 sessions/week (Mobility-heavy + protocol)."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = walking only."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 bike/walk."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = Zone 2 1-2×/week."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E2 Achievement markers. 4 weeks pain-free in daily activities + McGill big-3 endurance test at functional levels + loaded hinge tolerated.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E3",
+      "name": "E3 · Shoulder rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "lower-posterior",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week (Mobility + Lower P).",
+          "raw": "Phase 1 = 2-3 sessions/week (Mobility + Lower P)."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = Zone 2 walking/bike/row (no high-stroke-rate row pulls)."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 1-2×/week."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = full conditioning subtype range per user goal."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E3 Achievement markers. Full pain-free ROM + symmetric strength within 10% + overhead patterns reintroduced without symptom return.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E4",
+      "name": "E4 · Hip rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week.",
+          "raw": "Phase 1 = 2-3 sessions/week."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = walking."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 walking/bike."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = Zone 2 1-2×/week."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E4 Achievement markers. 4 weeks pain-free + loaded hinge and single-leg squat tolerated.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E5",
+      "name": "E5 · Achilles / calf rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "upper-push-pull",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "run",
+                "order": 2
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week.",
+          "raw": "Phase 1 = 2-3 sessions/week."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week including walk-run."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = bike only."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 bike."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = walk-run progression (per E5 Achievement markers)."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E5 Achievement markers. 25+ rep single-leg heel raise symmetric + pain-free running progression.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E6",
+      "name": "E6 · Wrist / elbow rehab",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              },
+              {
+                "template_id": "lower-posterior",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week.",
+          "raw": "Phase 1 = 2-3 sessions/week."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "All phases = Zone 2 bike/row (per grip tolerance) or walking."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E6 Achievement markers. 4 weeks pain-free + sport-specific demand tolerated.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override.",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "E7",
+      "name": "E7 · Return-to-training after extended pause",
+      "cluster": "E",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p1-foundation-2d",
+                "order": 1
+              },
+              {
+                "template_id": "hybrid-in-comeback-p1-foundation-3d",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p1-reentry-3d",
+                "order": 2
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "returning-athlete-p2-loaded-4d",
+                "order": 2
+              },
+              {
+                "template_id": "returning-athlete-p3-capacity-4d",
+                "order": 3
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "note: E7 closely overlaps with A1/A2 comeback persona phasing — primary scheduling defers to A1 or A2 if user has set those as primary goal",
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 2,
+          "strict": false,
+          "raw": "Phase 1 = 2 days/week."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = optional Zone 2 walk only."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 1×/week."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = up to Zone 2 + tempo per goal direction."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 E7 Achievement markers. 4 consecutive weeks of full programmed sessions without injury or excessive soreness + capacity at ~70-80% of pre-pause baseline.",
+      "special_weeks_applicable": [
+        "deload",
+        "recovery"
+      ],
+      "special_weeks_raw": "Standard deload. Recovery week if symptoms re-emerge.\n---",
+      "source_section": "E · Rehabilitation"
+    },
+    {
+      "goal_id": "F1",
+      "name": "F1 · Pregnancy — early (T1)",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "mobility",
+            "order": 2
+          }
+        ]
+      },
+      "eligible_templates_context": "gestational phase = Layer 4 phase = Layer 5 phase, 1:1 mapping) Full Body 2-3 day (light load, no overhead heavy, no supine work beyond T1 midpoint). Mobility template 1-2×/week. NO Reactivator/Returning Athlete templates (those assume non-pregnant context).",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week.",
+          "raw": "2-3 sessions/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 walking/easy bike/easy swim."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "NO intervals, NO tempo above conversational pace."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F1 Achievement markers. Phase = T1 end (~wk 12-14). Transitions automatically to F2 at gestational marker.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week (nausea, fatigue, bleeding) → drop to Mobility-only week. Medical-advice override always wins.",
+      "source_section": "F · Life-Stage Specific"
+    },
+    {
+      "goal_id": "F2",
+      "name": "F2 · Pregnancy — mid (T2 + early T3)",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "mobility",
+            "order": 2
+          },
+          {
+            "template_id": "lower-posterior",
+            "order": 3
+          }
+        ]
+      },
+      "eligible_templates_context": "Full Body 2-3 day adapted (no supine heavy, no overhead heavy, no contact). Mobility template 1-2×/week. Lower P with hip-thrust emphasis acceptable up to gestational comfort.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "breakdown": "2-3 sessions/week.",
+          "raw": "2-3 sessions/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 walking/easy bike/easy swim."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Conversational pace."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F2 Achievement markers. Phase = end of T2 / start of T3 (~wk 28).",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week override. Medical advice override.",
+      "source_section": "F · Life-Stage Specific"
+    },
+    {
+      "goal_id": "F3",
+      "name": "F3 · Pregnancy — late (late T3)",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "mobility",
+            "order": 1
+          },
+          {
+            "template_id": "full-body",
+            "order": 2
+          }
+        ]
+      },
+      "eligible_templates_context": "Mobility template (primary). Full Body 2-day light load OR walking-only per comfort. NO loaded compounds in final weeks.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 2,
+          "max_days": 2,
+          "strict": false,
+          "breakdown": "2 sessions/week typical, often dropping to 1 + daily walking by late T3.",
+          "raw": "2 sessions/week typical, often dropping to 1 + daily walking by late T3."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Walking only."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F3 Achievement markers. Phase = delivery.",
+      "special_weeks_applicable": [],
+      "special_weeks_raw": "Pre-delivery week is naturally a maintenance week.",
+      "source_section": "F · Life-Stage Specific"
+    },
+    {
+      "goal_id": "F4",
+      "name": "F4 · Postpartum reconditioning",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "phased",
+        "phases": [
+          {
+            "phase": "phase_1",
+            "phase_label": "Phase 1",
+            "eligible_templates": [
+              {
+                "template_id": "mobility",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_2",
+            "phase_label": "Phase 2",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p2-loaded-3d",
+                "order": 1
+              }
+            ]
+          },
+          {
+            "phase": "phase_3",
+            "phase_label": "Phase 3",
+            "eligible_templates": [
+              {
+                "template_id": "reactivator-p3-capacity-3d",
+                "order": 1
+              },
+              {
+                "template_id": "hybrid-in-comeback-p3-capacity-4d",
+                "order": 2
+              }
+            ]
+          }
+        ]
+      },
+      "eligible_templates_context": "Phase 1 / 2 / 3 = Layer 4 F4 phase definitions; medical clearance gates apply",
+      "frequency_coupling": [
+        {
+          "phase": "phase_1",
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 1 = 2-3 days/week (Mobility-heavy)."
+        },
+        {
+          "phase": "phase_2",
+          "min_days": 3,
+          "max_days": 3,
+          "strict": false,
+          "raw": "Phase 2 = 3 days/week."
+        },
+        {
+          "phase": "phase_3",
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "Phase 3 = 3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": "phase_1",
+          "subtype": "none",
+          "raw": "Phase 1 = walking only."
+        },
+        {
+          "phase": "phase_2",
+          "subtype": "none",
+          "raw": "Phase 2 = Zone 2 walking/bike."
+        },
+        {
+          "phase": "phase_3",
+          "subtype": "none",
+          "raw": "Phase 3 = full conditioning subtype range per user goal."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F4 Achievement markers. Each phase has 4-week stable window before progression. Phase gating includes pelvic floor symptom absence + diastasis check.",
+      "special_weeks_applicable": [
+        "symptom_flare"
+      ],
+      "special_weeks_raw": "Symptom-flare week (pelvic floor, doming) → drop to prior phase. Medical-advice override always wins.",
+      "source_section": "F · Life-Stage Specific"
+    },
+    {
+      "goal_id": "F5",
+      "name": "F5 · Menopause / perimenopause-aware training",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "lower-posterior",
+            "order": 1
+          },
+          {
+            "template_id": "upper-push-pull",
+            "order": 2
+          },
+          {
+            "template_id": "lower-anterior",
+            "order": 3
+          },
+          {
+            "template_id": "upper-core",
+            "order": 4
+          },
+          {
+            "template_id": "full-body",
+            "order": 5
+          },
+          {
+            "template_id": "mobility",
+            "order": 6
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal, indefinite per Layer 4 Achievement markers) Lower P / Upper PP / Lower A / Upper + Core 4-day split (strength preservation priority) OR Full Body 3-day. Mobility template 1-2×/week as compatible secondary.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 3,
+          "max_days": 4,
+          "strict": false,
+          "raw": "3-4 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 2-3×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Optional tempo 1×/week if user wants cardiometabolic emphasis."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Recovery markers monitored carefully per symptom-affected phases."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F5 Achievement markers. Rolling quarterly review; no graduation.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Quarterly symptom-and-training check prompt.",
+      "source_section": "F · Life-Stage Specific"
+    },
+    {
+      "goal_id": "F6",
+      "name": "F6 · Senior fitness (60+)",
+      "cluster": "F",
+      "eligible_templates": {
+        "type": "single_block",
+        "options": [
+          {
+            "template_id": "full-body",
+            "order": 1
+          },
+          {
+            "template_id": "mobility",
+            "order": 2
+          },
+          {
+            "template_id": "reactivator-p1-foundation-2d",
+            "order": 3
+          },
+          {
+            "template_id": "reactivator-p2-loaded-3d",
+            "order": 4
+          }
+        ]
+      },
+      "eligible_templates_context": "single-block goal, indefinite) Full Body 2-3 day (primary). Mobility template 1-2×/week as compatible secondary. Reactivator Phase 1-2 templates acceptable as entry-level for very deconditioned seniors.",
+      "frequency_coupling": [
+        {
+          "phase": null,
+          "min_days": 2,
+          "max_days": 3,
+          "strict": false,
+          "raw": "2-3 days/week."
+        }
+      ],
+      "conditioning_subtypes": [
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Zone 2 walking 2-3×/week."
+        },
+        {
+          "phase": null,
+          "subtype": "none",
+          "raw": "Balance work included per Achievement markers (single-leg stand, sit-to-stand) — Layer 1 Mobility template covers these."
+        }
+      ],
+      "phase_transitions_raw": "Per Layer 4 F6 Achievement markers. Rolling quarterly review; no graduation.",
+      "special_weeks_applicable": [
+        "deload"
+      ],
+      "special_weeks_raw": "Standard deload. Quarterly balance + functional self-test prompt.",
+      "source_section": "F · Life-Stage Specific"
     }
   ]
 }
