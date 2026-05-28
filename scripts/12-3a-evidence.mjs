@@ -12,6 +12,7 @@
 import { createHash } from "node:crypto";
 import { convertPreludeToEngineInput } from "../lib/prelude/converter.mjs";
 import { buildFirstWeekProgram } from "../lib/engine/index.mjs";
+import { getCouplingEntry } from "../lib/engine/kb-loader.mjs";
 
 const FIXTURES = {
   "VF-A1": {
@@ -62,6 +63,15 @@ const FIXTURES = {
   },
   "VF-A5": {
     description: "Hybrid Athlete · C4 Hyrox · 5 days · no inactivity",
+    // §11 amendment: VF-A5's profile is non-comeback (inactivity=0, trained,
+    // reported lifts) → Non-comeback C4 branch → goal_phase=null. Delivered
+    // program (trained mixed week: full-body + run + lower-posterior +
+    // upper-push-pull) is unchanged from 12.3a; only the phase label.
+    doctrine_assertion: {
+      expected_phase: null,
+      expected_primary_template: "full-body",
+      notes: "§11 — non-comeback C4 → goal_phase=null (parallel non-phased branch). Delivered program = trained mixed week.",
+    },
     prelude: {
       experience_level: "active",
       archetype_flags: {
@@ -346,26 +356,102 @@ function main() {
     };
   }
 
-  // AC5 (12.3a-fix): entry-phase doctrine. The 5 doctrine fixtures produce
-  // the expected phase per L5/L8 Spec §10. The two clinical safety fixtures
-  // MUST land on phase_1.
-  for (const [name, fx] of Object.entries(DOCTRINE_FIXTURES)) {
-    const result = runs[name];
-    const observed = result?.program?.goal?.goal_phase ?? null;
-    const expected = fx.expected_phase;
-    const ok = observed === expected;
-    const safety = /SAFETY/.test(fx.description);
-    out.ac5.push({
+  // AC5 (12.3a-fix): entry-phase doctrine. The 5 doctrine fixtures + any
+  // alpha fixture carrying a doctrine_assertion are checked against the
+  // expected phase (and primary template when asserted). The two clinical
+  // safety fixtures MUST land on phase_1.
+  const assertions = [
+    ...Object.entries(DOCTRINE_FIXTURES).map(([name, fx]) => ({
       name,
       description: fx.description,
       notes: fx.notes,
-      expected_phase: expected,
+      expected_phase: fx.expected_phase,
+      expected_primary_template: null,
+    })),
+    ...Object.entries(FIXTURES)
+      .filter(([, fx]) => fx.doctrine_assertion)
+      .map(([name, fx]) => ({
+        name,
+        description: fx.description,
+        notes: fx.doctrine_assertion.notes,
+        expected_phase: fx.doctrine_assertion.expected_phase,
+        expected_primary_template: fx.doctrine_assertion.expected_primary_template ?? null,
+      })),
+  ];
+  for (const a of assertions) {
+    const result = runs[a.name];
+    const observed = result?.program?.goal?.goal_phase ?? null;
+    const primary = result?.program?.templates_selected?.[0]?.template_id ?? null;
+    const phaseOk = observed === a.expected_phase;
+    const templateOk = a.expected_primary_template === null || primary === a.expected_primary_template;
+    const safety = /SAFETY/.test(a.description);
+    out.ac5.push({
+      name: a.name,
+      description: a.description,
+      notes: a.notes,
+      expected_phase: a.expected_phase,
       observed_phase: observed,
-      pass: ok,
+      expected_primary_template: a.expected_primary_template,
+      observed_primary_template: primary,
+      pass: phaseOk && templateOk,
       safety_critical: safety,
-      primary_template: result?.program?.templates_selected?.[0]?.template_id ?? null,
     });
   }
+
+  // SPOT-CHECK 1 (B6) — confirm transformed L5 JSON carries per-option
+  // `condition` qualifiers for non-comeback carve-outs. PD's canonical
+  // within-phase selection rule (§11 FLAG 2) depends on this data: an
+  // empty `condition` means the engine cannot distinguish comeback from
+  // non-comeback options within a phase block.
+  const b6 = {
+    checks: [
+      { goal_id: "A1", phase: "phase_1", expectCondition: "full-body" },
+      { goal_id: "A2", phase: "phase_3", expectCondition: "any" },
+      { goal_id: "C4", phase: "phase_2", expectCondition: "any" },
+    ],
+    results: [],
+  };
+  for (const c of b6.checks) {
+    const entry = getCouplingEntry(c.goal_id);
+    const phaseBlock = entry.eligible_templates.phases?.find((p) => p.phase === c.phase);
+    const options = phaseBlock?.eligible_templates ?? [];
+    const populated = options.some((o) => typeof o.condition === "string" && o.condition.length > 0);
+    const sample =
+      c.expectCondition === "full-body"
+        ? options.find((o) => o.template_id === "full-body")?.condition ?? null
+        : options.map((o) => o.condition ?? null);
+    b6.results.push({
+      goal_id: c.goal_id,
+      phase: c.phase,
+      any_condition_populated: populated,
+      sample_condition: sample,
+    });
+  }
+  const b6Dropped = b6.results.every((r) => !r.any_condition_populated);
+  out.ac5_spot_b6 = {
+    populated: !b6Dropped,
+    results: b6.results,
+    note: b6Dropped
+      ? "B6 DROPPED — every checked phase block has empty `condition` fields. The KB prose carries the qualifier ('For non-comeback A1 users... Full Body 2-day OR 3-day') but the transform did not capture it per the EligibleTemplateOption.condition schema. The engine-side condition-first selection rule (§11 FLAG 2) is wired but data-starved; without a B6 transform fix VF-A1-noncomeback continues to resolve to reactivator-p1-foundation-2d (option 1 by L5 order). Flagged to MD."
+      : "B6 OK — `condition` fields populated.",
+  };
+
+  // SPOT-CHECK 2 (FLAG-5 gate) — confirm the comeback-arc Phase-2 bump
+  // fires BECAUSE reported_lifts present (or experience ≥ active), not
+  // unconditionally. Evidence: VF-A1 (comeback + lifts) → phase_2;
+  // VF-A1-cold (comeback, no lifts, starter) → phase_1. Same goal, same
+  // comeback persona, opposite retained-capacity → opposite phase.
+  const vfA1 = runs["VF-A1"]?.program?.goal?.goal_phase ?? null;
+  const vfA1Cold = runs["VF-A1-cold"]?.program?.goal?.goal_phase ?? null;
+  const flag5Pass = vfA1 === "phase_2" && vfA1Cold === "phase_1";
+  out.ac5_spot_flag5 = {
+    pass: flag5Pass,
+    vf_a1_phase: vfA1,
+    vf_a1_cold_phase: vfA1Cold,
+    note: flag5Pass
+      ? "FLAG-5 OK — comeback Phase-2 bump is gated on retained-capacity, not persona alone. Same goal A1, same comeback persona; different retained-capacity → different phase."
+      : "FLAG-5 FAIL — the comeback Phase-2 bump did not differentiate retained-capacity from cold.",
+  };
 
   if (wantJson) {
     process.stdout.write(JSON.stringify(out, null, 2));
@@ -428,19 +514,39 @@ function main() {
     console.log(`  ${name}: run1=${r.hash_run_1} run2=${r.hash_run_2} identical=${r.identical}`);
   }
 
-  console.log("\n--- AC5 (12.3a-fix): Entry-phase doctrine — L5/L8 Spec §10 ---");
+  console.log("\n--- AC5 (12.3a-fix): Entry-phase doctrine — L5/L8 Spec §10 + §11 ---");
   for (const r of out.ac5) {
     const tag = r.pass ? "PASS" : "FAIL";
     const safety = r.safety_critical ? " [SAFETY]" : "";
+    const tpl = r.expected_primary_template
+      ? `  template_expected=${r.expected_primary_template} observed=${r.observed_primary_template}`
+      : r.observed_primary_template
+        ? `  (primary=${r.observed_primary_template})`
+        : "";
     console.log(
-      `  ${r.name}${safety}: expected=${r.expected_phase} observed=${r.observed_phase} → ${tag}` +
-        (r.primary_template ? `  (primary=${r.primary_template})` : "")
+      `  ${r.name}${safety}: expected_phase=${r.expected_phase} observed=${r.observed_phase} → ${tag}${tpl}`
     );
     console.log(`    ${r.notes}`);
   }
   const ac5AllPass = out.ac5.every((r) => r.pass);
   const ac5SafetyPass = out.ac5.every((r) => !r.safety_critical || r.pass);
-  console.log(`  → AC5 all-fixtures: ${ac5AllPass ? "PASS" : "FAIL"}; safety subset: ${ac5SafetyPass ? "PASS" : "FAIL"}`);
+  console.log(`  → AC5 all-assertions: ${ac5AllPass ? "PASS" : "FAIL"}; safety subset: ${ac5SafetyPass ? "PASS" : "FAIL"}`);
+
+  console.log("\n--- AC5 SPOT-CHECK 1 (B6 condition-field presence) ---");
+  for (const r of out.ac5_spot_b6.results) {
+    console.log(
+      `  ${r.goal_id} ${r.phase}: any_condition_populated=${r.any_condition_populated}  sample=${JSON.stringify(r.sample_condition)}`
+    );
+  }
+  console.log(`  → B6: ${out.ac5_spot_b6.populated ? "OK" : "DROPPED — flag to MD"}`);
+  console.log(`  ${out.ac5_spot_b6.note}`);
+
+  console.log("\n--- AC5 SPOT-CHECK 2 (FLAG-5 retained-capacity gate) ---");
+  console.log(
+    `  VF-A1 (comeback + lifts) → ${out.ac5_spot_flag5.vf_a1_phase}; VF-A1-cold (comeback, no lifts) → ${out.ac5_spot_flag5.vf_a1_cold_phase}`
+  );
+  console.log(`  → FLAG-5: ${out.ac5_spot_flag5.pass ? "PASS" : "FAIL"}`);
+  console.log(`  ${out.ac5_spot_flag5.note}`);
 
   console.log("\nDone.");
 }

@@ -416,243 +416,306 @@
       "name": "VF-A5",
       "description": "Hybrid Athlete · C4 Hyrox · 5 days · no inactivity",
       "goal_id": "C4",
-      "goal_phase": "phase_1",
+      "goal_phase": null,
       "templates": [
         {
-          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "template_id": "full-body",
           "role": "primary",
-          "day_variant": "strength_day_1_hinge_emphasis"
+          "day_variant": "default"
         },
         {
-          "template_id": "hybrid-in-comeback-p1-foundation-3d",
-          "role": "primary",
-          "day_variant": "strength_day_2_squat_emphasis"
+          "template_id": "run",
+          "role": "secondary",
+          "day_variant": "zone_2_base"
         },
         {
-          "template_id": "hybrid-in-comeback-p1-foundation-3d",
-          "role": "primary",
-          "day_variant": "strength_day_3_upper_emphasis"
+          "template_id": "lower-posterior",
+          "role": "secondary",
+          "day_variant": "default"
         },
         {
-          "template_id": "hybrid-in-comeback-p1-foundation-3d",
-          "role": "primary",
-          "day_variant": "strength_day_1_hinge_emphasis"
+          "template_id": "upper-push-pull",
+          "role": "secondary",
+          "day_variant": "default"
         },
         {
-          "template_id": "hybrid-in-comeback-p1-foundation-3d",
+          "template_id": "full-body",
           "role": "primary",
-          "day_variant": "strength_day_1_hinge_emphasis"
+          "day_variant": "default"
         }
       ],
       "sessions": [
         {
           "day": 0,
-          "template": "hybrid-in-comeback-p1-foundation-3d",
-          "variant": "strength_day_1_hinge_emphasis",
+          "template": "full-body",
+          "variant": "default",
           "exercises": [
             {
-              "slot": "superset_a_compound",
-              "id": 25,
-              "name": "Cable Pull-Through",
-              "scheme": "3×8-10",
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
               "rpe": 7,
-              "load": null
+              "load": "85 kg"
             },
             {
-              "slot": "superset_a_accessory",
-              "id": 21,
-              "name": "Hip Thrust",
-              "scheme": "3×10-12",
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
               "rpe": 7,
-              "load": null
+              "load": "42.5 kg"
             },
             {
               "slot": "superset_b_unilateral",
-              "id": 30,
-              "name": "Step-Up",
-              "scheme": "3×8-10",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
               "rpe": 7,
               "load": null
             },
             {
-              "slot": "superset_b_core",
-              "id": 53,
-              "name": "Dead Bug",
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
               "scheme": "3×10",
               "rpe": 7,
-              "load": "%BW"
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
             }
           ]
         },
         {
           "day": 1,
-          "template": "hybrid-in-comeback-p1-foundation-3d",
-          "variant": "strength_day_2_squat_emphasis",
+          "template": "run",
+          "variant": "zone_2_base",
+          "exercises": []
+        },
+        {
+          "day": 2,
+          "template": "lower-posterior",
+          "variant": "default",
           "exercises": [
             {
               "slot": "superset_a_compound",
-              "id": 31,
-              "name": "Goblet Squat",
-              "scheme": "3×8-10",
+              "id": 5,
+              "name": "Conventional Deadlift",
+              "scheme": "4×8",
               "rpe": 7,
-              "load": "85 kg"
+              "load": "105 kg"
             },
             {
               "slot": "superset_a_accessory",
               "id": 21,
               "name": "Hip Thrust",
-              "scheme": "3×10-12",
+              "scheme": "4×10",
               "rpe": 7,
               "load": null
             },
             {
               "slot": "superset_b_unilateral",
-              "id": 36,
-              "name": "Push-Up",
-              "scheme": "3×8-10",
-              "rpe": 7,
-              "load": "%BW"
-            },
-            {
-              "slot": "superset_b_core",
-              "id": 53,
-              "name": "Dead Bug",
-              "scheme": "3×10",
-              "rpe": 7,
-              "load": "%BW"
-            }
-          ]
-        },
-        {
-          "day": 2,
-          "template": "hybrid-in-comeback-p1-foundation-3d",
-          "variant": "strength_day_3_upper_emphasis",
-          "exercises": [
-            {
-              "slot": "superset_a_compound",
-              "id": 38,
-              "name": "Inverted Row",
-              "scheme": "3×8-10",
-              "rpe": 7,
-              "load": "55 kg"
-            },
-            {
-              "slot": "superset_a_accessory",
-              "id": 36,
-              "name": "Push-Up",
-              "scheme": "3×10-12",
-              "rpe": 7,
-              "load": "%BW"
-            },
-            {
-              "slot": "superset_b_unilateral",
-              "id": 30,
-              "name": "Step-Up",
-              "scheme": "3×8-10",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
               "rpe": 7,
               "load": null
             },
             {
               "slot": "superset_b_core",
-              "id": 53,
-              "name": "Dead Bug",
-              "scheme": "3×10",
+              "id": 48,
+              "name": "Plank",
+              "scheme": "3×45s",
               "rpe": 7,
               "load": "%BW"
+            },
+            {
+              "slot": "superset_c_hamstring",
+              "id": 26,
+              "name": "Glute Bridge",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_core",
+              "id": 52,
+              "name": "Ab Roll-Out",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
             }
           ]
         },
         {
           "day": 3,
-          "template": "hybrid-in-comeback-p1-foundation-3d",
-          "variant": "strength_day_1_hinge_emphasis",
+          "template": "upper-push-pull",
+          "variant": "default",
           "exercises": [
             {
-              "slot": "superset_a_compound",
-              "id": 25,
-              "name": "Cable Pull-Through",
-              "scheme": "3×8-10",
-              "rpe": 7,
-              "load": null
+              "slot": "superset_a_press",
+              "id": 9,
+              "name": "Bench Press",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "62.5 kg"
             },
             {
-              "slot": "superset_a_accessory",
-              "id": 21,
-              "name": "Hip Thrust",
-              "scheme": "3×10-12",
-              "rpe": 7,
-              "load": null
+              "slot": "superset_a_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
+              "scheme": "4×10",
+              "rpe": 7.5,
+              "load": "55 kg"
             },
             {
-              "slot": "superset_b_unilateral",
-              "id": 30,
-              "name": "Step-Up",
-              "scheme": "3×8-10",
-              "rpe": 7,
-              "load": null
-            },
-            {
-              "slot": "superset_b_core",
-              "id": 53,
-              "name": "Dead Bug",
+              "slot": "superset_b_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
               "scheme": "3×10",
               "rpe": 7,
-              "load": "%BW"
+              "load": null
+            },
+            {
+              "slot": "superset_b_shoulder",
+              "id": 40,
+              "name": "Lateral Raise",
+              "scheme": "3×15",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_biceps",
+              "id": 42,
+              "name": "Barbell Curl",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_triceps",
+              "id": 45,
+              "name": "Tricep Pushdown",
+              "scheme": "3×12",
+              "rpe": 7,
+              "load": null
             }
           ]
         },
         {
           "day": 4,
-          "template": "hybrid-in-comeback-p1-foundation-3d",
-          "variant": "strength_day_1_hinge_emphasis",
+          "template": "full-body",
+          "variant": "default",
           "exercises": [
             {
-              "slot": "superset_a_compound",
-              "id": 25,
-              "name": "Cable Pull-Through",
-              "scheme": "3×8-10",
+              "slot": "superset_a_compound_lower",
+              "id": 1,
+              "name": "Back Squat",
+              "scheme": "4×6",
               "rpe": 7,
-              "load": null
+              "load": "85 kg"
             },
             {
-              "slot": "superset_a_accessory",
-              "id": 21,
-              "name": "Hip Thrust",
-              "scheme": "3×10-12",
+              "slot": "superset_a_compound_push",
+              "id": 12,
+              "name": "Overhead Press (Standing Barbell)",
+              "scheme": "4×6",
               "rpe": 7,
-              "load": null
+              "load": "42.5 kg"
             },
             {
               "slot": "superset_b_unilateral",
-              "id": 30,
-              "name": "Step-Up",
-              "scheme": "3×8-10",
+              "id": 27,
+              "name": "Bulgarian Split Squat",
+              "scheme": "3×10/side",
               "rpe": 7,
               "load": null
             },
             {
-              "slot": "superset_b_core",
-              "id": 53,
-              "name": "Dead Bug",
+              "slot": "superset_b_pull",
+              "id": 14,
+              "name": "Barbell Row (Bent-Over Row)",
               "scheme": "3×10",
               "rpe": 7,
-              "load": "%BW"
+              "load": "55 kg"
+            },
+            {
+              "slot": "superset_c_posterior",
+              "id": 21,
+              "name": "Hip Thrust",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
+            },
+            {
+              "slot": "superset_c_vertical_pull",
+              "id": 18,
+              "name": "Chin-up",
+              "scheme": "3×10",
+              "rpe": 7,
+              "load": null
             }
           ]
         }
       ],
-      "substitutions": [],
-      "alerts": [
+      "substitutions": [
         {
-          "severity": "info",
-          "message": "template hybrid-in-comeback-p2-loaded-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
         },
         {
-          "severity": "info",
-          "message": "template hybrid-in-comeback-p3-capacity-4d dropped: not encoded in TEMPLATE_SPECS (alpha scope)"
+          "slot": "superset_c_hamstring",
+          "from_exercise_id": 32,
+          "to_exercise_id": 26,
+          "failure_type": "difficulty",
+          "reason": "difficulty: exercise floor=advanced > user ceil=intermediate",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_b_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
+        },
+        {
+          "slot": "superset_c_vertical_pull",
+          "from_exercise_id": 17,
+          "to_exercise_id": 18,
+          "failure_type": "skill_gate",
+          "reason": "skill_gate: bodyweight pull-up capacity >= 1 (default unmet)",
+          "fallback_path": [
+            "l1_slot_pool_walk_in_order"
+          ]
         }
       ],
-      "hash": "7bec68c42049a515"
+      "alerts": [],
+      "hash": "0c708b8e4799bcc0"
     },
     {
       "name": "VF-A1-cold",
@@ -1450,8 +1513,8 @@
       "identical": true
     },
     "VF-A5": {
-      "hash_run_1": "7bec68c42049a515",
-      "hash_run_2": "7bec68c42049a515",
+      "hash_run_1": "0c708b8e4799bcc0",
+      "hash_run_2": "0c708b8e4799bcc0",
       "identical": true
     },
     "VF-A1-cold": {
@@ -1487,9 +1550,10 @@
       "notes": "Rule 3 — comeback-arc A1, comeback persona, no retained capacity → Phase 1.",
       "expected_phase": "phase_1",
       "observed_phase": "phase_1",
+      "expected_primary_template": null,
+      "observed_primary_template": "reactivator-p1-foundation-2d",
       "pass": true,
-      "safety_critical": false,
-      "primary_template": "reactivator-p1-foundation-2d"
+      "safety_critical": false
     },
     {
       "name": "VF-A1-noncomeback",
@@ -1497,9 +1561,10 @@
       "notes": "Rule 1 default — non-comeback on a comeback-arc goal falls through to Phase 1.",
       "expected_phase": "phase_1",
       "observed_phase": "phase_1",
+      "expected_primary_template": null,
+      "observed_primary_template": "reactivator-p1-foundation-2d",
       "pass": true,
-      "safety_critical": false,
-      "primary_template": "reactivator-p1-foundation-2d"
+      "safety_critical": false
     },
     {
       "name": "VF-A2-noncomeback",
@@ -1507,9 +1572,10 @@
       "notes": "Rule 4 — A2 non-comeback ONLY: trained-user templates via latest-ordinal-with-coverage. SOLE legitimate skip-to-latest.",
       "expected_phase": "phase_3",
       "observed_phase": "phase_3",
+      "expected_primary_template": null,
+      "observed_primary_template": "lower-posterior",
       "pass": true,
-      "safety_critical": false,
-      "primary_template": "lower-posterior"
+      "safety_critical": false
     },
     {
       "name": "VF-E1-entry",
@@ -1517,9 +1583,10 @@
       "notes": "Rule 2 — clinical-progression goal hard-locked to Phase 1 regardless of training status. SAFETY: must NEVER auto-advance past medical clearance.",
       "expected_phase": "phase_1",
       "observed_phase": "phase_1",
+      "expected_primary_template": null,
+      "observed_primary_template": "mobility",
       "pass": true,
-      "safety_critical": true,
-      "primary_template": "mobility"
+      "safety_critical": true
     },
     {
       "name": "VF-F4-entry",
@@ -1527,9 +1594,67 @@
       "notes": "Rule 2 — clinical-progression goal hard-locked to Phase 1. SAFETY: bypassing clearance + diastasis/doming gates is unacceptable.",
       "expected_phase": "phase_1",
       "observed_phase": "phase_1",
+      "expected_primary_template": null,
+      "observed_primary_template": "mobility",
       "pass": true,
-      "safety_critical": true,
-      "primary_template": "mobility"
+      "safety_critical": true
+    },
+    {
+      "name": "VF-A5",
+      "description": "Hybrid Athlete · C4 Hyrox · 5 days · no inactivity",
+      "notes": "§11 — non-comeback C4 → goal_phase=null (parallel non-phased branch). Delivered program = trained mixed week.",
+      "expected_phase": null,
+      "observed_phase": null,
+      "expected_primary_template": "full-body",
+      "observed_primary_template": "full-body",
+      "pass": true,
+      "safety_critical": false
     }
-  ]
+  ],
+  "ac5_spot_b6": {
+    "populated": false,
+    "results": [
+      {
+        "goal_id": "A1",
+        "phase": "phase_1",
+        "any_condition_populated": false,
+        "sample_condition": null
+      },
+      {
+        "goal_id": "A2",
+        "phase": "phase_3",
+        "any_condition_populated": false,
+        "sample_condition": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "goal_id": "C4",
+        "phase": "phase_2",
+        "any_condition_populated": false,
+        "sample_condition": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ],
+    "note": "B6 DROPPED — every checked phase block has empty `condition` fields. The KB prose carries the qualifier ('For non-comeback A1 users... Full Body 2-day OR 3-day') but the transform did not capture it per the EligibleTemplateOption.condition schema. The engine-side condition-first selection rule (§11 FLAG 2) is wired but data-starved; without a B6 transform fix VF-A1-noncomeback continues to resolve to reactivator-p1-foundation-2d (option 1 by L5 order). Flagged to MD."
+  },
+  "ac5_spot_flag5": {
+    "pass": true,
+    "vf_a1_phase": "phase_2",
+    "vf_a1_cold_phase": "phase_1",
+    "note": "FLAG-5 OK — comeback Phase-2 bump is gated on retained-capacity, not persona alone. Same goal A1, same comeback persona; different retained-capacity → different phase."
+  }
 }
