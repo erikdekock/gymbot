@@ -18,6 +18,8 @@ import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
+import { transformLayer8, Layer8Records } from "./kb-transforms/transform-l8.mjs";
+import { transformLayer5, Layer5Records } from "./kb-transforms/transform-l5.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..");
@@ -475,20 +477,26 @@ async function extractLayer4(layer) {
 }
 
 // ---------- Layer 5 ----------
-const Layer5Schema = z.object({
-  layer: z.literal(5),
-  title: z.string().min(1),
-  source_page_id: z.string().min(1),
-  content_hash: z.string().length(64),
-  sections: StructuredSectionsSchema,
-});
+// Engine-ready: Foundation + per-goal CouplingEntry per
+// [Spec] Layer-5 + Layer-8 Record Schemas v1.0 §2. Structural extraction runs
+// first (sections/entries with content_markdown), then transformLayer5 turns
+// each prose block into typed records (B6/B7/B8).
+const Layer5Schema = Layer5Records;
 async function extractLayer5(layer) {
   const parseCode = (h) => {
     const m = h.match(GOAL_CODE_RE);
     return m ? m[1] : null;
   };
   const sections = await buildStructuredSections(layer, parseCode);
-  return { ...makeMeta(5, layer.title), sections };
+  const structural = { sections };
+  const { foundation, coupling_entries, warnings } = transformLayer5(structural);
+  for (const w of warnings) console.log(`[build-kb] L5 transform warning: ${w}`);
+  return {
+    ...makeMeta(5, layer.title),
+    version: "1.0",
+    foundation,
+    coupling_entries,
+  };
 }
 
 // ---------- Layer 6 ----------
@@ -533,28 +541,10 @@ const STRANDED_GOAL_RE = /^([A-G]\d+)\b/;
 // skipped (not extracted into either layer). Anything matching the
 // STRANDED_GOAL_RE that ISN'T in this set is drift and fails the build.
 const KNOWN_STRANDED_L8_CODES = new Set(["F7", "G1", "G2", "G3", "G4", "G5"]);
-const Layer8Schema = z.object({
-  layer: z.literal(8),
-  title: z.string().min(1),
-  source_page_id: z.string().min(1),
-  content_hash: z.string().length(64),
-  sections: z
-    .array(
-      z.object({
-        heading: z.string().min(1),
-        level: z.literal(2),
-        content_markdown: z.string(),
-        entries: z.array(
-          z.object({
-            key: z.string().regex(/^\d+$/),
-            heading: z.string().min(1),
-            content_markdown: z.string().min(1),
-          })
-        ),
-      })
-    )
-    .min(1),
-});
+// Engine-ready: ExerciseRecord[] per [Spec] §1. Structural extraction (cluster
+// sections → numbered entries) runs first, then transformLayer8 turns each
+// 15-field markdown block into typed records (B1–B4 + minor cleanups).
+const Layer8Schema = Layer8Records;
 async function extractLayer8(layer) {
   const sections = await groupSections(layer.contentBlocks);
   const skippedKnown = [];
@@ -601,7 +591,13 @@ async function extractLayer8(layer) {
         `Either add to KNOWN_STRANDED_L8_CODES (with sign-off) or fix the Kennisbank.`
     );
   }
-  return { ...makeMeta(8, layer.title), sections: out };
+  const structural = { sections: out };
+  const { exercises } = transformLayer8(structural);
+  return {
+    ...makeMeta(8, layer.title),
+    version: "1.0",
+    exercises,
+  };
 }
 
 // ---------- main ----------
@@ -621,10 +617,18 @@ const EXTRACTORS = {
 function withContentHash(data) {
   // Hash the JSON without content_hash itself, then re-emit with the hash
   // inserted right after source_page_id for stable, diff-friendly key order.
-  const { layer, title, source_page_id, ...rest } = data;
-  const forHash = { layer, title, source_page_id, ...rest };
+  // `version` (when present, L5/L8) follows content_hash.
+  const { layer, title, source_page_id, version, ...rest } = data;
+  const forHash = { layer, title, source_page_id, ...(version ? { version } : {}), ...rest };
   const hash = createHash("sha256").update(JSON.stringify(forHash)).digest("hex");
-  return { layer, title, source_page_id, content_hash: hash, ...rest };
+  return {
+    layer,
+    title,
+    source_page_id,
+    content_hash: hash,
+    ...(version ? { version } : {}),
+    ...rest,
+  };
 }
 
 async function main() {
@@ -675,6 +679,10 @@ async function main() {
 }
 
 function summariseLayer(num, data) {
+  if (data.exercises) return `${data.exercises.length} exercises`;
+  if (data.coupling_entries) {
+    return `Foundation + ${data.coupling_entries.length} coupling entries`;
+  }
   if (data.sections) {
     const total = data.sections.length;
     const entries = data.sections.reduce((a, s) => a + (s.entries?.length ?? 0), 0);
