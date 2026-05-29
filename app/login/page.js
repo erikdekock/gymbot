@@ -18,15 +18,19 @@ export default function Login() {
     if (!isValidEmail) { setError('That does not look like a valid email.'); return }
     setLoading(true)
     setError('')
+    // No emailRedirectTo: OTP code mode (template-driven). shouldCreateUser:true
+    // so sign-in and signup converge on the one code path.
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { shouldCreateUser: true },
     })
     if (err) {
-      setError('We could not send the link. Try again.')
+      setError('We could not send the code. Try again.')
       setLoading(false)
     } else {
-      router.push(`/check-email?email=${encodeURIComponent(email)}`)
+      sessionStorage.setItem('reprise.otp.email', email)
+      sessionStorage.setItem('reprise.otp.sent_at', String(Date.now()))
+      router.push('/check-email')
     }
   }
 
@@ -36,9 +40,9 @@ export default function Login() {
         <div className="rep-screen__top">
           <Wordmark size="primary" />
           <div style={{ marginTop: 48 }}>
-            <h1 className="rep-heading">Welcome back.</h1>
+            <h1 className="rep-heading">Pick the work back up.</h1>
             <p className="rep-helper">
-              Enter your email and we&apos;ll send you a link.
+              We&apos;ll email you a 6-digit code.
             </p>
           </div>
         </div>
@@ -63,7 +67,7 @@ export default function Login() {
             disabled={!isValidEmail || loading}
             onClick={handleSubmit}
           >
-            {loading ? 'Sending…' : 'Send me a link'}
+            {loading ? 'Sending…' : 'Send me a code'}
           </button>
           <button className="rep-btn tertiary" onClick={() => router.back()}>
             Back

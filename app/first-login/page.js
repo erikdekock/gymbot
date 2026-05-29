@@ -16,8 +16,8 @@ export default function FirstLogin() {
           </div>
         </div>
         <div className="rep-screen__bottom">
-          <button className="rep-btn rep-btn--primary" onClick={() => router.push('/')}>
-            Get started
+          <button className="rep-btn rep-btn--primary" onClick={() => router.push('/onboarding/welcome')}>
+            Begin
           </button>
         </div>
       </div>

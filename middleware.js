@@ -5,9 +5,7 @@ const PUBLIC_PATHS = [
   '/welcome',
   '/login',
   '/check-email',
-  '/link-expired',
   '/first-login',
-  '/auth',
 ]
 
 export async function middleware(request) {

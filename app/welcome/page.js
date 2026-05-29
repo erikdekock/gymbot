@@ -26,27 +26,31 @@ export default function Welcome() {
     setError('')
 
     try {
+      // No emailRedirectTo: OTP doesn't use redirects. The code-vs-link switch
+      // is driven by the Supabase email template ({{ .Token }}), set in the
+      // dashboard. shouldCreateUser:true so signup + sign-in converge.
       const { error: err } = await supabase.auth.signInWithOtp({
         email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        options: { shouldCreateUser: true },
       })
 
       if (err) {
         if (err.name === 'AuthRetryableFetchError') {
-          setError('No connection right now. Check your network — we\'ll send the link when you\'re back online.')
+          setError('No connection right now. Check your network — we\'ll send the code when you\'re back online.')
         } else if (err.status === 429 || err.code === 'over_email_send_rate_limit') {
           setError('Too many sign-in attempts in a row. Wait a few minutes before trying again.')
         } else {
-          setError('Something failed on our end and the link wasn\'t sent. Try again in a few minutes. If it keeps failing, email us at hello@reprise.coach.')
+          setError('Something failed on our end and the code wasn\'t sent. Try again in a few minutes. If it keeps failing, email us at hello@reprise.coach.')
         }
         setLoading(false)
       } else {
-        router.push(`/check-email?email=${encodeURIComponent(email)}`)
+        // Hand the email to /check-email via session state (kept out of the URL).
+        sessionStorage.setItem('reprise.otp.email', email)
+        sessionStorage.setItem('reprise.otp.sent_at', String(Date.now()))
+        router.push('/check-email')
       }
     } catch (e) {
-      setError('No connection right now. Check your network — we\'ll send the link when you\'re back online.')
+      setError('No connection right now. Check your network — we\'ll send the code when you\'re back online.')
       setLoading(false)
     }
   }
@@ -97,8 +101,10 @@ export default function Welcome() {
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            {loading ? 'Sending…' : 'Send me the link'}
+            {loading ? 'Sending…' : 'Send me a code'}
           </button>
+
+          <p className="rep-helper" style={{ margin: 0 }}>We&apos;ll email you a 6-digit code.</p>
 
           <button className="rep-btn tertiary" onClick={() => router.push('/login')}>
             I already have an account
