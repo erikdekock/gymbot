@@ -1030,3 +1030,94 @@ body {
   color: var(--graphite-10);
   text-decoration-color: var(--graphite-30);
 }
+
+/* ============================================================
+   v1.1.2 extension — OTP code input (.rep-otp)
+   Locked per UX/UI OTP Surface Spec (Phase 1) §04 + §05. The 6-digit
+   code field for /check-email. Six visual cells render OVER a single
+   underlying <input> (see app/check-email/OtpInput.js); these classes
+   style only the visual cells + caret.
+
+   Single-sage-moment rule: sage appears ONLY on the active cell
+   (border + focus ring §7.4 + blinking caret). No sage on this
+   surface's buttons. Error border uses the real --error token (NOT the
+   #8F392B illustrative hex from the spec mockup).
+   ============================================================ */
+.rep-otp {
+  display: flex;
+  gap: 9px;
+  justify-content: space-between;
+  width: 100%;
+}
+.rep-otp-cell {
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 1 / 1.18;
+  background: var(--paper-90);
+  border: 1.5px solid var(--paper-70);
+  border-radius: var(--rep-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--rep-font-mono);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--graphite-10);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+/* Active cell — the surface's single sage moment (§7.4 focus ring). */
+.rep-otp-cell.is-focused {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 2px rgba(61, 107, 92, 0.45);
+}
+/* Filled — digit colour signals fill; border stays paper-70. */
+.rep-otp-cell.is-filled {
+  color: var(--graphite-10);
+}
+/* Blinking sage caret inside the active cell. */
+.rep-otp-caret {
+  width: 2px;
+  height: 30px;
+  background: var(--sage);
+  animation: rep-otp-blink 1s steps(1) infinite;
+}
+@keyframes rep-otp-blink {
+  50% { opacity: 0; }
+}
+/* Error — all six borders recolour to --error (wrong + expired). */
+.rep-otp.is-error .rep-otp-cell {
+  border-color: var(--error);
+}
+/* Verifying — cells lock at 50% opacity while verifyOtp is in flight. */
+.rep-otp.is-verifying .rep-otp-cell {
+  opacity: 0.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rep-otp-caret { animation: none; }
+}
+
+/* Field wrapper — the single real <input> sits transparently over the
+   cells so taps focus it, iOS shows the numeric pad, and one-time-code
+   autofill / paste fill all six at once. font-size:16px on the input
+   prevents iOS auto-zoom on focus. */
+.rep-otp-field {
+  position: relative;
+}
+.rep-otp-field__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  outline: none;
+  cursor: text;
+  -webkit-appearance: none;
+}
+.rep-otp-field__input::selection { background: transparent; }
