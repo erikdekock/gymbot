@@ -7,33 +7,40 @@
  *
  * Spec source: [Spec] Prelude Conversation Flow §3 input-completion map.
  *
- * Returns the archetype slug or null when no signal is strong enough yet.
+ * Returns the canonical short archetype code (A1..A8, plus F7 — see TODO
+ * below) or null when no signal is strong enough yet. The engine input
+ * contract (lib/engine/schema.mjs ARCHETYPES) and KB Layer-6 both key off the
+ * short code, so this must emit short codes — never verbose slugs.
  *
  * @param {import('./initial-state').OnboardingState} s
  * @returns {string|null}
  */
 export function deriveArchetype(s) {
   // Finalising signals (Screen 6) take precedence
-  if (s.archetype_flags.postpartum_months != null) return 'A6_postpartum'
-  if (s.archetype_flags.age != null && s.archetype_flags.age >= 60) return 'A8_senior'
-  if (s.archetype_flags.age != null && s.archetype_flags.age < 18) return 'F7_youth'
+  if (s.archetype_flags.postpartum_months != null) return 'A6'
+  if (s.archetype_flags.age != null && s.archetype_flags.age >= 60) return 'A8'
+  // TODO: F7 in ARCHETYPES enum pending PD contract-coverage ruling (ticket
+  // 3714fef0d1ea817f974ee9f32ed9123d). Emitting the short code 'F7' is
+  // contract-correct; until PD adds F7 to lib/engine/schema.mjs ARCHETYPES,
+  // an under-18 signup throws a clean ContractError on F7 (bounded, traceable).
+  if (s.archetype_flags.age != null && s.archetype_flags.age < 18) return 'F7'
 
   // Mid-conversation signals
   if (
     s.experience_level === 'reactivator' &&
     (s.archetype_flags.recent_inactivity_months ?? 0) > 6
   ) {
-    return 'A1_reactivator'
+    return 'A1'
   }
-  if (s.experience_level === 'starter') return 'A3_starter'
+  if (s.experience_level === 'starter') return 'A3'
   if (
     (s.experience_level === 'active' || s.experience_level === 'experienced') &&
     s.training_history_cross_modal === true
   ) {
-    return 'A5_hybrid'
+    return 'A5'
   }
   if (s.experience_level === 'active' || s.experience_level === 'experienced') {
-    return 'A2_returning_athlete'
+    return 'A2'
   }
   return null
 }
