@@ -9,6 +9,7 @@
     "build-kb": "node scripts/build-kb.mjs",
     "engine:evidence": "node scripts/12-3a-evidence.mjs",
     "api:evidence": "node scripts/12-3b-evidence.mjs",
+    "archetype:evidence": "node scripts/archetype-contract-evidence.mjs",
     "vercel-build": "npm run build-kb && next build"
   },
   "dependencies": {
