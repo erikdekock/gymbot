@@ -231,6 +231,132 @@ const DOCTRINE_FIXTURES = {
   },
 };
 
+/**
+ * Pattern R fixture-gap close — ticket 3724fef0d1ea81d6a0a9fb0b046c6ee4.
+ *
+ * These fixtures encode the EXACT failure mode Erik hit on his first real
+ * Prelude completion: a profile carrying a knee contraindication routed to a
+ * template whose lower-body slot pool is composed entirely of `family:"squat"`
+ * exercises. `CONTRA_MAP.knee` biases the whole squat (and lunge) family, so
+ * every primary candidate fails the contraindication filter; the §9
+ * contra-failure fallback then re-walks the same all-squat slot pool plus the
+ * failed exercise's substitution_alternatives (similarity-biased → also
+ * squats), so nothing survives and `resolveSlot` throws "... unresolvable".
+ *
+ * BASELINE FAIL on these fixtures is CORRECT until the DS-01 §9 ruling lands.
+ * They are intentionally expected to throw today; once Program Designer rules
+ * on the slot-architecture doctrine (substitute-cross-family / drop-slot /
+ * slot-redefinition / doctrine-routing) and that ruling is implemented in the
+ * engine, each fixture flips from `expects_throw:true` (assertion: it threw at
+ * the named squat-pattern slot) to a normal pass.
+ *
+ * These fixtures are deliberately NOT added to ALL_FIXTURES: the AC2/AC4/AC5
+ * machinery calls buildFirstWeekProgram outside try/catch (AC4 determinism),
+ * so an expected-throw fixture there would crash the whole runner and regress
+ * the existing 8. They are exercised only by the dedicated Pattern-R section
+ * below, which expects and asserts the throw.
+ */
+const PATTERN_R_KNEE_FIXTURES = {
+  "VF-A2-noncomeback-knee": {
+    description:
+      "Returning Athlete persona · A2 Build muscle · trained, no layoff · knee contra — ERIK'S EXACT PROFILE",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    expects_throw: true,
+    expected_throw_slot: "superset_a_squat",
+    notes:
+      "Clone of VF-A2-noncomeback + contraindications:['knee']. Rule 4 → phase_3 " +
+      "trained-user templates; primary lower-posterior resolves via hinge defaults, " +
+      "secondary lower-anterior throws on superset_a_squat (candidates [1,2,4,31,3] " +
+      "all family=squat; fallback sub_alt #27 BSS also family=squat). BASELINE FAIL " +
+      "until DS-01 §9 ruling lands.",
+    prelude: {
+      experience_level: "experienced",
+      archetype_flags: {
+        recent_inactivity_months: 0,
+        age: 30,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 4,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 82,
+      reported_lifts: { squat: 130, deadlift: 160, bench: 100, ohp: 65, row: 85 },
+      contraindications: ["knee"],
+      goal_id: "A2",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A2",
+    },
+  },
+  "VF-A2-comeback-knee": {
+    description:
+      "Returning Athlete · A2 Build muscle · comeback persona (8mo layoff) · knee contra",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    expects_throw: true,
+    expected_throw_slot: "superset_b_unilateral",
+    notes:
+      "Same archetype, comeback_persona=true (inactivity 8mo). Rule 1 default → " +
+      "phase_1 → returning-athlete-p1-reentry-3d. day_1_hinge_emphasis throws on " +
+      "superset_b_unilateral (candidates [27,29,30] all family=squat) before the " +
+      "day_2 squat compound is even reached. BASELINE FAIL until DS-01 §9 ruling.",
+    prelude: {
+      experience_level: "active",
+      archetype_flags: {
+        recent_inactivity_months: 8,
+        age: 34,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 4,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 85,
+      reported_lifts: { squat: 120, deadlift: 150, bench: 90, ohp: 60, row: 80 },
+      contraindications: ["knee"],
+      goal_id: "A2",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A2",
+    },
+  },
+  "VF-A1-knee": {
+    description:
+      "Reactivator · A1 Get lean · cold (starter, no reported lifts) · 24mo layoff · knee contra",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    expects_throw: true,
+    expected_throw_slot: "block_a_squat",
+    notes:
+      "Clone of VF-A1-cold + contraindications:['knee']. Rule 3 → phase_1 → " +
+      "reactivator-p1-foundation-2d. block_a_hinge resolves (hinge, knee-safe); " +
+      "block_a_squat (candidates [31] Goblet Squat, family=squat) throws — this is " +
+      "the literal slot id from the original ticket. Reproduces the exact " +
+      "single-candidate squat pool. BASELINE FAIL until DS-01 §9 ruling.",
+    prelude: {
+      experience_level: "starter",
+      archetype_flags: {
+        recent_inactivity_months: 24,
+        age: 42,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 2,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 80,
+      reported_lifts: { squat: null, deadlift: null, bench: null, ohp: null, row: null },
+      contraindications: ["knee"],
+      goal_id: "A1",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A1",
+    },
+  },
+};
+
 const MALFORMED = {
   description: "Deliberately malformed: days_per_week=0, missing reported_lifts.squat key",
   prelude: {
@@ -532,6 +658,46 @@ function main() {
       : "FLAG-5 FAIL — the comeback Phase-2 bump did not differentiate retained-capacity from cold.",
   };
 
+  // AC7 (Pattern R fixture-gap, ticket 3724fef0…): knee contra × squat-pattern
+  // slot. Each fixture is EXPECTED to throw at a named squat-pattern slot
+  // today (BASELINE FAIL is correct until the DS-01 §9 ruling lands). The
+  // assertion here is inverted relative to the other ACs: `pass` means the
+  // engine threw "... unresolvable" at the expected squat slot. These are run
+  // in their own try/catch and are NOT part of ALL_FIXTURES, so they cannot
+  // crash AC2/AC4/AC5 or regress the existing 8 fixtures.
+  out.ac7_pattern_r_knee = [];
+  for (const [name, fx] of Object.entries(PATTERN_R_KNEE_FIXTURES)) {
+    let threw = false;
+    let message = null;
+    let observedSlot = null;
+    try {
+      const input = convertPreludeToEngineInput(fx.prelude);
+      buildFirstWeekProgram(input);
+    } catch (e) {
+      threw = true;
+      message = e.message;
+      const m = /slot (\S+) unresolvable/.exec(e.message || "");
+      observedSlot = m ? m[1] : null;
+    }
+    const slotOk = observedSlot === fx.expected_throw_slot;
+    // "pass" = behaved as expected for this pre-fix baseline: it threw, at the
+    // squat-pattern slot we predicted, with the squat-contra unresolvable shape.
+    const pass = fx.expects_throw ? threw && slotOk : !threw;
+    out.ac7_pattern_r_knee.push({
+      name,
+      description: fx.description,
+      ticket: fx.ticket,
+      notes: fx.notes,
+      expects_throw: fx.expects_throw,
+      expected_throw_slot: fx.expected_throw_slot,
+      observed_threw: threw,
+      observed_throw_slot: observedSlot,
+      error_message: message,
+      baseline_fail_is_expected: true,
+      pass,
+    });
+  }
+
   if (wantJson) {
     process.stdout.write(JSON.stringify(out, null, 2));
     return;
@@ -640,6 +806,25 @@ function main() {
   );
   console.log(`  → FLAG-5: ${out.ac5_spot_flag5.pass ? "PASS" : "FAIL"}`);
   console.log(`  ${out.ac5_spot_flag5.note}`);
+
+  console.log("\n--- AC7 (Pattern R fixture-gap, ticket 3724fef0…): knee contra × squat slot ---");
+  console.log("    BASELINE FAIL is correct until the DS-01 §9 ruling lands. `pass` below");
+  console.log("    means the engine threw at the predicted squat-pattern slot, as expected.");
+  for (const r of out.ac7_pattern_r_knee) {
+    const tag = r.pass ? "PASS (threw as expected)" : "UNEXPECTED";
+    console.log(`\n  [${r.name}] ${r.description}`);
+    console.log(
+      `    expects_throw=${r.expects_throw} expected_slot=${r.expected_throw_slot} → observed_threw=${r.observed_threw} observed_slot=${r.observed_throw_slot} → ${tag}`
+    );
+    if (r.error_message) console.log(`    error: ${r.error_message}`);
+    console.log(`    ${r.notes}`);
+  }
+  const ac7AllExpected = out.ac7_pattern_r_knee.every((r) => r.pass);
+  console.log(
+    `\n  → AC7: ${ac7AllExpected ? "ALL FIXTURES THREW AS EXPECTED" : "DRIFT — a Pattern-R fixture did not behave as predicted"} ` +
+      `(${out.ac7_pattern_r_knee.filter((r) => r.pass).length}/${out.ac7_pattern_r_knee.length}). ` +
+      "These flip to normal pass once DS-01 §9 doctrine fix lands."
+  );
 
   console.log("\nDone.");
 }
