@@ -12,7 +12,7 @@
 import { createHash } from "node:crypto";
 import { convertPreludeToEngineInput } from "../lib/prelude/converter.mjs";
 import { buildFirstWeekProgram } from "../lib/engine/index.mjs";
-import { getCouplingEntry } from "../lib/engine/kb-loader.mjs";
+import { getCouplingEntry, getExercise, getLadderForSlotRole } from "../lib/engine/kb-loader.mjs";
 
 const FIXTURES = {
   "VF-A1": {
@@ -227,6 +227,117 @@ const DOCTRINE_FIXTURES = {
       provisional_goal_source: null,
       user_words_goal: null,
       detected_archetype: null,
+    },
+  },
+};
+
+/**
+ * Pattern R knee-contra fixtures — ticket 3724fef0d1ea81d6a0a9fb0b046c6ee4.
+ *
+ * These encode the EXACT failure mode Erik hit: a profile carrying a knee
+ * contraindication routed to a template whose lower-body slot pool is composed
+ * entirely of `family:"squat"` exercises. CONTRA_MAP.knee biases the whole
+ * squat (and lunge) family, so every primary candidate fails the contra
+ * filter, and Tiers 1–2 (slot_pool + sub_alt) re-fail too (sub_alts are
+ * similarity-biased → also squats).
+ *
+ * They were introduced in PR #17 as BASELINE-FAIL fixtures (asserted to throw)
+ * pending PD's DS-01 §3.5 ruling. With the Tier-3 cross-family ladder walk now
+ * implemented (this PR / scope item (i)), they FLIP TO PASS: each resolves the
+ * squat-pattern slot cross-family via the slot_role ladder, logs the swap in
+ * applied_substitutions, and drops no slot. This AC7 supersedes PR #17's
+ * inverted (expects_throw) assertion — when the two PRs merge together, take
+ * this post-fix version.
+ *
+ * They are deliberately NOT in ALL_FIXTURES (kept out of AC2/AC4/AC5 wiring);
+ * AC7 exercises them in its own block.
+ */
+const PATTERN_R_KNEE_FIXTURES = {
+  "VF-A2-noncomeback-knee": {
+    description:
+      "Returning Athlete persona · A2 Build muscle · trained, no layoff · knee contra — ERIK'S EXACT PROFILE",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    // Post-§3.5 expectation: the lower-anterior squat compound resolves
+    // cross-family via the "Compound squat" ladder to a knee-safe hinge.
+    expects_resolution: true,
+    tier3_slot_role: "Compound squat",
+    knee_safe_compound_slot: "superset_a_squat",
+    prelude: {
+      experience_level: "experienced",
+      archetype_flags: {
+        recent_inactivity_months: 0,
+        age: 30,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 4,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 82,
+      reported_lifts: { squat: 130, deadlift: 160, bench: 100, ohp: 65, row: 85 },
+      contraindications: ["knee"],
+      goal_id: "A2",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A2",
+    },
+  },
+  "VF-A2-comeback-knee": {
+    description:
+      "Returning Athlete · A2 Build muscle · comeback persona (8mo layoff) · knee contra",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    expects_resolution: true,
+    tier3_slot_role: "Unilateral lower",
+    knee_safe_compound_slot: "superset_a_compound",
+    prelude: {
+      experience_level: "active",
+      archetype_flags: {
+        recent_inactivity_months: 8,
+        age: 34,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 4,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 85,
+      reported_lifts: { squat: 120, deadlift: 150, bench: 90, ohp: 60, row: 80 },
+      contraindications: ["knee"],
+      goal_id: "A2",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A2",
+    },
+  },
+  "VF-A1-knee": {
+    description:
+      "Reactivator · A1 Get lean · cold (starter, no reported lifts) · 24mo layoff · knee contra",
+    ticket: "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    // block_a_squat is the literal slot id from the original ticket.
+    expects_resolution: true,
+    tier3_slot_role: "Squat regression",
+    knee_safe_compound_slot: "block_a_squat",
+    prelude: {
+      experience_level: "starter",
+      archetype_flags: {
+        recent_inactivity_months: 24,
+        age: 42,
+        postpartum_months: null,
+        pregnancy_gestational_week: null,
+      },
+      training_history_cross_modal: false,
+      days_per_week: 2,
+      equipment_available: ["full_gym"],
+      bodyweight_kg: 80,
+      reported_lifts: { squat: null, deadlift: null, bench: null, ohp: null, row: null },
+      contraindications: ["knee"],
+      goal_id: "A1",
+      goal_provisional: false,
+      provisional_goal_source: null,
+      user_words_goal: null,
+      detected_archetype: "A1",
     },
   },
 };
@@ -532,6 +643,103 @@ function main() {
       : "FLAG-5 FAIL — the comeback Phase-2 bump did not differentiate retained-capacity from cold.",
   };
 
+  // AC7 (Pattern R fixture-gap → DS-01 §3.5 Tier-3 fix): knee contra ×
+  // squat-pattern slot. POST-FIX assertion (flips PR #17's baseline-fail): each
+  // fixture must (a) build a complete program without throwing, (b) log ≥1
+  // Tier-3 cross-family swap in applied_substitutions, (c) emit NO slot_dropped,
+  // and (d) place a knee-SAFE (non squat/lunge family) exercise in the named
+  // squat-pattern compound slot. Run in their own try/catch; NOT part of
+  // ALL_FIXTURES so they can't perturb AC2/AC4/AC5.
+  const KNEE_BIASED_FAMILIES = new Set(["squat", "lunge"]);
+  out.ac7_pattern_r_knee = [];
+  for (const [name, fx] of Object.entries(PATTERN_R_KNEE_FIXTURES)) {
+    let threw = false;
+    let message = null;
+    let tier3Swaps = [];
+    let slotDropped = [];
+    let kneeSafeCompound = null;
+    let compoundExerciseId = null;
+    let compoundFamily = null;
+    try {
+      const input = convertPreludeToEngineInput(fx.prelude);
+      const program = buildFirstWeekProgram(input);
+      tier3Swaps = program.applied_substitutions.filter((s) =>
+        (s.fallback_path || []).some((p) => /tier3 cross-family ladder/.test(p))
+      );
+      slotDropped = program.engine_alerts.filter((a) => /slot_dropped/.test(a.message || ""));
+      // Find the named squat-pattern compound slot across all sessions and
+      // confirm the engine put a knee-safe (non squat/lunge) exercise in it.
+      for (const s of program.sessions) {
+        const slotEntry = s.phases.find((p) => p.slot === fx.knee_safe_compound_slot && p.exercise_id);
+        if (slotEntry) {
+          compoundExerciseId = slotEntry.exercise_id;
+          compoundFamily = getExercise(slotEntry.exercise_id).movement_pattern.family;
+          kneeSafeCompound = !KNEE_BIASED_FAMILIES.has(compoundFamily);
+          break;
+        }
+      }
+    } catch (e) {
+      threw = true;
+      message = e.message;
+    }
+    const pass =
+      fx.expects_resolution &&
+      !threw &&
+      tier3Swaps.length > 0 &&
+      slotDropped.length === 0 &&
+      kneeSafeCompound === true;
+    out.ac7_pattern_r_knee.push({
+      name,
+      description: fx.description,
+      ticket: fx.ticket,
+      tier3_slot_role: fx.tier3_slot_role,
+      knee_safe_compound_slot: fx.knee_safe_compound_slot,
+      threw,
+      error_message: message,
+      tier3_swap_count: tier3Swaps.length,
+      tier3_swaps: tier3Swaps.map((s) => ({
+        slot: s.slot,
+        from: s.from_exercise_id,
+        to: s.to_exercise_id,
+        path: s.fallback_path,
+      })),
+      slot_dropped_count: slotDropped.length,
+      compound_slot_exercise_id: compoundExerciseId,
+      compound_slot_family: compoundFamily,
+      compound_slot_knee_safe: kneeSafeCompound,
+      pass,
+    });
+  }
+
+  // PATTERN M check (PD requested): confirm a role-level ladder is READABLE
+  // within the §2 step-5 read-flow before declaring the fix final. The engine
+  // reads the cross-family ladder by slot.slot_role at Tier 3 of slot-fill
+  // (step 5 of the read-flow). Evidence: getLadderForSlotRole returns an
+  // ordered, non-empty id list for each slot_role the Pattern R fixtures hit,
+  // AND those same ladder ids show up as the Tier-3 resolutions above (i.e. the
+  // engine actually consulted the role-keyed ladder during slot-fill).
+  const patternMRoles = [...new Set(Object.values(PATTERN_R_KNEE_FIXTURES).map((f) => f.tier3_slot_role))];
+  out.ac7_pattern_m = {
+    roles: patternMRoles.map((role) => {
+      const ladder = getLadderForSlotRole(role);
+      const tier3HitsForRole = out.ac7_pattern_r_knee
+        .flatMap((r) => r.tier3_swaps)
+        .filter((sw) => (sw.path || []).some((p) => p.includes(`slot_role="${role}"`)));
+      const consultedInReadFlow = tier3HitsForRole.length > 0;
+      const resolvedFromLadder = tier3HitsForRole.every((sw) => ladder.includes(sw.to));
+      return {
+        slot_role: role,
+        ladder_readable: ladder.length > 0,
+        ladder_ids: ladder,
+        consulted_in_step5_read_flow: consultedInReadFlow,
+        tier3_resolution_came_from_ladder: tier3HitsForRole.length === 0 ? null : resolvedFromLadder,
+      };
+    }),
+  };
+  out.ac7_pattern_m.pass = out.ac7_pattern_m.roles.every(
+    (r) => r.ladder_readable && r.consulted_in_step5_read_flow && r.tier3_resolution_came_from_ladder !== false
+  );
+
   if (wantJson) {
     process.stdout.write(JSON.stringify(out, null, 2));
     return;
@@ -640,6 +848,40 @@ function main() {
   );
   console.log(`  → FLAG-5: ${out.ac5_spot_flag5.pass ? "PASS" : "FAIL"}`);
   console.log(`  ${out.ac5_spot_flag5.note}`);
+
+  console.log("\n--- AC7 (DS-01 §3.5 Tier-3 fix): knee contra × squat slot — POST-FIX flip ---");
+  console.log("    Each fixture must build cleanly, log a Tier-3 cross-family swap, drop no slot,");
+  console.log("    and seat a knee-SAFE (non squat/lunge) exercise in the named compound slot.");
+  for (const r of out.ac7_pattern_r_knee) {
+    const tag = r.pass ? "PASS (flipped)" : "FAIL";
+    console.log(`\n  [${r.name}] ${r.description}`);
+    if (r.threw) {
+      console.log(`    THREW: ${r.error_message}`);
+    } else {
+      console.log(
+        `    tier3_swaps=${r.tier3_swap_count} slot_dropped=${r.slot_dropped_count} ` +
+          `compound_slot=${r.knee_safe_compound_slot} → #${r.compound_slot_exercise_id} ` +
+          `(family=${r.compound_slot_family}, knee_safe=${r.compound_slot_knee_safe}) → ${tag}`
+      );
+      for (const sw of r.tier3_swaps) {
+        console.log(`      tier3: slot=${sw.slot} #${sw.from} → #${sw.to} [${(sw.path || []).join(" | ")}]`);
+      }
+    }
+  }
+  const ac7AllPass = out.ac7_pattern_r_knee.every((r) => r.pass);
+  console.log(
+    `\n  → AC7: ${ac7AllPass ? "ALL 3 FIXTURES FLIPPED TO PASS" : "FAIL — a Pattern-R fixture did not flip"} ` +
+      `(${out.ac7_pattern_r_knee.filter((r) => r.pass).length}/${out.ac7_pattern_r_knee.length}).`
+  );
+
+  console.log("\n--- AC7 PATTERN M (PD): role-level ladder readable within §2 step-5 read-flow ---");
+  for (const r of out.ac7_pattern_m.roles) {
+    console.log(
+      `  slot_role="${r.slot_role}": ladder_readable=${r.ladder_readable} ids=[${r.ladder_ids.join(",")}] ` +
+        `consulted_in_step5=${r.consulted_in_step5_read_flow} resolved_from_ladder=${r.tier3_resolution_came_from_ladder}`
+    );
+  }
+  console.log(`  → PATTERN M: ${out.ac7_pattern_m.pass ? "CONFIRMED" : "FAIL"} — ladder reads cleanly at slot-fill (step 5).`);
 
   console.log("\nDone.");
 }
