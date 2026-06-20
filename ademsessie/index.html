@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>Ademsessie</title>
+  <meta name="description" content="Rustige Wim Hof-stijl ademhalingsoefening. Werkt volledig offline." />
+
+  <!-- PWA / iOS -->
+  <meta name="theme-color" content="#0d2544" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ademsessie" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="/src/styles/fonts.css" />
+  <link rel="stylesheet" href="/src/styles/app.css" />
+</head>
+<body>
+  <div class="sky-css"></div>
+  <!-- Optional photo layer over the CSS sky. To enable, drop an optimized,
+       locally-bundled image at public/sky.jpg and uncomment the line below;
+       main.js removes it automatically if it ever fails to load, so the CSS
+       sky always remains as the base. Do NOT hotlink an external image. -->
+  <!-- <img class="sky-photo" src="/sky.jpg" alt="" decoding="async" /> -->
+  <div class="scrim"></div>
+
+  <!-- ============ SETUP ============ -->
+  <section class="screen active" id="setup">
+    <div class="card">
+      <p class="card-title">Ademsessie</p>
+      <p class="card-sub">Stel je ronde in en begin wanneer je klaar bent.</p>
+
+      <div class="row">
+        <div><div class="label">Rondes</div></div>
+        <div class="stepper" id="roundsStep">
+          <button type="button" data-act="-" aria-label="Minder rondes">−</button>
+          <span class="val" id="roundsVal">3</span>
+          <button type="button" data-act="+" aria-label="Meer rondes">+</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div><div class="label">Ademhalingen per ronde</div></div>
+        <div class="stepper" id="breathsStep">
+          <button type="button" data-act="-" aria-label="Minder ademhalingen">−</button>
+          <span class="val" id="breathsVal">30</span>
+          <button type="button" data-act="+" aria-label="Meer ademhalingen">+</button>
+        </div>
+      </div>
+
+      <div class="row stack">
+        <div class="label">Tempo</div>
+        <div class="seg full" id="tempoSeg" role="group" aria-label="Tempo">
+          <button type="button" data-val="langzaam" aria-pressed="false">Langzaam</button>
+          <button type="button" data-val="normaal" aria-pressed="true">Normaal</button>
+          <button type="button" data-val="snel" aria-pressed="false">Snel</button>
+        </div>
+      </div>
+
+      <div class="row stack">
+        <div class="label">Retentie</div>
+        <div class="sub">Hoe lang je de adem leeg vasthoudt. Dubbeltik tijdens de hold om eerder door te gaan.</div>
+        <div class="seg full" id="retSeg" role="group" aria-label="Retentie">
+          <button type="button" data-val="90" aria-pressed="false">1:30</button>
+          <button type="button" data-val="120" aria-pressed="true">2:00</button>
+          <button type="button" data-val="150" aria-pressed="false">2:30</button>
+          <button type="button" data-val="180" aria-pressed="false">3:00</button>
+          <button type="button" data-val="custom" aria-pressed="false">Zelf</button>
+        </div>
+        <div class="custom-ret" id="customRet" hidden>
+          <span class="custom-label">Eigen tijd</span>
+          <div class="stepper" id="retStep">
+            <button type="button" data-act="-" aria-label="Korter">−</button>
+            <span class="val" id="retCustomVal">2:00</span>
+            <button type="button" data-act="+" aria-label="Langer">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="more-btn" id="moreBtn" aria-expanded="false">Meer instellingen ▾</button>
+      <div class="more" id="moreBox">
+        <div class="row stack">
+          <div class="label">Herstelademhaling</div>
+          <div class="seg full" id="recSeg" role="group" aria-label="Herstelademhaling">
+            <button type="button" data-val="10" aria-pressed="false">10s</button>
+            <button type="button" data-val="15" aria-pressed="true">15s</button>
+            <button type="button" data-val="20" aria-pressed="false">20s</button>
+          </div>
+        </div>
+        <div class="row">
+          <div><div class="label">Toon</div><div class="sub">Zachte cue per in- en uitademing</div></div>
+          <button class="toggle" id="toneTgl" aria-pressed="true" aria-label="Toon aan/uit"><span class="knob"></span></button>
+        </div>
+        <div class="row">
+          <div><div class="label">Trilling</div><div class="sub">Werkt alleen op ondersteunde toestellen</div></div>
+          <button class="toggle" id="vibTgl" aria-pressed="true" aria-label="Trilling aan/uit"><span class="knob"></span></button>
+        </div>
+      </div>
+
+      <button class="start" id="startBtn">Begin</button>
+    </div>
+  </section>
+
+  <!-- ============ SESSION ============ -->
+  <section class="screen" id="session">
+    <header class="topbar">
+      <span class="round" id="roundLabel">Ronde 1 / 3</span>
+      <button class="stop" id="stopBtn" type="button">Stop</button>
+    </header>
+    <main class="center" id="tapArea">
+      <div class="stage" id="stage">
+        <div class="aura"></div>
+        <div class="orb"><span class="readout" id="readout">1</span></div>
+      </div>
+      <p class="instruction" id="instruction">Adem in</p>
+      <p class="helper" id="helper"></p>
+    </main>
+  </section>
+
+  <!-- ============ END ============ -->
+  <section class="screen" id="end">
+    <div class="end-wrap">
+      <p class="end-title">Klaar.</p>
+      <button class="again" id="againBtn" type="button">Opnieuw</button>
+    </div>
+  </section>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
