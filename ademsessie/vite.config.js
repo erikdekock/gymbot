@@ -4,8 +4,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Static, 100% client-side breathing PWA. vite-plugin-pwa (Workbox) generates
 // the manifest + service worker and precaches the full app shell — HTML, CSS,
 // JS, fonts (woff2) and icons — so the app works fully offline after first load.
+//
+// `base` is configurable via BASE_PATH so the same source deploys both at a
+// domain root ('/') and under a subpath (e.g. GitHub Pages: '/gymbot/'). The
+// manifest start_url/scope follow base so the PWA installs correctly there too.
+const base = process.env.BASE_PATH || '/'
+
 export default defineConfig({
-  base: '/',
+  base,
   // Pin an inline (empty) PostCSS config so Vite doesn't walk up the tree and
   // pick up the parent Next.js project's postcss/tailwind config.
   css: { postcss: {} },
@@ -22,8 +28,8 @@ export default defineConfig({
         short_name: 'Ademsessie',
         description: 'Rustige Wim Hof-stijl ademhalingsoefening. Werkt volledig offline.',
         lang: 'nl',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#3f80ca',

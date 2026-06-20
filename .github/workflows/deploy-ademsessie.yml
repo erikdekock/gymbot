@@ -1,0 +1,54 @@
+name: Deploy Ademsessie to GitHub Pages
+
+# Builds the Vite PWA in ademsessie/ and publishes it to GitHub Pages at
+# https://erikdekock.github.io/gymbot/ . Runs on pushes to this branch that
+# touch the app, and can be triggered manually from the Actions tab.
+on:
+  push:
+    branches: [claude/sweet-goldberg-921385]
+    paths: ['ademsessie/**', '.github/workflows/deploy-ademsessie.yml']
+  workflow_dispatch:
+
+# Permissions required by actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ademsessie
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ademsessie/package-lock.json
+      - run: npm ci
+      - name: Build (subpath base for project Pages)
+        run: npm run build
+        env:
+          BASE_PATH: /gymbot/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ademsessie/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
