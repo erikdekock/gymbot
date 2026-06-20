@@ -39,6 +39,10 @@ jobs:
         env:
           BASE_PATH: /gymbot/
       - uses: actions/configure-pages@v5
+        # Enable Pages on the repo automatically on first run (uses GITHUB_TOKEN
+        # with pages: write), so no manual Settings step is needed.
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ademsessie/dist
