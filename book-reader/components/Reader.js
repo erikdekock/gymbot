@@ -101,12 +101,21 @@ export default function Reader({ chapters, bookTitle }) {
     const col = columnsRef.current
     if (!vp || !col) return
 
-    const w = vp.clientWidth
-    col.style.columnWidth = `${w}px`
+    // Use the viewport's *fractional* width as the page pitch. clientWidth is
+    // rounded to an integer, but a single CSS column stretches to fill the real
+    // (sub-pixel) width — translating by the rounded value drifts a fraction of
+    // a pixel per page, which accumulates and clips text at the right edge.
+    const w = vp.getBoundingClientRect().width
+    if (w <= 0) return
+    // A hair under the pitch guarantees exactly one column fits, then stretches
+    // to fill the full width — so the column pitch equals `w` exactly.
+    col.style.columnWidth = `${Math.floor(w)}px`
     col.style.columnGap = '0px'
 
-    // Reading scrollWidth forces the layout we just requested.
-    const total = Math.max(1, Math.round(col.scrollWidth / w))
+    // Reading scrollWidth forces the layout we just requested. Round up (with a
+    // small epsilon for sub-pixel scrollWidth rounding) so the final partial
+    // page is never dropped.
+    const total = Math.max(1, Math.ceil(col.scrollWidth / w - 0.02))
     setPageWidth(w)
     setPageCount(total)
 

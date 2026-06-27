@@ -61,6 +61,9 @@ body {
   letter-spacing: 0.002em;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* Never let a long unbreakable token spill past the column edge. */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .prose-book h1,
