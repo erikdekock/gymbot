@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  Theme palettes — light (warm paper), sepia, dark                   */
+/* ------------------------------------------------------------------ */
+:root {
+  --paper: #f6f1e7;
+  --paper-edge: #efe7d6;
+  --ink: #2b2622;
+  --ink-soft: #6b6256;
+  --accent: #9b6a43;
+  --rule: rgba(43, 38, 34, 0.12);
+  --panel: #fbf8f1;
+  --panel-shadow: rgba(58, 47, 30, 0.16);
+  --overlay: rgba(40, 33, 24, 0.32);
+}
+
+[data-theme='sepia'] {
+  --paper: #ece0c8;
+  --paper-edge: #e4d6ba;
+  --ink: #4b3a26;
+  --ink-soft: #7d6749;
+  --accent: #97612f;
+  --rule: rgba(75, 58, 38, 0.16);
+  --panel: #f3ead6;
+  --panel-shadow: rgba(75, 58, 38, 0.2);
+  --overlay: rgba(60, 45, 25, 0.34);
+}
+
+[data-theme='dark'] {
+  --paper: #1c1a17;
+  --paper-edge: #232019;
+  --ink: #e7dfd2;
+  --ink-soft: #9a9183;
+  --accent: #cd9a6b;
+  --rule: rgba(231, 223, 210, 0.14);
+  --panel: #26221c;
+  --panel-shadow: rgba(0, 0, 0, 0.5);
+  --overlay: rgba(0, 0, 0, 0.55);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reading column — typography modelled on a printed page             */
+/* ------------------------------------------------------------------ */
+.prose-book {
+  color: var(--ink);
+  line-height: 1.72;
+  letter-spacing: 0.002em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.prose-book h1,
+.prose-book h2,
+.prose-book h3 {
+  font-family: var(--font-display), Georgia, serif;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.9em;
+}
+
+.prose-book h1 {
+  font-size: 1.9em;
+  margin-bottom: 1.1em;
+}
+.prose-book h2 {
+  font-size: 1.45em;
+  margin-top: 1.2em;
+}
+.prose-book h3 {
+  font-size: 1.2em;
+  margin-top: 1em;
+}
+
+.prose-book p {
+  margin: 0 0 1em;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* First paragraph after a heading: no indent, others get a book indent. */
+.prose-book p + p {
+  text-indent: 1.4em;
+  margin-top: 0;
+}
+
+.prose-book em {
+  font-style: italic;
+}
+.prose-book strong {
+  font-weight: 600;
+}
+
+.prose-book blockquote {
+  margin: 1.4em 0.4em;
+  padding-left: 1em;
+  border-left: 2px solid var(--accent);
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.prose-book code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--paper-edge);
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+}
+
+.prose-book ul,
+.prose-book ol {
+  margin: 0 0 1em 1.4em;
+}
+.prose-book li {
+  margin: 0.25em 0;
+}
+
+/* Scene break — three centred dots rather than a hard rule. */
+.prose-book hr.scene-break {
+  border: 0;
+  text-align: center;
+  margin: 1.8em 0;
+}
+.prose-book hr.scene-break::before {
+  content: '· · ·';
+  letter-spacing: 0.6em;
+  color: var(--ink-soft);
+  font-size: 1.1em;
+}
+
+/* Font-size scale (small / medium / large). */
+.fs-sm .prose-book {
+  font-size: 1rem;
+}
+.fs-md .prose-book {
+  font-size: 1.18rem;
+}
+.fs-lg .prose-book {
+  font-size: 1.4rem;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page-turn paginator (CSS multi-column)                             */
+/* ------------------------------------------------------------------ */
+.page-viewport {
+  overflow: hidden;
+  position: relative;
+}
+
+.page-track {
+  height: 100%;
+  transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.page-columns {
+  height: 100%;
+  column-fill: auto;
+}
+
+/* Soft vignette at the page edges, like a slightly curved sheet. */
+.page-shade {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 22px 0 28px -28px var(--panel-shadow),
+    inset -22px 0 28px -28px var(--panel-shadow);
+}
+
+/* Floating UI panels (toolbar, modal, nav). */
+.panel {
+  background: var(--panel);
+  box-shadow: 0 10px 40px -12px var(--panel-shadow), 0 2px 8px -4px var(--panel-shadow);
+  border: 1px solid var(--rule);
+}
+
+.tap-zone {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbars inside the reading column. */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-track {
+    transition: none;
+  }
+}
