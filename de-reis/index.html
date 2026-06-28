@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>De Reis</title>
+<style>
+  /* ============================================================
+     DE REIS — one self-contained file. No build, no CDN, no storage.
+     Layout: a fixed-aspect stage that scales to the viewport.
+     Canvas draws the runner games; DOM overlay draws menus,
+     card-moments and the reveal.
+     ============================================================ */
+  :root{
+    --ink:#f4ece0; --ink-dim:#bcae9a; --gold:#e8c06a; --rose:#d98b73;
+    --bg0:#120e14; --bg1:#1c1622; --card:#241b2b; --line:#3a2d40;
+    --mars:#e07a4f; --pale:#e0b24f; --bilb:#5fb0c9;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;
+    font-family:'Georgia','Times New Roman',serif;color:var(--ink);}
+  #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;}
+  /* The stage keeps a 16:9 internal coordinate system, scaled by JS. */
+  #stage{position:relative;width:960px;height:540px;transform-origin:center center;
+    background:var(--bg0);box-shadow:0 0 60px rgba(0,0,0,.8);overflow:hidden;}
+  #cv{position:absolute;inset:0;width:960px;height:540px;display:block;}
+  #overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    pointer-events:none;}
+  #overlay.active{pointer-events:auto;}
+  .panel{pointer-events:auto;}
+
+  /* ---------- generic typography / buttons ---------- */
+  h1{font-size:62px;margin:0;letter-spacing:.18em;font-weight:normal;}
+  h2{font-size:30px;margin:0 0 10px;font-weight:normal;letter-spacing:.06em;}
+  p.lead{font-size:19px;line-height:1.5;color:var(--ink-dim);max-width:560px;margin:14px auto;}
+  .btn{display:inline-block;cursor:pointer;border:1px solid var(--gold);color:var(--gold);
+    background:transparent;padding:12px 30px;font-size:19px;letter-spacing:.12em;border-radius:2px;
+    font-family:inherit;transition:.15s;text-transform:uppercase;}
+  .btn:hover{background:var(--gold);color:#1a130a;}
+  .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;padding:30px;background:
+    radial-gradient(120% 90% at 50% 30%, rgba(40,28,30,.55), rgba(8,6,10,.94));}
+  .kbd{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:1px 8px;
+    font-size:14px;color:var(--ink-dim);font-family:monospace;background:rgba(255,255,255,.03);}
+  .fade{animation:fade .6s ease both;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  /* ---------- card moment ---------- */
+  #moment{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+    justify-content:center;background:rgba(8,6,12,.86);backdrop-filter:blur(2px);}
+  #moment.show{display:flex;}
+  .prompt{font-size:34px;letter-spacing:.05em;margin-bottom:6px;color:var(--ink);}
+  .prompt .lead-in{display:block;font-size:15px;letter-spacing:.32em;color:var(--gold);
+    text-transform:uppercase;margin-bottom:10px;}
+  .grab-hint{font-size:14px;color:var(--ink-dim);letter-spacing:.2em;text-transform:uppercase;
+    margin:6px 0 22px;display:flex;align-items:center;gap:12px;}
+  .ring{width:16px;height:16px;border-radius:50%;border:2px solid var(--gold);
+    border-top-color:transparent;animation:spin 1.1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .cards{display:flex;gap:20px;}
+  .moment-card{width:236px;min-height:200px;background:linear-gradient(160deg,var(--card),#1a1320);
+    border:1px solid var(--line);border-radius:10px;padding:22px 20px;cursor:pointer;
+    display:flex;flex-direction:column;justify-content:space-between;position:relative;
+    transition:transform .18s, border-color .18s, box-shadow .18s;animation:dealIn .5s ease both;}
+  .moment-card:hover{transform:translateY(-8px);border-color:var(--gold);
+    box-shadow:0 14px 30px rgba(0,0,0,.5);}
+  .moment-card .num{position:absolute;top:10px;right:14px;font-size:13px;color:var(--ink-dim);
+    font-family:monospace;border:1px solid var(--line);border-radius:4px;padding:0 7px;}
+  .moment-card .body{font-size:18px;line-height:1.45;color:var(--ink);}
+  .moment-card .pick{font-size:12px;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--ink-dim);margin-top:18px;}
+  @keyframes dealIn{from{opacity:0;transform:translateY(28px) rotate(-2deg);}to{opacity:1;transform:none;}}
+  .moment-card.chosen{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 40px rgba(232,192,106,.4);
+    transform:translateY(-8px) scale(1.03);}
+  .moment-card.dim{opacity:.25;filter:saturate(.4);}
+
+  /* ---------- reveal ---------- */
+  #reveal{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+    justify-content:flex-start;overflow-y:auto;padding:20px 14px;}
+  #reveal.show{display:flex;}
+  #reveal h2{margin-top:auto;}
+  #revealAgain{margin-bottom:auto;}
+  .dossier{display:flex;gap:13px;flex-wrap:wrap;justify-content:center;max-width:900px;
+    perspective:900px;margin:14px 0;}
+  .post{width:172px;background:#f4ece0;color:#2a211a;border-radius:6px;padding:13px 14px 15px;
+    box-shadow:0 12px 30px rgba(0,0,0,.55);font-size:14px;line-height:1.38;position:relative;
+    transform:rotate(var(--rot));opacity:0;animation:postIn .7s ease forwards;}
+  .post .stamp{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9a7d4f;
+    border-bottom:1px solid #d8c9a8;padding-bottom:5px;margin-bottom:8px;}
+  @keyframes postIn{from{opacity:0;transform:translateY(40px) rotate(0);}
+    to{opacity:1;transform:translateY(0) rotate(var(--rot));}}
+  #cityName{margin-top:22px;font-size:62px;letter-spacing:.2em;color:var(--gold);opacity:0;
+    text-shadow:0 0 40px rgba(232,192,106,.45);transform:scale(.8);line-height:1.05;text-align:center;}
+  #cityName.in{animation:cityDrop 1s cubic-bezier(.2,.9,.2,1) forwards;}
+  @keyframes cityDrop{to{opacity:1;transform:scale(1);}}
+  #citySub{opacity:0;color:var(--ink-dim);letter-spacing:.32em;text-transform:uppercase;
+    font-size:14px;margin-top:8px;}
+  #citySub.in{animation:fade .8s .3s both;}
+  #revealAgain{margin-top:22px;opacity:0;}
+  #revealAgain.in{animation:fade .8s .4s both;}
+
+  /* ---------- debug ---------- */
+  #debug{position:absolute;top:0;right:0;width:300px;max-height:100%;overflow:auto;
+    background:rgba(6,8,12,.95);border-left:1px solid #2a3340;color:#cfe;display:none;
+    font-family:monospace;font-size:12px;padding:10px;z-index:50;}
+  #debug.show{display:block;}
+  #debug h3{margin:8px 0 4px;color:#7fd;font-size:12px;letter-spacing:.1em;}
+  #debug button{background:#13202b;color:#bfe;border:1px solid #2c4150;border-radius:3px;
+    cursor:pointer;padding:4px 7px;margin:2px;font-family:inherit;font-size:11px;}
+  #debug button:hover{background:#1d3340;}
+  #debug .row{margin:3px 0;}
+  #debug .tag{color:#8ab;}
+  #dbgState{white-space:pre-wrap;color:#9cf;background:#0a141c;padding:6px;border-radius:4px;
+    margin-top:6px;font-size:11px;line-height:1.5;}
+  .hidden{display:none !important;}
+  .flash{position:absolute;inset:0;background:var(--gold);opacity:0;pointer-events:none;}
+  .flash.go{animation:flashAnim .5s ease;}
+  @keyframes flashAnim{0%{opacity:0;}30%{opacity:.5;}100%{opacity:0;}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="cv" width="960" height="540"></canvas>
+    <div id="overlay"></div>
+    <div id="moment"></div>
+    <div id="reveal"></div>
+    <div class="flash" id="flash"></div>
+    <div id="debug"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   1. DATA — CITIES, CARDS, state
+   ============================================================================ */
+const CITIES = ['marseille', 'palermo', 'bilbao'];
+
+const CITY_INFO = {
+  marseille: { name: 'MARSEILLE', sub: 'Frankrijk · de zee',   accent: '#e07a4f', emoji: '☀️' },
+  palermo:   { name: 'PALERMO',   sub: 'Sicilië · het goud',   accent: '#e0b24f', emoji: '🍊' },
+  bilbao:    { name: 'BILBAO',    sub: 'Baskenland · de heuvels', accent: '#5fb0c9', emoji: '🌿' },
+};
+
+// 9 moments. game = which mini-game. prompt = the question shown.
+// cards = the three options; engine randomizes their left/center/right order.
+const CARDS = {
+  // GAME 1 — ARTHUR · instinct (sensory)
+  1: { game: 1, prompt: '…een geur', cards: [
+    { city: 'marseille', text: 'Warm steen en zout, en ergens komijn uit een open raam.' },
+    { city: 'palermo',   text: 'Gebakken deeg en sinaasappelbloesem — zoet en vet tegelijk.' },
+    { city: 'bilbao',    text: 'Natte den en regen op asfalt, koel en schoon.' },
+  ]},
+  2: { game: 1, prompt: '…een geluid', cards: [
+    { city: 'marseille', text: 'Een snerpende snaar, een handtrom, een stem die meezingt.' },
+    { city: 'palermo',   text: 'Marktstemmen die over elkaar buitelen, een knetterende scooter.' },
+    { city: 'bilbao',    text: 'Glazen die tikken, gelach dat terugkaatst, ergens een fontein.' },
+  ]},
+  3: { game: 1, prompt: '…een warmte', cards: [
+    { city: 'marseille', text: 'Een zongloeiende motorkap, stof en blik, warm tot diep in de avond.' },
+    { city: 'palermo',   text: 'Een gladde, uitgesleten stenen trap, nog warm van de dag.' },
+    { city: 'bilbao',    text: 'Koel geborsteld metaal dat net de zon ving, glad en strak.' },
+  ]},
+
+  // GAME 2 — SCOOTER · appetite (food)
+  4: { game: 2, prompt: '…een marktgeur', cards: [
+    { city: 'marseille', text: 'Bergen gedroogde rozen, kruidnagel en saffraan in jutezakken.' },
+    { city: 'palermo',   text: 'Glanzende paarse aubergines en citroenen met het blad er nog aan.' },
+    { city: 'bilbao',    text: 'Felgroene pepers, plakjes bacalao, een fles die naar groene appel ruikt.' },
+  ]},
+  5: { game: 2, prompt: '…een gerecht', cards: [   // strongest food tell
+    { city: 'marseille', text: 'Diep-oranje vissoep, rouille en knoflook — de zee in een lepel.' },
+    { city: 'palermo',   text: 'Krokante gefrituurde bol, ragù-hart, vingers die ervan glimmen.' },
+    { city: 'bilbao',    text: 'Een precies torentje op brood: ansjovis, peper, olijf aan een prikker.' },
+  ]},
+  6: { game: 2, prompt: '…de zoete afsluiter', cards: [
+    { city: 'marseille', text: 'Oranjebloesemijs met een snufje zout, smeltend in de zon.' },
+    { city: 'palermo',   text: 'Amandelgranita in een warm briochebroodje, zoet op zoet.' },
+    { city: 'bilbao',    text: 'Een wolk lichtverbrande kaastaart, koel en romig.' },
+  ]},
+
+  // GAME 3 — BAR CRAWL · longing (finale)
+  7: { game: 3, prompt: '…de straat waarin we zouden verdwalen', cards: [
+    { city: 'marseille', text: 'Een steile straat van afgebladderd oker, was aan de lijn, kinderstemmen.' },
+    { city: 'palermo',   text: 'Een gouden barokstraat die langzaam vergaat, balkons vol citrus.' },
+    { city: 'bilbao',    text: 'Smalle keien tussen kleurige gevels, een rij kleine bars, schoon en levend.' },
+  ]},
+  8: { game: 3, prompt: '…de avond die we zouden hebben', cards: [
+    { city: 'marseille', text: 'Pastis op een rauw pleintje, muziek uit een speaker, warme wind.' },
+    { city: 'palermo',   text: "Een markt die 's nachts feest wordt — gegrild vlees, wijn in plastic bekers." },
+    { city: 'bilbao',    text: 'Van bar naar bar met een glas dat licht prikt, koele avond, veel gelach.' },
+  ]},
+  9: { game: 3, prompt: '…waar we wakker zouden worden', cards: [   // final grab
+    { city: 'marseille', text: 'Wakker met zout op je huid, luiken open, de zee ruw en blauw.' },
+    { city: 'palermo',   text: 'Ontwaken in een hoge, vervallen kamer, goud licht door stoffige luiken.' },
+    { city: 'bilbao',    text: 'Mist die optrekt boven groene heuvels, koele lakens, koffie en stilte.' },
+  ]},
+};
+
+const state = {
+  screen: 'intro',        // intro | game1 | inter1 | game2 | inter2 | game3 | reveal
+  currentMoment: 0,       // 1..9, set when a safe spot is reached
+  grabs: [],              // ordered list of chosen city strings, length grows to 9
+  grabbedCards: {},       // momentId -> the chosen card object (for the reveal)
+  lives: 9,               // Game 1 soft-fail
+  flow: 100,              // Game 2 momentum bar
+  borrel: 0,              // Game 3 gezelligheid meter (also drives control wobble)
+};
+
+function resetState(){
+  state.screen='intro'; state.currentMoment=0; state.grabs=[]; state.grabbedCards={};
+  state.lives=9; state.flow=100; state.borrel=0;
+}
+
+/* ============================================================================
+   2. DOM refs + helpers
+   ============================================================================ */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const W = 960, H = 540;
+const overlay = document.getElementById('overlay');
+const momentEl = document.getElementById('moment');
+const revealEl = document.getElementById('reveal');
+const flashEl = document.getElementById('flash');
+const debugEl = document.getElementById('debug');
+
+function shuffle(arr){ // Fisher–Yates; no Math.random ban here (browser, in-memory)
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function doFlash(){ flashEl.classList.remove('go'); void flashEl.offsetWidth; flashEl.classList.add('go'); }
+
+// Scale the stage to fit the viewport while keeping 16:9.
+function fitStage(){
+  const stage=document.getElementById('stage');
+  const s=Math.min(window.innerWidth/W, window.innerHeight/H);
+  stage.style.transform='scale('+s+')';
+}
+window.addEventListener('resize', fitStage); fitStage();
+
+/* ============================================================================
+   3. INPUT — single router, mode-aware
+   mode: 'menu' | 'game' | 'card'
+   ============================================================================ */
+const input = { left:false, right:false, up:false, reactUntil:0, mode:'menu' };
+let cardKeyHandler = null; // set while a card moment is open
+
+window.addEventListener('keydown', (e)=>{
+  if(e.key==='`'){ e.preventDefault(); toggleDebug(); return; }
+  if(input.mode==='card' && cardKeyHandler){ cardKeyHandler(e); return; }
+  if(input.mode==='game'){
+    if(e.key==='ArrowLeft'){ input.left=true; e.preventDefault(); }
+    else if(e.key==='ArrowRight'){ input.right=true; e.preventDefault(); }
+    else if(e.key==='ArrowUp'||e.key==='w'){ input.up=true; e.preventDefault(); }
+    else if(e.key===' '){ input.reactUntil=performance.now()+200; e.preventDefault(); }
+  }
+});
+window.addEventListener('keyup', (e)=>{
+  if(e.key==='ArrowLeft') input.left=false;
+  else if(e.key==='ArrowRight') input.right=false;
+  else if(e.key==='ArrowUp'||e.key==='w') input.up=false;
+});
+
+/* ============================================================================
+   4. ENGINE — shared runner consumed by runGame(config)
+   A config is { gameNum, screen, theme, meter, legs, momentIds, playerStyle }
+   Each leg = { name, length, obstacles:[{at,type}] } ; arriving at a leg end
+   (a safe spot) fires the matching card moment, then resumes.
+   ============================================================================ */
+const GROUND_Y = 430;          // player's feet line
+const PLAYER_X = 170;          // fixed screen x of the player
+const ZONE_HALF = 70;          // reaction window half-width around the player
+const JUMP_V = -12, GRAVITY = 0.62;
+
+let runner = null;   // active run object
+let rafId = null;
+let lastT = 0;
+
+// Obstacle archetypes per game. action: 'space' | 'up'. emoji + Dutch cue.
+const OBSTACLES = {
+  cat:    { emoji:'🐈‍⬛', action:'space', cue:'MEP!',     color:'#2a2a33' },
+  dog:    { emoji:'🐕',   action:'up',    cue:'SPRING',   color:'#7a5a3a' },
+  person: { emoji:'🙆',   action:'space', cue:'ONTWIJK',  color:'#caa' },
+  gps:    { emoji:'📡',   action:'space', cue:'VERSTOP',  color:'#5cf' },
+  tourist:{ emoji:'🧳',   action:'space', cue:'REM',      color:'#cdd' },
+  bike:   { emoji:'🚲',   action:'up',    cue:'WIJK UIT', color:'#bbb' },
+  light:  { emoji:'🚦',   action:'space', cue:'TIMING',   color:'#6c6' },
+  cam:    { emoji:'📷',   action:'space', cue:'REM',      color:'#fc6' },
+  buur:   { emoji:'🗣️',  action:'space', cue:'ONTWIJK',  color:'#cba' },
+  terras: { emoji:'🍷',   action:'space', cue:'WEERSTA',  color:'#c66' },
+  tram:   { emoji:'🚊',   action:'up',    cue:'WIJK UIT', color:'#dd6' },
+};
+
+function makeRunner(config){
+  // Build obstacle world positions per leg (cumulative distance is world x in px).
+  let cursor = 0;
+  const obstacles = [];
+  config.legs.forEach((leg, li)=>{
+    leg.obstacles.forEach(o=>{
+      obstacles.push({ worldX: cursor + o.at, type:o.type, resolved:false, ok:false, leg:li });
+    });
+    leg.start = cursor;
+    cursor += leg.length;
+    leg.end = cursor;           // safe spot at end of each leg
+  });
+  return {
+    config, obstacles, totalLen:cursor,
+    distance:0, legIndex:0, speed:config.speed||250,
+    player:{ y:GROUND_Y, vy:0, airborne:false, stumble:0, x:PLAYER_X },
+    wobble:0, paused:false, done:false,
+    bannerT:1.6, // show leg banner at start of each leg
+  };
+}
+
+function startGame(config){
+  state.screen = config.screen;
+  // reset per-game meter
+  if(config.gameNum===1) state.lives=9;
+  if(config.gameNum===2) state.flow=100;
+  if(config.gameNum===3) state.borrel=0;
+  runner = makeRunner(config);
+  input.mode='game';
+  overlay.className=''; overlay.innerHTML='';
+  if(!rafId){ lastT=performance.now(); rafId=requestAnimationFrame(loop); }
+}
+
+function loop(t){
+  rafId = requestAnimationFrame(loop);
+  let dt = (t-lastT)/1000; lastT=t;
+  if(dt>0.05) dt=0.05; // clamp big gaps (tab switches)
+  if(runner && !runner.paused && !runner.done){
+    update(dt);
+  }
+  render(dt);
+}
+
+function meterFail(){
+  const c=runner.config;
+  if(c.gameNum===1){ state.lives=Math.max(0,state.lives-1); }
+  else if(c.gameNum===2){ state.flow=Math.max(0,state.flow-22); runner.player.stumble=Math.max(runner.player.stumble,0.5); }
+  else if(c.gameNum===3){ state.borrel=Math.min(100,state.borrel+4); }
+  runner.player.stumble=Math.max(runner.player.stumble,0.45);
+}
+
+function update(dt){
+  const r=runner, p=r.player, c=r.config;
+  const dtf = dt*60; // frames-equivalent for physics tuned at 60fps
+
+  if(r.bannerT>0) r.bannerT-=dt;
+
+  // jump physics
+  if(input.up && !p.airborne && p.stumble<=0){ p.vy=JUMP_V; p.airborne=true; }
+  if(p.airborne){
+    p.vy += GRAVITY*dtf; p.y += p.vy*dtf;
+    if(p.y>=GROUND_Y){ p.y=GROUND_Y; p.vy=0; p.airborne=false; }
+  }
+
+  // wobble (game 3 — the drink is the boss). Drives x drift + zone offset.
+  if(c.gameNum===3){
+    r.wobble = (state.borrel/100) * 34;
+  }
+  const wob = r.wobble>0 ? Math.sin(r.distance/55)*r.wobble + Math.sin(r.distance/19)*r.wobble*0.4 : 0;
+  // gentle left/right nudge for feel + counter-wobble
+  let nudge=0; if(input.left) nudge-=1.4; if(input.right) nudge+=1.4;
+  p.x += ( (PLAYER_X+wob+nudge*18) - p.x ) * Math.min(1, 8*dt);
+
+  // advance the world (slower while stumbling = soft-fail, never stops)
+  const spd = r.speed * (p.stumble>0 ? 0.45 : 1);
+  if(p.stumble>0) p.stumble-=dt;
+  r.distance += spd*dt;
+
+  // resolve obstacles as they cross the reaction zone (centred on the wobbled player)
+  const zoneCenter = p.x;
+  const reactActive = performance.now() < input.reactUntil;
+  for(const o of r.obstacles){
+    if(o.resolved) continue;
+    const sx = PLAYER_X + (o.worldX - r.distance);
+    const def = OBSTACLES[o.type];
+    if(Math.abs(sx - zoneCenter) < ZONE_HALF){
+      if(def.action==='space' && reactActive){ o.resolved=true; o.ok=true; }
+      else if(def.action==='up' && p.airborne){ o.resolved=true; o.ok=true; }
+    } else if(sx < zoneCenter - ZONE_HALF){
+      // passed without the right reaction → soft fail
+      o.resolved=true; o.ok=false; meterFail();
+    }
+  }
+
+  // slow flow regen for game 2
+  if(c.gameNum===2) state.flow=Math.min(100, state.flow+6*dt);
+
+  // reached a safe spot?
+  const leg=c.legs[r.legIndex];
+  if(r.distance >= leg.end){
+    r.distance = leg.end;
+    fireSafeSpot(r.legIndex);
+  }
+}
+
+function fireSafeSpot(legIndex){
+  const r=runner;
+  r.paused=true;
+  const momentId = r.config.momentIds[legIndex];
+  openCardMoment(momentId, ()=>{
+    // resume / advance
+    if(legIndex+1 < r.config.legs.length){
+      r.legIndex++; r.bannerT=1.4; r.paused=false;
+    } else {
+      r.done=true;
+      onGameComplete(r.config);
+    }
+  });
+}
+
+function onGameComplete(config){
+  if(config.gameNum===1) showInter('inter1');
+  else if(config.gameNum===2) showInter('inter2');
+  else if(config.gameNum===3) goReveal();
+}
+
+/* ---------- rendering ---------- */
+function render(dt){
+  ctx.clearRect(0,0,W,H);
+  if(runner){ drawScene(); drawObstacles(); drawPlayer(); drawHUD(); }
+}
+
+function drawScene(){
+  const r=runner, th=r.config.theme;
+  // sky
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, th.sky0); g.addColorStop(1, th.sky1);
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  // sun/moon disc
+  ctx.fillStyle=th.disc; ctx.globalAlpha=.8;
+  ctx.beginPath(); ctx.arc(760,120,52,0,7); ctx.fill(); ctx.globalAlpha=1;
+
+  // far parallax silhouettes
+  drawParallax(r.distance*0.15, th.far, 70, 150, 240, 0.5);
+  // mid buildings
+  drawParallax(r.distance*0.4, th.mid, 120, 120, 170, 1);
+
+  // ground
+  ctx.fillStyle=th.ground; ctx.fillRect(0,GROUND_Y+30,W,H-GROUND_Y-30);
+  ctx.fillStyle=th.groundLine;
+  const step=80; const off=(r.distance%step);
+  for(let x=-off; x<W; x+=step){ ctx.fillRect(x, GROUND_Y+30, 44, 5); }
+  // safe-spot marker near the end of the current leg
+  const leg=r.config.legs[r.legIndex];
+  const endSx = PLAYER_X + (leg.end - r.distance);
+  if(endSx<W+40){
+    ctx.fillStyle=th.safe; ctx.globalAlpha=.85;
+    ctx.fillRect(endSx, GROUND_Y-90, 6, 120);
+    ctx.font='26px serif'; ctx.textAlign='center'; ctx.fillText('🏁', endSx+3, GROUND_Y-100);
+    ctx.globalAlpha=1; ctx.textAlign='left';
+  }
+}
+
+function drawParallax(scroll, color, baseW, minH, maxH, alpha){
+  ctx.fillStyle=color; ctx.globalAlpha=alpha;
+  const period=baseW*2.3; const off=scroll%period;
+  let seed=0;
+  for(let x=-off-period; x<W+period; x+=period){
+    // deterministic pseudo heights from x bucket
+    const b=Math.floor((x+scroll)/period);
+    const h=minH + (Math.abs((b*73)%(maxH-minH)));
+    ctx.fillRect(x, GROUND_Y+30-h, baseW, h);
+    seed++;
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawObstacles(){
+  const r=runner;
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  for(const o of r.obstacles){
+    const sx = PLAYER_X + (o.worldX - r.distance);
+    if(sx<-60||sx>W+60) continue;
+    const def=OBSTACLES[o.type];
+    // approaching cue chip (only if not yet resolved and within view ahead of player)
+    if(!o.resolved && sx>r.player.x){
+      ctx.font='12px monospace';
+      ctx.fillStyle = def.action==='up' ? '#9fd' : '#fda';
+      ctx.fillText(def.cue+(def.action==='up'?' ↑':' ␣'), sx, GROUND_Y-78);
+    }
+    // body
+    ctx.font='40px serif';
+    ctx.globalAlpha = o.resolved ? (o.ok?0.35:0.55) : 1;
+    ctx.fillText(def.emoji, sx, GROUND_Y+18);
+    ctx.globalAlpha=1;
+    if(o.resolved && o.ok){ ctx.font='18px serif'; ctx.fillStyle='#7f9'; ctx.fillText('✓', sx+22, GROUND_Y-30); }
+    if(o.resolved && !o.ok){ ctx.font='18px serif'; ctx.fillStyle='#f88'; ctx.fillText('•', sx+22, GROUND_Y-30); }
+  }
+  ctx.textAlign='left';
+}
+
+function drawPlayer(){
+  const r=runner, p=r.player, st=r.config.playerStyle;
+  const bounce = p.airborne?0:Math.sin(r.distance/26)*3;
+  const cx=p.x, cy=p.y - bounce - 24;
+  ctx.save();
+  if(p.stumble>0){ ctx.globalAlpha=0.6+0.4*Math.sin(performance.now()/40); }
+  if(st.kind==='cat'){
+    // white blob Arthur (placeholder)
+    ctx.fillStyle = p.stumble>0?'#f7caca':'#f4f1ea';
+    roundRect(cx-22,cy-18,44,40,16); ctx.fill();
+    // ears
+    ctx.beginPath(); ctx.moveTo(cx-16,cy-14); ctx.lineTo(cx-22,cy-30); ctx.lineTo(cx-6,cy-18); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx+16,cy-14); ctx.lineTo(cx+22,cy-30); ctx.lineTo(cx+6,cy-18); ctx.fill();
+    // eyes
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(cx-7,cy-2,2.6,0,7); ctx.arc(cx+7,cy-2,2.6,0,7); ctx.fill();
+    // tail
+    ctx.strokeStyle = ctx.fillStyle='#f4f1ea'; ctx.lineWidth=6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx-20,cy+14); ctx.quadraticCurveTo(cx-44,cy+6,cx-38,cy-12); ctx.stroke();
+  } else {
+    // emoji rider (scooter / couple)
+    ctx.font='48px serif'; ctx.textAlign='center';
+    ctx.fillText(st.emoji, cx, cy+24);
+    ctx.textAlign='left';
+  }
+  ctx.restore();
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.28)'; ctx.beginPath();
+  ctx.ellipse(cx, GROUND_Y+26, 26-(p.airborne?8:0), 7, 0,0,7); ctx.fill();
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+function drawHUD(){
+  const r=runner, c=r.config;
+  // leg name banner
+  const leg=c.legs[r.legIndex];
+  ctx.textAlign='center';
+  if(r.bannerT>0){
+    ctx.globalAlpha=Math.min(1, r.bannerT*1.5);
+    ctx.fillStyle='rgba(0,0,0,.5)'; roundRect(W/2-220,40,440,54,10); ctx.fill();
+    ctx.fillStyle='#e8c06a'; ctx.font='13px monospace';
+    ctx.fillText(c.title.toUpperCase()+'  ·  ETAPPE '+(r.legIndex+1)+'/'+c.legs.length, W/2, 62);
+    ctx.fillStyle='#f4ece0'; ctx.font='22px serif'; ctx.fillText(leg.name, W/2, 84);
+    ctx.globalAlpha=1;
+  }
+  ctx.textAlign='left';
+
+  // progress bar of current leg
+  const frac=(r.distance-leg.start)/(leg.end-leg.start);
+  ctx.fillStyle='rgba(255,255,255,.12)'; roundRect(30,28,260,8,4); ctx.fill();
+  ctx.fillStyle='#e8c06a'; roundRect(30,28,260*Math.max(0,Math.min(1,frac)),8,4); ctx.fill();
+
+  // meter widget (top-right under debug area)
+  drawMeter();
+}
+
+function drawMeter(){
+  const c=runner.config;
+  ctx.textAlign='right'; ctx.font='13px monospace';
+  if(c.gameNum===1){
+    ctx.fillStyle='#f4ece0';
+    let s=''; for(let i=0;i<9;i++) s += i<state.lives?'♥':'·';
+    ctx.fillText('LEVENS '+s, W-24, 40);
+  } else if(c.gameNum===2){
+    ctx.fillStyle='#ddd'; ctx.fillText('FLOW', W-180, 40);
+    ctx.fillStyle='rgba(255,255,255,.15)'; roundRect(W-150,30,120,12,6); ctx.fill();
+    const col = state.flow>40?'#6cd6a0':'#e08a5a';
+    ctx.fillStyle=col; roundRect(W-150,30,120*state.flow/100,12,6); ctx.fill();
+  } else {
+    ctx.fillStyle='#ddd'; ctx.fillText('BORREL', W-180, 40);
+    ctx.fillStyle='rgba(255,255,255,.15)'; roundRect(W-150,30,120,12,6); ctx.fill();
+    ctx.fillStyle='#e0b24f'; roundRect(W-150,30,120*state.borrel/100,12,6); ctx.fill();
+    if(state.borrel>50){ ctx.fillStyle='#e0b24f'; ctx.font='11px monospace';
+      ctx.fillText('🥴 wiebelig…', W-24, 58); }
+  }
+  ctx.textAlign='left';
+}
+
+/* ============================================================================
+   5. CARD MOMENT — the hub. Build once, used 9×.
+   ============================================================================ */
+function openCardMoment(momentId, onDone){
+  state.currentMoment = momentId;
+  const data = CARDS[momentId];
+  const order = shuffle(data.cards); // randomize left/center/right
+  input.mode='card';
+
+  momentEl.classList.add('show');
+  momentEl.innerHTML =
+    '<div class="prompt fade"><span class="lead-in">Je grijpt instinctief naar…</span>'+escapeH(data.prompt)+'</div>'+
+    '<div class="grab-hint">Grijp er één — snel <span class="ring"></span></div>'+
+    '<div class="cards"></div>';
+  const row = momentEl.querySelector('.cards');
+  const keyLabels=['1','2','3'];
+  order.forEach((card, i)=>{
+    const el=document.createElement('div');
+    el.className='moment-card';
+    el.style.animationDelay=(i*0.08)+'s';
+    el.innerHTML='<div class="num">'+keyLabels[i]+'</div>'+
+      '<div class="body">'+escapeH(card.text)+'</div>'+
+      '<div class="pick">grijp '+keyLabels[i]+'</div>';
+    el.addEventListener('click', ()=>choose(i));
+    row.appendChild(el);
+  });
+
+  function choose(idx){
+    if(input.mode!=='card') return;
+    const card=order[idx];
+    // record
+    state.grabs.push(card.city);
+    state.grabbedCards[momentId]=card;
+    if(runner && runner.config.gameNum===3) state.borrel=Math.min(100,state.borrel+30); // each kopstootje fills borrel
+    // visual confirm
+    const cards=row.children;
+    for(let i=0;i<cards.length;i++){ cards[i].classList.add(i===idx?'chosen':'dim'); }
+    doFlash();
+    input.mode='none';
+    cardKeyHandler=null;
+    updateDebug();
+    setTimeout(()=>{
+      momentEl.classList.remove('show'); momentEl.innerHTML='';
+      input.mode='game';
+      onDone();
+    }, 700);
+  }
+
+  // keyboard: 1/2/3 ; ArrowLeft/Space/ArrowRight ; never auto-fail on stall
+  cardKeyHandler=(e)=>{
+    let idx=-1;
+    if(e.key==='1') idx=0; else if(e.key==='2') idx=1; else if(e.key==='3') idx=2;
+    else if(e.key==='ArrowLeft') idx=0; else if(e.key===' ') idx=1; else if(e.key==='ArrowRight') idx=2;
+    if(idx>=0){ e.preventDefault(); choose(idx); }
+  };
+}
+function escapeH(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ============================================================================
+   6. GAME CONFIGS — three games on one engine
+   ============================================================================ */
+const Game1_Arthur = {
+  gameNum:1, screen:'game1', title:'Arthur', momentIds:[1,2,3], speed:240,
+  playerStyle:{kind:'cat'},
+  theme:{ sky0:'#2a2336', sky1:'#4a3a4e', disc:'#f3d6a0', far:'#241d2e', mid:'#34283a',
+          ground:'#241b22', groundLine:'#3a2c34', safe:'#e8c06a' },
+  legs:[
+    { name:'Voordeur → onder de geparkeerde auto', length:3400, obstacles:[
+      {at:800,type:'cat'},{at:1500,type:'dog'},{at:2200,type:'cat'},{at:2900,type:'person'} ]},
+    { name:'De auto → de speeltuin', length:3400, obstacles:[
+      {at:700,type:'cat'},{at:1400,type:'dog'},{at:2100,type:'gps'},{at:2800,type:'cat'} ]},
+    { name:'De speeltuin → thuis', length:3400, obstacles:[
+      {at:800,type:'dog'},{at:1500,type:'cat'},{at:2200,type:'person'},{at:2900,type:'cat'} ]},
+  ],
+};
+
+const Game2_Scooter = {
+  gameNum:2, screen:'game2', title:'Scooter', momentIds:[4,5,6], speed:300,
+  playerStyle:{kind:'emoji', emoji:'🛵'},
+  theme:{ sky0:'#244a63', sky1:'#7aa6b8', disc:'#fff4d8', far:'#3a5e72', mid:'#4f7383',
+          ground:'#3a3f44', groundLine:'#565c62', safe:'#ffe08a' },
+  legs:[
+    { name:'Noordermarkt → Dappermarkt', length:3600, obstacles:[
+      {at:800,type:'tourist'},{at:1500,type:'bike'},{at:2200,type:'tourist'},{at:2950,type:'light'} ]},
+    { name:'Grachten → het noodlerestaurant', length:3600, obstacles:[
+      {at:800,type:'bike'},{at:1500,type:'tourist'},{at:2200,type:'cam'},{at:2950,type:'tourist'} ]},
+    { name:'→ ijs, Vondelpark', length:3600, obstacles:[
+      {at:800,type:'tourist'},{at:1500,type:'light'},{at:2200,type:'bike'},{at:2950,type:'tourist'} ]},
+  ],
+};
+
+const Game3_BarCrawl = {
+  gameNum:3, screen:'game3', title:'Borrel', momentIds:[7,8,9], speed:255,
+  playerStyle:{kind:'emoji', emoji:'🍻'},
+  theme:{ sky0:'#161126', sky1:'#3a2a44', disc:'#ffe9a8', far:'#221a30', mid:'#322444',
+          ground:'#1d1722', groundLine:'#332838', safe:'#e8c06a' },
+  legs:[
+    { name:"Café 't Smalle", length:3300, obstacles:[
+      {at:800,type:'buur'},{at:1500,type:'terras'},{at:2200,type:'tram'},{at:2900,type:'buur'} ]},
+    { name:'De Kat in de Wijngaert', length:3300, obstacles:[
+      {at:800,type:'terras'},{at:1500,type:'buur'},{at:2200,type:'tram'},{at:2900,type:'terras'} ]},
+    { name:'De Willem', length:3300, obstacles:[
+      {at:800,type:'buur'},{at:1500,type:'tram'},{at:2200,type:'terras'},{at:2900,type:'buur'} ]},
+  ],
+};
+
+/* ============================================================================
+   7. TALLY + tiebreak ladder (deterministic — always resolves)
+   ============================================================================ */
+function tally(){
+  const t={marseille:0,palermo:0,bilbao:0};
+  state.grabs.forEach(c=>{ if(t[c]!==undefined) t[c]++; });
+  return t;
+}
+
+function resolveWinner(){
+  const t=tally();
+  // 1. highest total
+  let max=Math.max(t.marseille,t.palermo,t.bilbao);
+  let tied=CITIES.filter(c=>t[c]===max);
+  if(tied.length===1) return tied[0];
+
+  // 2. most grabs in GAME 3 (moments 7,8,9 → grabs indices 6,7,8) among tied
+  const g3={}; tied.forEach(c=>g3[c]=0);
+  for(let i=6;i<=8;i++){ const c=state.grabs[i]; if(g3[c]!==undefined) g3[c]++; }
+  let g3max=Math.max(...tied.map(c=>g3[c]));
+  let tied2=tied.filter(c=>g3[c]===g3max);
+  if(tied2.length===1) return tied2[0];
+
+  // 3. most recent grab: scan card 9 -> 1, first whose city is still tied wins
+  for(let i=state.grabs.length-1;i>=0;i--){
+    if(tied2.includes(state.grabs[i])) return state.grabs[i];
+  }
+  return tied2[0]; // safety
+}
+
+/* ============================================================================
+   8. REVEAL — dossier of the winning city's own grabbed cards (game order)
+   ============================================================================ */
+function goReveal(){
+  state.screen='reveal'; input.mode='menu';
+  runner=null;
+  const winner=resolveWinner();
+  const info=CITY_INFO[winner];
+
+  // collect winning city's grabbed cards in moment order 1..9
+  const won=[];
+  for(let m=1;m<=9;m++){
+    const card=state.grabbedCards[m];
+    if(card && card.city===winner) won.push({m, card});
+  }
+
+  revealEl.classList.add('show');
+  revealEl.innerHTML='<h2 class="fade" style="letter-spacing:.3em;color:var(--gold)">HET DOSSIER</h2>'+
+    '<p class="lead fade" style="margin-top:0">Drie zichtlijnen die op één punt samenkomen…</p>'+
+    '<div class="dossier"></div>'+
+    '<div id="cityName">'+info.emoji+' '+info.name+'</div>'+
+    '<div id="citySub">'+info.sub+'</div>'+
+    '<div id="revealAgain"><button class="btn" onclick="restartAll()">Nog eens</button></div>';
+  const dos=revealEl.querySelector('.dossier');
+
+  // animate postcards in one by one
+  won.forEach((w,i)=>{
+    const el=document.createElement('div');
+    el.className='post';
+    const rot=(i%2===0?-1:1)*(2+i); el.style.setProperty('--rot',rot+'deg');
+    el.style.animationDelay=(0.5+i*0.55)+'s';
+    el.innerHTML='<div class="stamp">'+escapeH(CARDS[w.m].prompt)+'</div>'+escapeH(w.card.text);
+    dos.appendChild(el);
+  });
+
+  const total=0.5+won.length*0.55+0.5;
+  setTimeout(()=>{
+    document.getElementById('cityName').classList.add('in');
+    document.getElementById('citySub').classList.add('in');
+    document.getElementById('revealAgain').classList.add('in');
+    document.getElementById('stage').style.setProperty('--gold', info.accent);
+    doFlash();
+  }, total*1000);
+  updateDebug();
+}
+
+/* ============================================================================
+   9. SCREEN MACHINE — intro / inters wired to the engine
+   ============================================================================ */
+function showIntro(){
+  state.screen='intro'; input.mode='menu'; runner=null;
+  hideAllOverlays();
+  overlay.className='active';
+  overlay.innerHTML=
+    '<div class="center fade">'+
+      '<h1>DE REIS</h1>'+
+      '<p class="lead">Drie steden. Negen keuzes. Eén bestemming.<br>'+
+      'Je hoeft niet na te denken — grijp gewoon wat je instinct als eerste pakt. '+
+      'Aan het eind weet ik waar we heen gaan.</p>'+
+      '<p class="lead" style="font-size:15px">'+
+      '<span class="kbd">← ↑ →</span> bewegen · <span class="kbd">spatie</span> reageren · '+
+      'bij een kaart: <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span></p>'+
+      '<div style="margin-top:14px"><button class="btn" id="startBtn">Begin</button></div>'+
+      '<p class="lead" style="font-size:12px;color:#6b5d4d;margin-top:30px">'+
+      'tip: <span class="kbd">`</span> opent het debugpaneel</p>'+
+    '</div>';
+  document.getElementById('startBtn').addEventListener('click', ()=>{ overlay.className=''; overlay.innerHTML=''; startGame(Game1_Arthur); });
+}
+
+function showInter(which){
+  input.mode='menu'; runner && (runner.done=true);
+  hideAllOverlays();
+  overlay.className='active';
+  const cfgs={
+    inter1:{ title:'Etappe 1 voltooid', body:'Arthur is veilig thuis. Tijd om de stad in te gaan — stap achterop, ik rij niet.',
+             btn:'Op de scooter', next:Game2_Scooter, screen:'inter1' },
+    inter2:{ title:'Etappe 2 voltooid', body:'Genoeg gegeten. Nu het belangrijkste: een kopstootje, of drie. Volg je gevoel — de borrel doet de rest.',
+             btn:'De kroeg in', next:Game3_BarCrawl, screen:'inter2' },
+  };
+  const c=cfgs[which]; state.screen=c.screen;
+  overlay.innerHTML='<div class="center fade"><h2 style="color:var(--gold)">'+c.title+'</h2>'+
+    '<p class="lead">'+c.body+'</p><button class="btn" id="interBtn">'+c.btn+'</button></div>';
+  document.getElementById('interBtn').addEventListener('click', ()=>{ overlay.className=''; overlay.innerHTML=''; startGame(c.next); });
+}
+
+function hideAllOverlays(){
+  momentEl.classList.remove('show'); momentEl.innerHTML='';
+  revealEl.classList.remove('show'); revealEl.innerHTML='';
+}
+
+function restartAll(){
+  resetState(); hideAllOverlays();
+  document.getElementById('stage').style.removeProperty('--gold');
+  showIntro(); updateDebug();
+}
+
+/* ============================================================================
+   10. DEBUG PANEL — toggle with backtick. Build early; drives everything.
+   ============================================================================ */
+function toggleDebug(){ debugEl.classList.toggle('show'); if(debugEl.classList.contains('show')) updateDebug(); }
+
+function buildDebug(){
+  debugEl.innerHTML=
+    '<h3>▸ JUMP TO GAME</h3><div class="row" id="dbgGames"></div>'+
+    '<h3>▸ AUTO-GRAB CURRENT MOMENT</h3>'+
+    '<div class="row" id="dbgGrab"><span class="tag">geen actief moment</span></div>'+
+    '<h3>▸ SIMULATE</h3><div class="row">'+
+      '<button onclick="dbgRandomRun()">random volledige run</button></div>'+
+    '<h3>▸ FORCE TALLY → REVEAL</h3><div class="row" id="dbgTally"></div>'+
+    '<h3>▸ SKIP TO REVEAL (winner)</h3><div class="row" id="dbgWin"></div>'+
+    '<h3>▸ STATE</h3><div id="dbgState"></div>';
+
+  const games=[['Game 1 · Arthur',Game1_Arthur],['Game 2 · Scooter',Game2_Scooter],['Game 3 · Borrel',Game3_BarCrawl]];
+  const gw=debugEl.querySelector('#dbgGames');
+  games.forEach(([label,cfg])=>{
+    cfg.legs.forEach((leg,li)=>{
+      const b=document.createElement('button');
+      b.textContent=cfg.title+' E'+(li+1);
+      b.title=label+' — '+leg.name;
+      b.onclick=()=>dbgJump(cfg,li);
+      gw.appendChild(b);
+    });
+  });
+
+  // force-tally scenarios covering each tiebreak branch
+  const tw=debugEl.querySelector('#dbgTally');
+  const scenarios=[
+    ['Marseille wint (5-2-2)', ['marseille','marseille','marseille','marseille','marseille','palermo','palermo','bilbao','bilbao']],
+    ['Gelijk → Game 3 (3-3-3, Pal G3)', ['marseille','marseille','marseille','bilbao','bilbao','bilbao','palermo','palermo','palermo']],
+    ['Gelijk → kaart 9 (3-3-3, 1-1-1 in G3, Bil laatste)', ['marseille','palermo','bilbao','marseille','palermo','bilbao','marseille','palermo','bilbao']],
+  ];
+  scenarios.forEach(([label,grabs])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    b.onclick=()=>dbgForceTally(grabs); tw.appendChild(b);
+  });
+
+  const ww=debugEl.querySelector('#dbgWin');
+  CITIES.forEach(c=>{
+    const b=document.createElement('button'); b.textContent=CITY_INFO[c].name;
+    b.onclick=()=>dbgSkipReveal(c); ww.appendChild(b);
+  });
+}
+
+function updateDebug(){
+  if(!debugEl.classList.contains('show')) return;
+  // auto-grab buttons for the active moment
+  const gw=debugEl.querySelector('#dbgGrab');
+  if(state.currentMoment && momentEl.classList.contains('show')){
+    gw.innerHTML='<span class="tag">moment '+state.currentMoment+': '+CARDS[state.currentMoment].prompt+'</span><br>';
+    CITIES.forEach(c=>{
+      const b=document.createElement('button'); b.textContent='grab '+c;
+      b.onclick=()=>dbgAutoGrab(c); gw.appendChild(b);
+    });
+  } else {
+    gw.innerHTML='<span class="tag">geen actief moment</span>';
+  }
+  debugEl.querySelector('#dbgState').textContent=
+    'screen: '+state.screen+'\nmoment: '+state.currentMoment+
+    '\ngrabs ('+state.grabs.length+'): '+JSON.stringify(state.grabs)+
+    '\ntally: '+JSON.stringify(tally())+
+    '\nlives:'+state.lives+' flow:'+Math.round(state.flow)+' borrel:'+Math.round(state.borrel);
+}
+
+function dbgJump(cfg, legIndex){
+  hideAllOverlays(); overlay.className=''; overlay.innerHTML='';
+  startGame(cfg);
+  // fast-forward to the requested leg start
+  runner.legIndex=legIndex;
+  runner.distance=cfg.legs[legIndex].start;
+  runner.bannerT=1.4;
+  // mark earlier legs' obstacles resolved so they don't linger
+  runner.obstacles.forEach(o=>{ if(o.leg<legIndex){o.resolved=true;o.ok=true;} });
+  updateDebug();
+}
+
+function dbgAutoGrab(city){
+  if(!momentEl.classList.contains('show')) return;
+  // find the card element matching this city and click it
+  const data=CARDS[state.currentMoment];
+  const card=data.cards.find(c=>c.city===city);
+  const bodies=momentEl.querySelectorAll('.moment-card .body');
+  for(let i=0;i<bodies.length;i++){
+    if(bodies[i].textContent===card.text){ bodies[i].closest('.moment-card').click(); break; }
+  }
+}
+
+function dbgRandomRun(){
+  state.grabs=[]; state.grabbedCards={};
+  for(let m=1;m<=9;m++){
+    const city=CITIES[Math.floor(Math.random()*3)];
+    state.grabs.push(city);
+    state.grabbedCards[m]=CARDS[m].cards.find(c=>c.city===city);
+  }
+  goReveal();
+}
+
+function dbgForceTally(grabs){
+  state.grabs=grabs.slice();
+  state.grabbedCards={};
+  grabs.forEach((city,i)=>{ state.grabbedCards[i+1]=CARDS[i+1].cards.find(c=>c.city===city); });
+  goReveal();
+}
+
+function dbgSkipReveal(winner){
+  // craft a clean win for the chosen city using its own cards
+  const grabs=[];
+  for(let m=1;m<=9;m++) grabs.push(m<=5?winner:CITIES[(CITIES.indexOf(winner)+ (m%2?1:2))%3]);
+  dbgForceTally(grabs);
+}
+
+/* ============================================================================
+   11. BOOT
+   ============================================================================ */
+buildDebug();
+showIntro();
+updateDebug();
+</script>
+</body>
+</html>
