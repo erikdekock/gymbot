@@ -7,10 +7,11 @@ import { useState } from 'react'
 export default function WelcomeModal({ onSubmit, onSkip }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [subscribe, setSubscribe] = useState(false)
 
   function handleSubmit(e) {
     e.preventDefault()
-    onSubmit({ name: name.trim(), email: email.trim() })
+    onSubmit({ name: name.trim(), email: email.trim(), subscribe: subscribe && !!email.trim() })
   }
 
   return (
@@ -59,6 +60,25 @@ export default function WelcomeModal({ onSubmit, onSkip }) {
             }}
           />
         </div>
+
+        <label
+          className={`mt-3 flex cursor-pointer items-start gap-2.5 text-sm transition-opacity ${
+            email.trim() ? 'opacity-100' : 'opacity-50'
+          }`}
+          style={{ color: 'var(--ink-soft)' }}
+        >
+          <input
+            type="checkbox"
+            checked={subscribe}
+            disabled={!email.trim()}
+            onChange={(e) => setSubscribe(e.target.checked)}
+            className="mt-0.5 h-4 w-4 accent-[var(--accent)]"
+          />
+          <span>
+            Keep me posted &mdash; subscribe to <span style={{ color: 'var(--ink)' }}>Het Zal</span> for
+            news about this book and what&rsquo;s next.
+          </span>
+        </label>
 
         <div className="mt-5 flex items-center justify-between gap-3">
           <button

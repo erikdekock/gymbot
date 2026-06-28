@@ -24,6 +24,7 @@ export default function Toolbar({
   theme,
   onTheme,
   onOpenNav,
+  onShare,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const popoverRef = useRef(null)
@@ -70,17 +71,35 @@ export default function Toolbar({
           {title}
         </div>
 
-        <div className="relative" ref={popoverRef}>
-          <button
-            onClick={() => setSettingsOpen((v) => !v)}
-            aria-label="Reading settings"
-            className="panel flex h-10 w-10 items-center justify-center rounded-full"
-            style={{ color: 'var(--ink)' }}
-          >
-            <span className="font-display text-[17px] leading-none">
-              A<span className="text-[12px]">a</span>
-            </span>
-          </button>
+        <div className="flex items-center gap-2">
+          {onShare && (
+            <button
+              onClick={onShare}
+              aria-label="Share the book"
+              className="panel flex h-10 w-10 items-center justify-center rounded-full"
+              style={{ color: 'var(--ink)' }}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.6" y1="13.5" x2="15.4" y2="17.5" />
+                <line x1="15.4" y1="6.5" x2="8.6" y2="10.5" />
+              </svg>
+            </button>
+          )}
+
+          <div className="relative" ref={popoverRef}>
+            <button
+              onClick={() => setSettingsOpen((v) => !v)}
+              aria-label="Reading settings"
+              className="panel flex h-10 w-10 items-center justify-center rounded-full"
+              style={{ color: 'var(--ink)' }}
+            >
+              <span className="font-display text-[17px] leading-none">
+                A<span className="text-[12px]">a</span>
+              </span>
+            </button>
 
           {settingsOpen && (
             <div
@@ -146,7 +165,8 @@ export default function Toolbar({
                 ))}
               </div>
             </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>

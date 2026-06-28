@@ -43,6 +43,14 @@ export function resolveReaderId() {
   return id
 }
 
+// The ?ref= id, if this reader arrived via someone else's share link. Captured
+// once (the first visit) so we can build the referral chain in the dashboard.
+export function getReferral() {
+  if (typeof window === 'undefined') return null
+  const ref = new URLSearchParams(window.location.search).get('ref')
+  return ref && ref.trim() ? ref.trim() : null
+}
+
 export function isRegistered(readerId) {
   if (typeof window === 'undefined') return true
   return localStorage.getItem(`${REGISTERED_KEY}_${readerId}`) === '1'

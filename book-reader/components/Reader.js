@@ -11,8 +11,16 @@ import {
   markRegistered,
   loadPosition,
   savePosition,
+  getReferral,
 } from '../lib/reader-id'
-import { registerReader, trackChapter, updateProgress } from '../lib/analytics'
+import {
+  registerReader,
+  trackChapter,
+  updateProgress,
+  setReferrer,
+  subscribeHetZal,
+  recordShare,
+} from '../lib/analytics'
 
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n))
 
@@ -76,6 +84,10 @@ export default function Reader({ chapters, bookTitle }) {
     } else {
       registerReader(id)
     }
+
+    // If they arrived via someone's share link, record the referral once.
+    const ref = getReferral()
+    if (ref) setReferrer(id, ref)
 
     setReady(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -321,10 +333,11 @@ export default function Reader({ chapters, bookTitle }) {
   }
 
   // ---- welcome handlers ------------------------------------------------------
-  const handleWelcome = ({ name, email }) => {
+  const handleWelcome = ({ name, email, subscribe }) => {
     if (readerId) {
       registerReader(readerId, name, email)
       markRegistered(readerId)
+      if (subscribe && email) subscribeHetZal(readerId, { email, name, book: bookTitle })
     }
     setShowWelcome(false)
   }
@@ -335,6 +348,30 @@ export default function Reader({ chapters, bookTitle }) {
     }
     setShowWelcome(false)
   }
+
+  // ---- share -----------------------------------------------------------------
+  const [shareToast, setShareToast] = useState(false)
+  const handleShare = useCallback(async () => {
+    if (typeof window === 'undefined') return
+    // Share link carries ?ref=<readerId> so referrals can be attributed.
+    const url = `${window.location.origin}/read?ref=${readerId || ''}`
+    const shareData = { title: bookTitle, text: `I'm reading ${bookTitle} — have a look:`, url }
+    let channel = 'copy'
+    try {
+      if (navigator.share) {
+        channel = 'native'
+        await navigator.share(shareData)
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url)
+      }
+      setShareToast(true)
+      setTimeout(() => setShareToast(false), 2200)
+    } catch {
+      /* user cancelled the share sheet — ignore */
+      return
+    }
+    if (readerId) recordShare(readerId, channel)
+  }, [readerId, bookTitle])
 
   const atVeryEnd =
     chapterIndex === chapters.length - 1 && pageIndex === pageCount - 1
@@ -352,7 +389,16 @@ export default function Reader({ chapters, bookTitle }) {
         theme={theme}
         onTheme={setTheme}
         onOpenNav={() => setNavOpen(true)}
+        onShare={handleShare}
       />
+
+      {shareToast && (
+        <div className="pointer-events-none fixed inset-x-0 top-16 z-[60] flex justify-center">
+          <div className="panel rounded-full px-4 py-2 text-sm" style={{ color: 'var(--ink)' }}>
+            Link copied — thanks for sharing ✨
+          </div>
+        </div>
+      )}
 
       <ChapterNav
         open={navOpen}
