@@ -1,0 +1,220 @@
+{
+  "cards": [
+    {
+      "file": "cards/bilbao_01.jpg",
+      "city": "Bilbao",
+      "theme": 1,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_02.jpg",
+      "city": "Bilbao",
+      "theme": 2,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_03.jpg",
+      "city": "Bilbao",
+      "theme": 3,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_04.jpg",
+      "city": "Bilbao",
+      "theme": 4,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_05.jpg",
+      "city": "Bilbao",
+      "theme": 5,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_06.jpg",
+      "city": "Bilbao",
+      "theme": 6,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_07.jpg",
+      "city": "Bilbao",
+      "theme": 7,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_08.jpg",
+      "city": "Bilbao",
+      "theme": 8,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/bilbao_09.jpg",
+      "city": "Bilbao",
+      "theme": 9,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_01.jpg",
+      "city": "Marseille",
+      "theme": 1,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_02.jpg",
+      "city": "Marseille",
+      "theme": 2,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_03.jpg",
+      "city": "Marseille",
+      "theme": 3,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_04.jpg",
+      "city": "Marseille",
+      "theme": 4,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_05.jpg",
+      "city": "Marseille",
+      "theme": 5,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_06.jpg",
+      "city": "Marseille",
+      "theme": 6,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_07.jpg",
+      "city": "Marseille",
+      "theme": 7,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_08.jpg",
+      "city": "Marseille",
+      "theme": 8,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/marseille_09.jpg",
+      "city": "Marseille",
+      "theme": 9,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_01.jpg",
+      "city": "Palermo",
+      "theme": 1,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_02.jpg",
+      "city": "Palermo",
+      "theme": 2,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_03.jpg",
+      "city": "Palermo",
+      "theme": 3,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_04.jpg",
+      "city": "Palermo",
+      "theme": 4,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_05.jpg",
+      "city": "Palermo",
+      "theme": 5,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_06.jpg",
+      "city": "Palermo",
+      "theme": 6,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_07.jpg",
+      "city": "Palermo",
+      "theme": 7,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_08.jpg",
+      "city": "Palermo",
+      "theme": 8,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    },
+    {
+      "file": "cards/palermo_09.jpg",
+      "city": "Palermo",
+      "theme": 9,
+      "w": 512,
+      "h": 768,
+      "mime": "image/jpeg"
+    }
+  ]
+}

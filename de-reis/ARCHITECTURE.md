@@ -270,3 +270,12 @@ De secties hierboven beschrijven het origineel (`reference/`). De gebouwde versi
   links/rechts-as, geen lanes; bestaande sprong (↑/`air`/`GRAV`) hergebruikt. In-memory
   voortgang/stemmen blijven; geen reload. Tunables: `HOOP_Z/Y/R/D/DMARG/AIR/BAND/CAP_D`.
   Kern-runner/obstakels/projectie/`texStrip` ongewijzigd; blobs byte-identiek.
+- **Ticket 5 — Kaarten inlinen + pakjes-datalaag (geen UI).** Nieuwe **additieve** global
+  `CARDS` (27 entries `{city, theme, src}`), ge-inlined door `build.mjs` uit
+  `assets/cards/manifest.cards.json` — échte JPEG-bestanden met `image/jpeg`-mime (niet de
+  `.png`-key-quirk van `IMAGES`). `game.js` krijgt een pure `buildPacks()` die 9 pakjes maakt:
+  elk pakje één-per-stad met 3 verschillende thema's (offsets 0/3/6 + random rotatie), samen alle
+  27 kaarten precies één keer; pakje-volgorde én posities geschud. `REIS.packs` wordt **één keer**
+  gezet bij de eerste hub (overleeft etappe-herstart/mis), met `packsForLevel()` als cursor
+  (3 pakjes per etappe; nog niet geconsumeerd). Geen UI/stemmen/reveal (ticket 6). Bestaande blobs
+  byte-identiek; dist ≈ 11 MB.

@@ -75,10 +75,25 @@ function clearOv(){['finalChoice','reveal','gameOver','hub'].forEach(id=>{var e=
 
 /* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
 let currentLevel=1, completed=[false,false,false];
-const REIS={picks:[],votes:{marseille:0,palermo:0,bilbao:0}};/* placeholder voor kaarten/stemtelling (ticket 5) */
+const REIS={picks:[],votes:{marseille:0,palermo:0,bilbao:0},packs:null,packIndex:0};/* kaarten/pakjes (ticket 5); picks/votes/packIndex consumeren in ticket 6 */
+/* ---- Pakjes-datalaag (Ticket 5): 9 pakjes uit de 27 kaarten (CARDS), GEEN UI ---- */
+function shufflePack(a){for(var i=a.length-1;i>0;i--){var j=(Math.random()*(i+1))|0,t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function cardOf(city,theme){for(var i=0;i<CARDS.length;i++)if(CARDS[i].city===city&&CARDS[i].theme===theme)return CARDS[i];return null;}
+function buildPacks(){
+ /* offsets 0/3/6 -> binnen elk pakje drie verschillende thema's; rotatie r randomiseert de paring */
+ var cities=['Marseille','Palermo','Bilbao'],off=[0,3,6],r=(Math.random()*9)|0,packs=[];
+ for(var i=0;i<9;i++){
+   var trio=cities.map(function(city,ci){return cardOf(city,((i+off[ci]+r)%9)+1);});
+   shufflePack(trio);/* posities links/midden/rechts schudden */
+   packs.push(trio);
+ }
+ shufflePack(packs);/* pakje-volgorde schudden */
+ return packs;
+}
+function packsForLevel(level){return REIS.packs?REIS.packs.slice((level-1)*3,(level-1)*3+3):[];}/* 3 pakjes per etappe (cursor; nog niet geconsumeerd) */
 const HUBTIJD=['Ochtend','Schemering','Nacht'];/* tijd-van-de-dag per etappe */
 function levelUnlocked(i){return i===0||completed[i-1];}/* lineair ontgrendeld (0-based) */
-function showHub(){S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
+function showHub(){if(!REIS.packs)REIS.packs=buildPacks();/* één keer bij de eerste hub; NIET opnieuw schudden bij herstart/mis */S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
 function renderHubTiles(){
  var tiles=document.querySelectorAll('#hub .htile');
  for(var i=0;i<tiles.length;i++){(function(i){

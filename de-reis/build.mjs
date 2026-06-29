@@ -53,6 +53,15 @@ for (const [key, o] of Object.entries(manifest.STREET)) STREET[key] = { w: o.w, 
 const OBSTI = {};
 for (const [key, o] of Object.entries(manifest.OBSTI)) OBSTI[key] = { w: o.w, h: o.h, d: dataURI(o.file) };
 
+// CARDS: additieve nieuwe global (27 stadskaarten), gevoed door assets/cards/manifest.cards.json.
+// Dit zijn ECHTE jpeg-bestanden met jpeg-mime (niet de .png-key-met-jpeg-quirk van IMAGES).
+const cardsManifest = JSON.parse(fs.readFileSync(path.join(ASSETS, 'cards', 'manifest.cards.json'), 'utf8'));
+const CARDS = cardsManifest.cards.map((c) => {
+  const buf = fs.readFileSync(path.join(ASSETS, c.file));
+  const mime = c.mime || mimeOf(buf); // echte mime uit het manifest (image/jpeg)
+  return { city: c.city, theme: c.theme, src: `data:${mime};base64,${buf.toString('base64')}` };
+});
+
 const assetsScript =
   '<script>\n' +
   '/* === ge-inlinede assets — gegenereerd door build.mjs uit assets/manifest.json. Niet handmatig bewerken. === */\n' +
@@ -62,6 +71,7 @@ const assetsScript =
   `const HOUSES=${JSON.stringify(HOUSES)};\n` +
   `const STREET=${JSON.stringify(STREET)};\n` +
   `const OBSTI=${JSON.stringify(OBSTI)};\n` +
+  `const CARDS=${JSON.stringify(CARDS)};\n` +
   '</script>';
 
 const gameJs = fs.readFileSync(path.join(SRC, 'game.js'), 'utf8');
@@ -84,5 +94,6 @@ console.log('  assets ge-inlined:',
   ERIK_FRAMES.length, 'erik,',
   HOUSES.length, 'houses,',
   Object.keys(STREET).length, 'street,',
-  Object.keys(OBSTI).length, 'obstacles');
+  Object.keys(OBSTI).length, 'obstacles,',
+  CARDS.length, 'cards');
 console.log('  outputgrootte:', kb(Buffer.byteLength(html)));
