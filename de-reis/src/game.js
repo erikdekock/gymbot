@@ -19,6 +19,13 @@ const GATE_D=1.8;       /* controlediepte: check valt als d ≈ GATE_D */
 const GATE_DMARG=0.45;  /* timing-venster (halve breedte); groter = milder */
 const GATE_CLEAR=48;    /* minimale air-hoogte (px) om over het hek te komen */
 const GATE_CAP_D=8;     /* toon affordance-caption binnen deze diepte */
+/* ---- Bekendmaking / tromgeroffel (Ticket 11) ---- */
+var _bkRaf=0;
+const HOLD_DUR=1.7;
+const HOLD_DECAY=2;
+const BK_CONF_N=90;
+const BK_FW_IVAL=0.45;
+const BK_FW_MAX=15;
 const AIMGS=ARTHUR_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const EIMGS=ERIK_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const CIMGS=CAT_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
@@ -78,7 +85,7 @@ C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.cli
 C.addEventListener('pointerup',()=>{S.duck=false;});
 function begin(level){S=fresh();S.level=level||currentLevel||1;gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
 function restart(){begin(currentLevel);}
-function clearOv(){['finalChoice','reveal','revealintro','gameOver','hub','cards','explain'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+function clearOv(){['finalChoice','reveal','revealintro','tromgeroffel','bekendmaking','gameOver','hub','cards','explain'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});cancelAnimationFrame(_bkRaf);_bkRaf=0;}
 
 /* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
 let currentLevel=1, completed=[false,false,false];
@@ -145,8 +152,102 @@ function showExplain(level){S.phase='explain';var ov=document.getElementById('ex
  function dismiss(e){if(e.type==='keydown'&&e.key!==' '&&e.key!=='Enter')return;if(!ov.classList.contains('show'))return;if(e.type==='keydown'){e.preventDefault();e.stopPropagation();}document.removeEventListener('keydown',dismiss,true);ov.removeEventListener('pointerdown',dismiss);ov.classList.remove('show');startCardPhase(level);}
  document.addEventListener('keydown',dismiss,true);ov.addEventListener('pointerdown',dismiss);}
 function showRevealIntro(city){S.phase='revealintro';var ov=document.getElementById('revealintro');ov.classList.add('show');
- function dismiss(e){if(e.type==='keydown'&&e.key!==' '&&e.key!=='Enter')return;if(!ov.classList.contains('show'))return;if(e.type==='keydown'){e.preventDefault();e.stopPropagation();}document.removeEventListener('keydown',dismiss,true);ov.removeEventListener('pointerdown',dismiss);ov.classList.remove('show');showReveal(city);}
+ function dismiss(e){if(e.type==='keydown'&&e.key!==' '&&e.key!=='Enter')return;if(!ov.classList.contains('show'))return;if(e.type==='keydown'){e.preventDefault();e.stopPropagation();}document.removeEventListener('keydown',dismiss,true);ov.removeEventListener('pointerdown',dismiss);ov.classList.remove('show');showTromgeroffel(city);}
  document.addEventListener('keydown',dismiss,true);ov.addEventListener('pointerdown',dismiss);}
+function showTromgeroffel(city){
+ S.phase='tromgeroffel';
+ var ov=document.getElementById('tromgeroffel');
+ ov.classList.add('show');
+ var holder=document.getElementById('trholder'),label=holder.querySelector('.trlabel');
+ var ring=ov.querySelector('.trrfill');
+ var prog=0,holding=false,rafId=0,lastT=0;
+ var CIRC=276.5;
+ function tick(now){
+  var dt=lastT?(now-lastT)/1000:0.016;lastT=now;dt=Math.min(dt,0.05);
+  prog=holding?Math.min(1,prog+dt/HOLD_DUR):Math.max(0,prog-dt*HOLD_DECAY/HOLD_DUR);
+  ring.setAttribute('stroke-dasharray',(prog*CIRC).toFixed(1)+' '+CIRC);
+  var glow=Math.round(prog*36);
+  holder.style.boxShadow='0 0 '+(6+glow)+'px '+(3+glow/2)+'px rgba(217,178,74,'+(0.25+prog*0.55)+')';
+  if(prog>0.55&&holding){var s=(prog-0.55)*2*5;holder.style.transform='translate('+(Math.random()*s-s/2)+'px,'+(Math.random()*s-s/2)+'px)';}
+  else holder.style.transform='';
+  label.textContent=prog>0.6?'Bijna...':'Hou vast om te onthullen';
+  if(prog>=1){done();return;}
+  rafId=requestAnimationFrame(tick);
+ }
+ function done(){cleanup();holder.style.boxShadow='';holder.style.transform='';showBekendmaking(city);}
+ function cleanup(){
+  cancelAnimationFrame(rafId);
+  holder.removeEventListener('pointerdown',onDown);
+  holder.removeEventListener('pointerup',onUp);
+  holder.removeEventListener('pointerleave',onUp);
+  document.removeEventListener('keydown',onKey,true);
+  document.removeEventListener('keyup',onKeyUp,true);
+  ov.classList.remove('show');
+ }
+ function onDown(e){e.preventDefault();e.stopPropagation();holding=true;}
+ function onUp(){holding=false;}
+ function onKey(e){if(e.key===' '){e.preventDefault();holding=true;}}
+ function onKeyUp(e){if(e.key===' ')holding=false;}
+ holder.addEventListener('pointerdown',onDown);
+ holder.addEventListener('pointerup',onUp);
+ holder.addEventListener('pointerleave',onUp);
+ document.addEventListener('keydown',onKey,true);
+ document.addEventListener('keyup',onKeyUp,true);
+ rafId=requestAnimationFrame(tick);
+}
+function showBekendmaking(city){
+ S.phase='bekendmaking';
+ var tr=document.getElementById('tromgeroffel');if(tr)tr.classList.remove('show');
+ var ov=document.getElementById('bekendmaking');
+ ov.querySelector('.bkname').textContent=city.name.toUpperCase();
+ ov.querySelector('.bkmap').src=CITY_MAPS[city.name]||'';
+ ov.classList.add('show');
+ _startBkAnim(ov);
+}
+function _startBkAnim(ov){
+ cancelAnimationFrame(_bkRaf);
+ var c=document.getElementById('bkcanvas');
+ var W=c.offsetWidth||600,H=c.offsetHeight||800;c.width=W;c.height=H;
+ var X=c.getContext('2d');
+ var COLS=['#FFD700','#FF6B6B','#4ECDC4','#96CEB4','#DDA0DD','#F7DC6F','#FF9F43','#A29BFE'];
+ var conf=[];
+ for(var i=0;i<BK_CONF_N;i++){
+  conf.push({x:Math.random()*W,y:-10-Math.random()*H,vx:(Math.random()-0.5)*80,vy:80+Math.random()*120,
+   w:6+Math.random()*8,h:3+Math.random()*4,rot:Math.random()*360,rv:(Math.random()-0.5)*300,
+   col:COLS[(Math.random()*COLS.length)|0],ph:Math.random()*6.28});
+ }
+ var fwp=[],fwNext=0,fwCount=0;
+ function spawnFw(){
+  var cx=W*0.15+Math.random()*W*0.7,cy=H*0.08+Math.random()*H*0.42;
+  var col=COLS[(Math.random()*COLS.length)|0],n=26;
+  for(var i=0;i<n;i++){var a=(i/n)*6.283+Math.random()*0.4,sp=120+Math.random()*180;
+   fwp.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-30,life:0,max:0.7+Math.random()*0.7,col});}
+ }
+ var t=0,lastT=0;
+ function frame(now){
+  var dt=lastT?(now-lastT)/1000:0.016;lastT=now;dt=Math.min(dt,0.05);t+=dt;
+  X.clearRect(0,0,W,H);
+  for(var i=0;i<conf.length;i++){
+   var p=conf[i];
+   p.vy+=120*dt;p.vx+=Math.sin(t*1.8+p.ph)*40*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.rv*dt;
+   if(p.y>H+20){p.y=-10;p.x=Math.random()*W;p.vy=80+Math.random()*100;p.vx=(Math.random()-0.5)*80;}
+   X.save();X.translate(p.x,p.y);X.rotate(p.rot*Math.PI/180);
+   var al=1;if(p.y>H-80)al=(H-p.y)/80;
+   X.globalAlpha=Math.max(0,al);X.fillStyle=p.col;
+   X.fillRect(-p.w/2,-p.h/2,p.w,p.h);X.restore();
+  }
+  if(t>fwNext){spawnFw();fwCount++;fwNext=t+BK_FW_IVAL+Math.random()*0.5;if(fwCount>=BK_FW_MAX){fwCount=0;fwNext=t+2+Math.random()*1.5;}}
+  for(var i=fwp.length-1;i>=0;i--){
+   var p=fwp[i];p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;
+   var al=1-p.life/p.max;
+   if(al<=0){fwp.splice(i,1);continue;}
+   X.beginPath();X.arc(p.x,p.y,2.5+al*2,0,6.283);
+   X.fillStyle=p.col;X.globalAlpha=al*0.9;X.fill();X.globalAlpha=1;
+  }
+  if(ov.classList.contains('show'))_bkRaf=requestAnimationFrame(frame);
+ }
+ _bkRaf=requestAnimationFrame(frame);
+}
 /* ---- Climax-afloop (Ticket 4): herstart etappe zonder voortgang/stemmen te wissen, zonder reload ---- */
 function runFail(msg){S.phase='retry';S.retryT=0;S.capText=msg;S.cap=2.0;S.flash=0.6;}
 function gateHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
@@ -324,7 +425,7 @@ function drawHUD(){
  X.fillStyle='rgba(255,255,255,0.78)';X.font='12px sans-serif';X.textAlign='center';X.fillText('spatie = kat    .    omhoog = hond    .    omlaag = Erik',300,H-12);}
 
 function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.clearRect(0,0,W,H);
- if(S.phase==='reveal'||S.phase==='revealintro')return;/* alleen overlay; lege canvas erachter */
+ if(S.phase==='reveal'||S.phase==='revealintro'||S.phase==='tromgeroffel'||S.phase==='bekendmaking')return;/* alleen overlay; lege canvas erachter */
  if(S.phase==='start'||S.phase==='hub'||S.phase==='cards'||S.phase==='explain'){startScreen();return;}
  X.save();if(S.shake>0){X.translate((Math.random()-0.5)*9*S.shake/0.2,(Math.random()-0.5)*9*S.shake/0.2);}
  drawSky();drawGround();

@@ -1,0 +1,25 @@
+{
+  "city_maps": [
+    {
+      "city": "Marseille",
+      "file": "maps/marseille.jpg",
+      "w": 1024,
+      "h": 1280,
+      "mime": "image/jpeg"
+    },
+    {
+      "city": "Bilbao",
+      "file": "maps/bilbao.jpg",
+      "w": 1024,
+      "h": 1280,
+      "mime": "image/jpeg"
+    },
+    {
+      "city": "Palermo",
+      "file": "maps/palermo.jpg",
+      "w": 1024,
+      "h": 1280,
+      "mime": "image/jpeg"
+    }
+  ]
+}

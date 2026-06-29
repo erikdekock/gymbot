@@ -68,6 +68,15 @@ const CARDS = cardsManifest.cards.map((c) => {
   return { city: c.city, theme: c.theme, src: `data:${mime};base64,${buf.toString('base64')}` };
 });
 
+// CITY_MAPS: additieve nieuwe global (3 stadskaarten), gevoed door assets/maps/manifest.maps.json.
+// { Marseille: dataURI, Palermo: dataURI, Bilbao: dataURI }
+const mapsManifest = JSON.parse(fs.readFileSync(path.join(ASSETS, 'maps', 'manifest.maps.json'), 'utf8'));
+const CITY_MAPS = {};
+for (const m of mapsManifest.city_maps) {
+  const buf = fs.readFileSync(path.join(ASSETS, m.file));
+  CITY_MAPS[m.city] = `data:${m.mime};base64,${buf.toString('base64')}`;
+}
+
 const assetsScript =
   '<script>\n' +
   '/* === ge-inlinede assets — gegenereerd door build.mjs uit assets/manifest.json. Niet handmatig bewerken. === */\n' +
@@ -80,6 +89,7 @@ const assetsScript =
   `const STREET=${JSON.stringify(STREET)};\n` +
   `const OBSTI=${JSON.stringify(OBSTI)};\n` +
   `const CARDS=${JSON.stringify(CARDS)};\n` +
+  `const CITY_MAPS=${JSON.stringify(CITY_MAPS)};\n` +
   '</script>';
 
 const gameJs = fs.readFileSync(path.join(SRC, 'game.js'), 'utf8');
@@ -105,5 +115,6 @@ console.log('  assets ge-inlined:',
   HOUSES.length, 'houses,',
   Object.keys(STREET).length, 'street,',
   Object.keys(OBSTI).length, 'obstacles,',
-  CARDS.length, 'cards');
+  CARDS.length, 'cards',
+  Object.keys(CITY_MAPS).length, 'maps');
 console.log('  outputgrootte:', kb(Buffer.byteLength(html)));

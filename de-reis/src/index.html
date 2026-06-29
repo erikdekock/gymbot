@@ -87,7 +87,21 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
 /* reveal-uitleg: donkere overlay vóór de stadsnaam */
 #revealintro .rxinner{width:100%;max-width:500px;text-align:center;padding:24px}
 #revealintro p{font-family:Georgia,serif;font-size:17px;line-height:1.7;color:rgba(255,255,255,.92);max-width:440px;margin:0 auto}
-#revealintro .ihint{color:rgba(255,255,255,.6);margin-top:32px}</style></head><body>
+#revealintro .ihint{color:rgba(255,255,255,.6);margin-top:32px}
+/* tromgeroffel: hold-to-reveal mechanic, papier-stijl */
+#tromgeroffel{background:radial-gradient(120% 90% at 50% 28%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%);color:#3a2f26}
+#tromgeroffel .trinner{width:100%;max-width:480px;text-align:center;padding:28px 20px}
+.trquestion{font-family:Georgia,serif;font-size:21px;line-height:1.45;color:#3a2f26;margin-bottom:36px}
+#trholder{position:relative;width:168px;height:168px;border-radius:50%;margin:0 auto;cursor:pointer;background:radial-gradient(circle,#f4eddf 60%,#e8dcc8 100%);border:2px solid rgba(160,130,90,.35);display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none}
+.trring{position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none}
+.trlabel{font-family:Georgia,serif;font-size:13px;color:#7a4a2a;text-align:center;padding:0 18px;line-height:1.45;z-index:1;max-width:120px}
+/* bekendmaking: donker, grote naam, kaart-afbeelding, confetti+vuurwerk canvas */
+#bekendmaking{background:#050708;flex-direction:column;padding:0}
+#bekendmaking .bkinner{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;z-index:1}
+.bkprefix{font-family:Georgia,serif;font-size:16px;color:rgba(255,255,255,.65);letter-spacing:.6px;margin-bottom:4px}
+.bkname{font-family:Georgia,serif;font-size:58px;font-weight:700;color:#fff;letter-spacing:3px;text-shadow:0 0 44px rgba(255,255,255,.35),0 3px 10px rgba(0,0,0,.9);line-height:1;margin-bottom:18px}
+.bkmap{width:min(58%,240px);border-radius:10px;box-shadow:0 14px 44px rgba(0,0,0,.75)}
+#bkcanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}</style></head><body>
 <div class="wrap">
 <canvas id="game" width="600" height="800"></canvas>
 <div id="finalChoice" class="overlay"><div class="fcinner">
@@ -159,6 +173,18 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
  <p>Negen keer heb je gekozen, allemaal op gevoel. Zonder het te weten wees je steeds naar dezelfde plek. Dit is waar je hart je bracht.</p>
  <div class="ihint">spatie of tik om te zien waar</div>
 </div></div>
+<div id="tromgeroffel" class="overlay"><div class="trinner">
+ <p class="trquestion">Klaar voor je bestemming, Liefie?</p>
+ <div id="trholder"><svg class="trring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(160,130,90,.25)" stroke-width="5"/><circle class="trrfill" cx="50" cy="50" r="44" fill="none" stroke="#d9b24a" stroke-width="5" stroke-dasharray="0 277" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg><div class="trlabel">Hou vast om te onthullen</div></div>
+</div></div>
+<div id="bekendmaking" class="overlay">
+ <div class="bkinner">
+   <div class="bkprefix">Jullie gaan naar</div>
+   <div class="bkname"></div>
+   <img class="bkmap" alt="">
+ </div>
+ <canvas id="bkcanvas"></canvas>
+</div>
 </div>
 <!-- BUILD:INJECT  (build.mjs vervangt dit door <script> met ge-inlinede assets + game.js) -->
 <script>
