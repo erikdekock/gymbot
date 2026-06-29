@@ -78,7 +78,7 @@ C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.cli
 C.addEventListener('pointerup',()=>{S.duck=false;});
 function begin(level){S=fresh();S.level=level||currentLevel||1;gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
 function restart(){begin(currentLevel);}
-function clearOv(){['finalChoice','reveal','gameOver','hub','cards'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+function clearOv(){['finalChoice','reveal','revealintro','gameOver','hub','cards','explain'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
 
 /* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
 let currentLevel=1, completed=[false,false,false];
@@ -102,7 +102,7 @@ function packsForLevel(level){return REIS.packs?REIS.packs.slice((level-1)*3,(le
 /* ===== Kaart-fase (Ticket 6): woordloze keuze, 3 pakjes per etappe, stemmen, reveal ===== */
 let CARDP=null,cardLock=false;
 /* na de fireworks: eerste keer -> open de 3 pakjes; al gehaald (replay) -> geen kaarten/stemmen */
-function afterClimax(){if(completed[currentLevel-1]){completeEtappe();}else{startCardPhase(currentLevel);}}
+function afterClimax(){if(completed[currentLevel-1]){completeEtappe();}else{showExplain(currentLevel);}}
 function startCardPhase(level){S.phase='cards';CARDP={level:level,packs:packsForLevel(level),i:0};cardLock=false;var ov=document.getElementById('cards');if(ov)ov.classList.add('show');showPack();}
 function showPack(){var ov=document.getElementById('cards');if(!ov||!CARDP)return;var pack=CARDP.packs[CARDP.i],cards=ov.querySelectorAll('.gcard');
  cards.forEach(function(el,k){el.classList.remove('chosen','faded');var im=el.querySelector('img');im.src=pack[k]?pack[k].src:'';el.onclick=function(){chooseCard(k);};});
@@ -115,7 +115,7 @@ function chooseCard(k){if(cardLock||!CARDP)return;var pack=CARDP.packs[CARDP.i];
  REIS.picks.push({city:pack[k].city,theme:pack[k].theme});REIS.packIndex++;/* geordende stem; cursor vooruit */
  setTimeout(function(){cardLock=false;CARDP.i++;if(CARDP.i<3){showPack();}else{endCardPhase();}},800);}
 function endCardPhase(){var ov=document.getElementById('cards');if(ov)ov.classList.remove('show');CARDP=null;
- if(REIS.picks.length>=9){completed[currentLevel-1]=true;S.phase='reveal';showReveal(cityByName(tallyWinner(REIS.picks)));}/* reis compleet -> tel stemmen -> bestaande reveal bovenop (geen hub eronder) */
+ if(REIS.picks.length>=9){completed[currentLevel-1]=true;showRevealIntro(cityByName(tallyWinner(REIS.picks)));}/* reis compleet -> reveal-uitleg -> stad */
  else{completeEtappe();}}
 /* pure functie: meeste stemmen wint; gelijkspel -> de laatst-gekozen stad uit de gelijke set */
 function tallyWinner(picks){var count={},i,c;for(i=0;i<picks.length;i++){c=picks[i].city;count[c]=(count[c]||0)+1;}
@@ -125,6 +125,7 @@ function tallyWinner(picks){var count={},i,c;for(i=0;i<picks.length;i++){c=picks
  return picks[picks.length-1].city;}
 function cityByName(name){for(var i=0;i<CITYDATA.length;i++)if(CITYDATA[i].name===name)return CITYDATA[i];return CITYDATA[0];}
 const HUBTIJD=['Ochtend','Schemering','Nacht'];/* tijd-van-de-dag per etappe */
+const EXPLAIN_TEXT=['Je kunt nooit kiezen, Liefie. En hoe langer je nadenkt, hoe lastiger het wordt. Daarom doen we het deze keer anders. Geen verstand, geen afwegen, alleen gevoel. Je krijgt straks steeds drie kaartjes te zien. Elk kaartje is een sfeer, een klein moment. Kijk er niet te lang naar en kies gewoon het kaartje dat je het meeste aantrekt, zonder te weten waarom. Verspreid over de reis kies je zo negen keer. Aan het einde heeft jouw gevoel vanzelf de plek gekozen die echt bij je past.','Daar gaan we weer, Liefie. Niet nadenken, gewoon voelen welk kaartje je pakt.','De laatste ronde. Vertrouw je gevoel, het weet allang waar je heen wilt.'];
 function levelUnlocked(i){return i===0||completed[i-1];}/* lineair ontgrendeld (0-based) */
 function showHub(){if(!REIS.packs)REIS.packs=buildPacks();/* één keer bij de eerste hub; NIET opnieuw schudden bij herstart/mis */S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
 function renderHubTiles(){
@@ -140,6 +141,12 @@ function renderHubTiles(){
 }
 function startEtappe(level){if(!levelUnlocked(level-1))return;currentLevel=level;var h=document.getElementById('hub');if(h)h.classList.remove('show');begin(level);}
 function completeEtappe(){completed[currentLevel-1]=true;showHub();}
+function showExplain(level){S.phase='explain';var ov=document.getElementById('explain');document.getElementById('explain-text').textContent=EXPLAIN_TEXT[level-1];ov.classList.add('show');
+ function dismiss(e){if(e.type==='keydown'&&e.key!==' '&&e.key!=='Enter')return;if(!ov.classList.contains('show'))return;if(e.type==='keydown'){e.preventDefault();e.stopPropagation();}document.removeEventListener('keydown',dismiss,true);ov.removeEventListener('pointerdown',dismiss);ov.classList.remove('show');startCardPhase(level);}
+ document.addEventListener('keydown',dismiss,true);ov.addEventListener('pointerdown',dismiss);}
+function showRevealIntro(city){S.phase='revealintro';var ov=document.getElementById('revealintro');ov.classList.add('show');
+ function dismiss(e){if(e.type==='keydown'&&e.key!==' '&&e.key!=='Enter')return;if(!ov.classList.contains('show'))return;if(e.type==='keydown'){e.preventDefault();e.stopPropagation();}document.removeEventListener('keydown',dismiss,true);ov.removeEventListener('pointerdown',dismiss);ov.classList.remove('show');showReveal(city);}
+ document.addEventListener('keydown',dismiss,true);ov.addEventListener('pointerdown',dismiss);}
 /* ---- Climax-afloop (Ticket 4): herstart etappe zonder voortgang/stemmen te wissen, zonder reload ---- */
 function runFail(msg){S.phase='retry';S.retryT=0;S.capText=msg;S.cap=2.0;S.flash=0.6;}
 function gateHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
@@ -150,7 +157,7 @@ function spawnBurst(cx,cy){const cols=[[255,210,120],[255,150,90],[180,210,255],
 function pts(d,v){S.fx.push({x:300,y:groundY(d)-44,t:0,kind:'pts',v});}
 function slap(){S.slapT=0.22;let best=99,bi=-1;S.obs.forEach((o,i)=>{if(o.type==='cat'&&o.state==='come'){const d=o.z-S.travel;if(d>1.9&&d<3.7&&d<best){best=d;bi=i;}}});
  if(bi>=0){const o=S.obs[bi];o.state='done';o.ft=0;o.fdir=Math.random()<0.5?-1:1;S.score+=10;pts(best,'+10');S.shake=0.14;}}
-function loseLife(){S.lives--;S.stun=0.9;S.shake=0.3;S.flash=0.5;if(S.lives<=0)runFail('Arthur haalde het net niet — opnieuw.');}
+function loseLife(){S.lives--;S.stun=0.9;S.shake=0.3;S.flash=0.5;if(S.lives<=0)runFail('Arthur haalde het net niet. Opnieuw!');}
 
 function gen(){const FAR=52;
  for(let si=0;si<2;si++){const side=si===0?-1:1;
@@ -317,8 +324,8 @@ function drawHUD(){
  X.fillStyle='rgba(255,255,255,0.78)';X.font='12px sans-serif';X.textAlign='center';X.fillText('spatie = kat    .    omhoog = hond    .    omlaag = Erik',300,H-12);}
 
 function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.clearRect(0,0,W,H);
- if(S.phase==='reveal')return;/* alleen de reveal-overlay; lege (zwarte) canvas erachter, geen tekst-bleed */
- if(S.phase==='start'||S.phase==='hub'||S.phase==='cards'){startScreen();return;}
+ if(S.phase==='reveal'||S.phase==='revealintro')return;/* alleen overlay; lege canvas erachter */
+ if(S.phase==='start'||S.phase==='hub'||S.phase==='cards'||S.phase==='explain'){startScreen();return;}
  X.save();if(S.shake>0){X.translate((Math.random()-0.5)*9*S.shake/0.2,(Math.random()-0.5)*9*S.shake/0.2);}
  drawSky();drawGround();
  const it=[];
@@ -342,7 +349,7 @@ function startScreen(){const sv=S.travel;S.travel=4;ph=0.1;nf=0;dusk=0.3;drawSky
  X.fillStyle='rgba(8,10,12,0.52)';X.fillRect(0,0,W,H);X.textAlign='center';X.fillStyle='#fff';X.font='700 38px Georgia,serif';X.fillText('Arthur',300,232);
  X.font='16px sans-serif';X.fillStyle='rgba(255,255,255,0.9)';X.fillText('Breng Arthur veilig naar de speeltuin.',300,272);
  X.font='15px sans-serif';
- ['spatie  -  sla de zwarte kat','pijl-omhoog  -  spring over de hond','pijl-omlaag  -  duik onder de auto voor Erik','3 levens - haal de speeltuin'].forEach((t,i)=>X.fillText(t,300,318+i*28));
+ ['spatie: sla de zwarte kat','pijl omhoog: spring over de hond','pijl omlaag: duik onder de auto voor Erik','3 levens, haal de speeltuin'].forEach((t,i)=>X.fillText(t,300,318+i*28));
  X.font='600 18px sans-serif';X.fillStyle='#ffd86b';X.fillText('spatie of klik om te beginnen',300,495);}
 
 // ===== EINDE: Kies! =====
