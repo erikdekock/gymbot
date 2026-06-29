@@ -7,6 +7,12 @@ const FPS=10,ARTHUR_W=112;
 const ERIK_FPS=8,ERIK_H=1.8;/* walk-cycle-snelheid en wereldhoogte (reproduceert de oude vector-silhouethoogte) */
 const CAT_FPS=10,CAT_H=1.0;/* kat: animatie-snelheid (fps) en wereldhoogte */
 const DOG_FPS=9,DOG_H=0.96;/* hond: animatie-snelheid (fps) en wereldhoogte */
+/* knockback-tunables: visuele boog van de weggeknalde kat (raakt score/levens NIET aan) */
+const KNOCK_HV=9.2;  /* horizontale vliegsnelheid (sc-eenheden/s) */
+const KNOCK_UV=8.8;  /* initiële opwaartse snelheid (sc-eenheden/s) */
+const KNOCK_GV=11.5; /* zwaartekracht van de boog (sc-eenheden/s²) */
+const KNOCK_ROT=13.5;/* rotatiesnelheid (rad/s) */
+const KNOCK_SHR=0.5; /* schaalkrimp per seconde */
 /* ---- Climax: hoepel bij het hek (Ticket 4) — losse tunables ---- */
 const HOOP_Z=LEN-0.1;   /* wereldpositie (bij de bestaande gate) */
 const HOOP_Y=0.95;      /* wereldhoogte van het hoepelmidden */
@@ -245,13 +251,29 @@ function drawProp(p){const d=p.z-S.travel;if(d<0.5)return;const sc=F/d,sx=300+p.
 function drawCarShape(col){X.fillStyle='rgba(0,0,0,0.25)';X.beginPath();X.ellipse(0,0.03,1.05,0.11,0,0,7);X.fill();X.fillStyle=RGB(L3(col,[18,20,28],nf*0.5));X.beginPath();X.moveTo(-1.0,-0.04);X.lineTo(-0.92,-0.5);X.lineTo(-0.4,-0.57);X.lineTo(-0.26,-0.88);X.lineTo(0.42,-0.88);X.lineTo(0.56,-0.57);X.lineTo(0.92,-0.5);X.lineTo(1.0,-0.04);X.closePath();X.fill();X.fillStyle=RGB(L3([150,180,200],[40,60,90],nf));X.fillRect(-0.22,-0.83,0.58,0.28);X.fillStyle='#111';X.beginPath();X.arc(-0.56,-0.01,0.19,0,7);X.arc(0.58,-0.01,0.19,0,7);X.fill();}
 
 function drawObs(o){if(o.type==='cat')drawCat(o);else if(o.type==='dog')drawDog(o);else drawErik(o);}
-function drawCat(o){const d=o.z-S.travel;if(d<0.28)return;let sc=F/d,x=300,gy=groundY(d),a=1;
- if(o.state!=='come'&&o.fdir){x+=o.fdir*o.ft*sc*1.7;gy-=o.ft*sc*0.5;a=Math.max(0,1-o.ft/1.25);}
+function drawCat(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,gy=groundY(d);
+ if(o.state==='done'){
+  /* knockback: dramatische tuimelende boog ver buiten beeld */
+  const ft=o.ft,img=CIMGS[0];
+  if(img&&img.naturalWidth){
+   const kx=300+o.fdir*ft*KNOCK_HV*sc;
+   const krise=KNOCK_UV*sc*ft-0.5*KNOCK_GV*sc*ft*ft;
+   const cy=gy-CAT_H*sc*0.5-krise;
+   const ks=Math.max(0.04,1-ft*KNOCK_SHR);
+   const hh=CAT_H*sc*ks,w=hh*img.naturalWidth/img.naturalHeight;
+   X.save();X.translate(kx,cy);X.rotate(o.fdir*ft*KNOCK_ROT);
+   X.drawImage(img,-w/2,-hh/2,w,hh);
+   if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(-w/2,-hh/2,w,hh);}
+   X.restore();}
+  return;}
+ /* nadering (come) of mis (miss): geanimeerde kat op zijn plek */
  const fi=Math.floor(S.t*CAT_FPS+o.z)%CIMGS.length,img=CIMGS[fi];
- if(img&&img.naturalWidth){const hh=CAT_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;X.save();X.globalAlpha=a;
-   X.fillStyle='rgba(0,0,0,'+(0.2*a)+')';X.beginPath();X.ellipse(x,gy,w*0.4,sc*0.055,0,0,7);X.fill();
-   X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}X.restore();
-   if(o.state==='come'&&d>1.9&&d<5){X.fillStyle='#ff8a6b';X.font='bold 16px sans-serif';X.textAlign='center';X.fillText('spatie',x,iy-0.12*sc);}}}
+ if(img&&img.naturalWidth){const hh=CAT_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=300-w/2,iy=gy-hh;
+  X.save();
+  X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(300,gy,w*0.4,sc*0.055,0,0,7);X.fill();
+  X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
+  X.restore();
+  if(o.state==='come'&&d>1.9&&d<5){X.fillStyle='#ff8a6b';X.font='bold 16px sans-serif';X.textAlign='center';X.fillText('spatie',300,iy-0.12*sc);}}}
 function drawDog(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=groundY(d);
  const fi=Math.floor(S.t*DOG_FPS+o.z)%DIMGS.length,img=DIMGS[fi];
  if(img&&img.naturalWidth){const hh=DOG_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;
