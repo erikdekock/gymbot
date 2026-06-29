@@ -87,10 +87,10 @@ const REIS={picks:[],votes:{marseille:0,palermo:0,bilbao:0},packs:null,packIndex
 function shufflePack(a){for(var i=a.length-1;i>0;i--){var j=(Math.random()*(i+1))|0,t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function cardOf(city,theme){for(var i=0;i<CARDS.length;i++)if(CARDS[i].city===city&&CARDS[i].theme===theme)return CARDS[i];return null;}
 function buildPacks(){
- /* offsets 0/3/6 -> binnen elk pakje drie verschillende thema's; rotatie r randomiseert de paring */
- var cities=['Marseille','Palermo','Bilbao'],off=[0,3,6],r=(Math.random()*9)|0,packs=[];
- for(var i=0;i<9;i++){
-   var trio=cities.map(function(city,ci){return cardOf(city,((i+off[ci]+r)%9)+1);});
+ /* één thema per pakje: alle drie steden krijgen hetzelfde nummer k (T10) */
+ var cities=['Marseille','Palermo','Bilbao'],packs=[];
+ for(var k=1;k<=9;k++){
+   var trio=cities.map(function(city){return cardOf(city,k);});
    shufflePack(trio);/* posities links/midden/rechts schudden */
    packs.push(trio);
  }
