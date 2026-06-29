@@ -279,3 +279,14 @@ De secties hierboven beschrijven het origineel (`reference/`). De gebouwde versi
   gezet bij de eerste hub (overleeft etappe-herstart/mis), met `packsForLevel()` als cursor
   (3 pakjes per etappe; nog niet geconsumeerd). Geen UI/stemmen/reveal (ticket 6). Bestaande blobs
   byte-identiek; dist ≈ 11 MB.
+- **Ticket 6 — Woordloze kies-UI + stemmen + reveal.** Tussen fireworks en hub komt nu de
+  kaart-fase (`#cards`, papier-overlay, fase `cards`). Na een geslaagde climax opent
+  `afterClimax()` de 3 pakjes van die etappe (`packsForLevel`) één voor één: 3 face-up kaarten
+  (CARDS-src), **geen tekst/stadsnamen**, met 3 voortgangsstipjes. Tik/klik of toets 1/2/3 →
+  `chooseCard()`: gekozen kaart licht op/schaalt, de andere twee vervagen; de keuze wordt als
+  `{city,theme}` aan de geordende `REIS.picks` gepusht en het pakje geconsumeerd. Na 3 pakjes →
+  `completeEtappe()` → hub. Guard: een al gehaalde etappe (`completed[level]`) opent géén
+  kaart-fase en voegt géén stemmen toe → nooit meer dan 9 keuzes. Na de 9e keuze →
+  `tallyWinner(picks)` (pure: meeste stemmen; gelijkspel → laatst-gekozen stad uit de gelijke
+  set) → bestaande `showReveal(cityByName(winnaar))` met `CITYDATA` (ongewijzigd; enige plek met
+  een stadsnaam). Bestaande blobs byte-identiek; runner/hub/climax verder ongemoeid.

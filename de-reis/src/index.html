@@ -45,6 +45,23 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
 .htile.locked:hover{transform:none;border-color:rgba(0,0,0,.12)}
 .htile .hlock{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:12px;font-weight:700;color:#fff;background:rgba(20,16,12,.32);letter-spacing:.5px}
 .hubdone{display:none;margin-top:22px;font-family:Georgia,serif;font-size:16px;font-style:italic;color:#9a6a2a}
+/* kaart-fase: woordloze keuze, 3 kaarten per pakje, papier-stijl */
+#cards{background:radial-gradient(120% 90% at 50% 24%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%)}
+#cards .cardsinner{width:100%;max-width:600px;display:flex;flex-direction:column;align-items:center;gap:22px;padding:10px 16px}
+.cardrow{display:flex;gap:14px;justify-content:center;width:100%}
+.cardrow.in .gcard{animation:cardin .42s ease both}
+.cardrow.in .gcard:nth-child(2){animation-delay:.07s}
+.cardrow.in .gcard:nth-child(3){animation-delay:.14s}
+@keyframes cardin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.gcard{flex:1;max-width:178px;cursor:pointer;border-radius:14px;overflow:hidden;background:#1d1a16;border:3px solid rgba(255,255,255,.4);box-shadow:0 10px 26px rgba(0,0,0,.4);transition:transform .25s,box-shadow .25s,opacity .42s,border-color .25s}
+.gcard img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.gcard:hover{transform:translateY(-8px) scale(1.03);border-color:#d9b24a}
+.gcard.chosen{transform:scale(1.07);border-color:#f0c860;box-shadow:0 0 0 3px #f0c860,0 14px 36px rgba(240,200,96,.55)}
+.gcard.faded{opacity:.22;transform:scale(.93);pointer-events:none}
+.cardprog{display:flex;gap:11px}
+.cardprog span{width:9px;height:9px;border-radius:50%;background:rgba(90,70,50,.28);transition:background .25s,transform .25s}
+.cardprog span.on{background:#c98a3a;transform:scale(1.15)}
+.cardprog span.done{background:#7a4a2a}
 /* intro: storybook/aquarel papier, twee pagina's */
 #intro{background:radial-gradient(120% 90% at 50% 28%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%);color:#3a2f26}
 #intro .iinner{width:100%;max-width:520px;text-align:center;padding:10px 20px}
@@ -115,7 +132,15 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
    <div class="htile" data-level="2"><div class="hnum">Etappe 2</div><div class="htime">Schemering</div><div class="hcheck">✓</div><div class="hlock">op slot</div></div>
    <div class="htile" data-level="3"><div class="hnum">Etappe 3</div><div class="htime">Nacht</div><div class="hcheck">✓</div><div class="hlock">op slot</div></div>
  </div>
- <div id="hubdone" class="hubdone">Reis voltooid — kaarten volgen</div>
+ <div id="hubdone" class="hubdone">Reis voltooid</div>
+</div></div>
+<div id="cards" class="overlay"><div class="cardsinner">
+ <div class="cardrow">
+   <div class="gcard"><img alt=""></div>
+   <div class="gcard"><img alt=""></div>
+   <div class="gcard"><img alt=""></div>
+ </div>
+ <div class="cardprog"><span></span><span></span><span></span></div>
 </div></div>
 </div>
 <!-- BUILD:INJECT  (build.mjs vervangt dit door <script> met ge-inlinede assets + game.js) -->

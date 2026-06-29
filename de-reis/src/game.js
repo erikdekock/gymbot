@@ -71,7 +71,7 @@ C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.cli
 C.addEventListener('pointerup',()=>{S.duck=false;});
 function begin(level){S=fresh();S.level=level||currentLevel||1;gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
 function restart(){begin(currentLevel);}
-function clearOv(){['finalChoice','reveal','gameOver','hub'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+function clearOv(){['finalChoice','reveal','gameOver','hub','cards'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
 
 /* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
 let currentLevel=1, completed=[false,false,false];
@@ -90,7 +90,33 @@ function buildPacks(){
  shufflePack(packs);/* pakje-volgorde schudden */
  return packs;
 }
-function packsForLevel(level){return REIS.packs?REIS.packs.slice((level-1)*3,(level-1)*3+3):[];}/* 3 pakjes per etappe (cursor; nog niet geconsumeerd) */
+function packsForLevel(level){return REIS.packs?REIS.packs.slice((level-1)*3,(level-1)*3+3):[];}/* 3 pakjes per etappe */
+
+/* ===== Kaart-fase (Ticket 6): woordloze keuze, 3 pakjes per etappe, stemmen, reveal ===== */
+let CARDP=null,cardLock=false;
+/* na de fireworks: eerste keer -> open de 3 pakjes; al gehaald (replay) -> geen kaarten/stemmen */
+function afterClimax(){if(completed[currentLevel-1]){completeEtappe();}else{startCardPhase(currentLevel);}}
+function startCardPhase(level){S.phase='cards';CARDP={level:level,packs:packsForLevel(level),i:0};cardLock=false;var ov=document.getElementById('cards');if(ov)ov.classList.add('show');showPack();}
+function showPack(){var ov=document.getElementById('cards');if(!ov||!CARDP)return;var pack=CARDP.packs[CARDP.i],cards=ov.querySelectorAll('.gcard');
+ cards.forEach(function(el,k){el.classList.remove('chosen','faded');var im=el.querySelector('img');im.src=pack[k]?pack[k].src:'';el.onclick=function(){chooseCard(k);};});
+ var dots=ov.querySelectorAll('.cardprog span');dots.forEach(function(d,k){d.classList.toggle('on',k===CARDP.i);d.classList.toggle('done',k<CARDP.i);});
+ var row=ov.querySelector('.cardrow');row.classList.remove('in');void row.offsetWidth;row.classList.add('in');}/* re-trigger binnenkomst-animatie */
+function chooseCard(k){if(cardLock||!CARDP)return;var pack=CARDP.packs[CARDP.i];if(!pack||!pack[k])return;cardLock=true;
+ var ov=document.getElementById('cards'),cards=ov.querySelectorAll('.gcard');
+ ov.querySelector('.cardrow').classList.remove('in');/* stop de binnenkomst-animatie (fill-mode) zodat .faded/.chosen kunnen winnen */
+ cards.forEach(function(el,j){el.onclick=null;el.classList.add(j===k?'chosen':'faded');});
+ REIS.picks.push({city:pack[k].city,theme:pack[k].theme});REIS.packIndex++;/* geordende stem; cursor vooruit */
+ setTimeout(function(){cardLock=false;CARDP.i++;if(CARDP.i<3){showPack();}else{endCardPhase();}},800);}
+function endCardPhase(){var ov=document.getElementById('cards');if(ov)ov.classList.remove('show');CARDP=null;
+ if(REIS.picks.length>=9){completed[currentLevel-1]=true;S.phase='reveal';showReveal(cityByName(tallyWinner(REIS.picks)));}/* reis compleet -> tel stemmen -> bestaande reveal bovenop (geen hub eronder) */
+ else{completeEtappe();}}
+/* pure functie: meeste stemmen wint; gelijkspel -> de laatst-gekozen stad uit de gelijke set */
+function tallyWinner(picks){var count={},i,c;for(i=0;i<picks.length;i++){c=picks[i].city;count[c]=(count[c]||0)+1;}
+ var max=-1;for(c in count)if(count[c]>max)max=count[c];
+ var tied={};for(c in count)if(count[c]===max)tied[c]=true;
+ for(i=picks.length-1;i>=0;i--)if(tied[picks[i].city])return picks[i].city;
+ return picks[picks.length-1].city;}
+function cityByName(name){for(var i=0;i<CITYDATA.length;i++)if(CITYDATA[i].name===name)return CITYDATA[i];return CITYDATA[0];}
 const HUBTIJD=['Ochtend','Schemering','Nacht'];/* tijd-van-de-dag per etappe */
 function levelUnlocked(i){return i===0||completed[i-1];}/* lineair ontgrendeld (0-based) */
 function showHub(){if(!REIS.packs)REIS.packs=buildPacks();/* één keer bij de eerste hub; NIET opnieuw schudden bij herstart/mis */S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
@@ -147,7 +173,7 @@ function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;S.t+=dt;
  ph=(((S.level||1)-1)+Math.min(1,S.travel/LEN))/3;nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
  if(S.phase==='run')update(dt);
  else if(S.phase==='bloom'){S.bloomT+=dt;if(S.bloomT>0.3&&S.orbs.length<26&&Math.random()<0.4)S.orbs.push({x:120+Math.random()*360,y:760+Math.random()*40,vy:-(20+Math.random()*30),tw:Math.random()*6,r:3+Math.random()*4});if(S.bloomT>4.2&&!document.getElementById('finalChoice').classList.contains('show'))showFinalChoice();}
- else if(S.phase==='fireworks'){S.fwT+=dt;if(S.fwT>=S.fwNext&&S.fwT<2.0){S.fwNext+=0.34;spawnBurst(140+Math.random()*320,150+Math.random()*230);}for(const p of S.fw){p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=140*dt;}S.fw=S.fw.filter(p=>p.life<p.max);if(S.fwT>2.7)completeEtappe();}
+ else if(S.phase==='fireworks'){S.fwT+=dt;if(S.fwT>=S.fwNext&&S.fwT<2.0){S.fwNext+=0.34;spawnBurst(140+Math.random()*320,150+Math.random()*230);}for(const p of S.fw){p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=140*dt;}S.fw=S.fw.filter(p=>p.life<p.max);if(S.fwT>2.7)afterClimax();}
  else if(S.phase==='retry'){S.retryT+=dt;if(S.flash>0)S.flash-=dt*1.2;if(S.retryT>1.6)begin(currentLevel);}
  for(const o of S.orbs)o.y+=o.vy*dt,o.tw+=dt;
  for(const b of S.birds){b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=20*dt;b.t+=dt;}S.birds=S.birds.filter(b=>b.t<2.4);
@@ -273,7 +299,8 @@ function drawHUD(){
  X.fillStyle='rgba(255,255,255,0.78)';X.font='12px sans-serif';X.textAlign='center';X.fillText('spatie = kat    .    omhoog = hond    .    omlaag = Erik',300,H-12);}
 
 function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.clearRect(0,0,W,H);
- if(S.phase==='start'||S.phase==='hub'){startScreen();return;}
+ if(S.phase==='reveal')return;/* alleen de reveal-overlay; lege (zwarte) canvas erachter, geen tekst-bleed */
+ if(S.phase==='start'||S.phase==='hub'||S.phase==='cards'){startScreen();return;}
  X.save();if(S.shake>0){X.translate((Math.random()-0.5)*9*S.shake/0.2,(Math.random()-0.5)*9*S.shake/0.2);}
  drawSky();drawGround();
  const it=[];
@@ -314,5 +341,6 @@ function showReveal(city){const ov=document.getElementById('reveal');ov.querySel
  const strip=ov.querySelector('.rvstrip');strip.innerHTML='';city.imgs.forEach(im=>{const g=document.createElement('img');g.src=IMAGES[im];strip.appendChild(g);});ov.classList.add('show');}
 function showGameOver(){const ov=document.getElementById('gameOver');ov.querySelector('.goscore').textContent='Punten: '+S.score;ov.classList.add('show');}
 addEventListener('keydown',e=>{if(document.getElementById('finalChoice').classList.contains('show')&&['1','2','3'].includes(e.key))pickCity(+e.key-1);});
+addEventListener('keydown',e=>{if(S.phase==='cards'&&['1','2','3'].includes(e.key))chooseCard(+e.key-1);});/* kaart-fase: toets 1/2/3 */
 
 gen();requestAnimationFrame(loop);
