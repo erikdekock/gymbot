@@ -171,15 +171,12 @@ const KNOCK_UV=8.8;  /* initiële opwaartse snelheid (sc-eenheden/s) */
 const KNOCK_GV=11.5; /* zwaartekracht van de boog (sc-eenheden/s²) */
 const KNOCK_ROT=13.5;/* rotatiesnelheid (rad/s) */
 const KNOCK_SHR=0.5; /* schaalkrimp per seconde */
-/* ---- Climax: hoepel bij het hek (Ticket 4) — losse tunables ---- */
-const HOOP_Z=LEN-0.1;   /* wereldpositie (bij de bestaande gate) */
-const HOOP_Y=0.95;      /* wereldhoogte van het hoepelmidden */
-const HOOP_R=0.72;      /* wereldstraal */
-const HOOP_D=2.15;      /* diepte waarop Arthur 'door' de hoepel gaat */
-const HOOP_DMARG=0.5;   /* diepte-marge = timing-venster (groter = makkelijker) */
-const HOOP_AIR=42;      /* midden van de ringband (sprong-hoogte in px) */
-const HOOP_BAND=30;     /* halve ringband-dikte = succes-marge in px */
-const HOOP_CAP_D=7;     /* toon de affordance-caption binnen deze diepte */
+/* ---- Climax: sprong over het hek (Ticket 8) — losse tunables ---- */
+const GATE_Z=LEN;       /* wereldpositie van het hek (einde van het parcours) */
+const GATE_D=1.8;       /* controlediepte: check valt als d ≈ GATE_D */
+const GATE_DMARG=0.45;  /* timing-venster (halve breedte); groter = milder */
+const GATE_CLEAR=30;    /* minimale air-hoogte (px) om over het hek te komen */
+const GATE_CAP_D=8;     /* toon affordance-caption binnen deze diepte */
 const AIMGS=ARTHUR_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const EIMGS=ERIK_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const CIMGS=CAT_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
@@ -303,8 +300,8 @@ function startEtappe(level){if(!levelUnlocked(level-1))return;currentLevel=level
 function completeEtappe(){completed[currentLevel-1]=true;showHub();}
 /* ---- Climax-afloop (Ticket 4): herstart etappe zonder voortgang/stemmen te wissen, zonder reload ---- */
 function runFail(msg){S.phase='retry';S.retryT=0;S.capText=msg;S.cap=2.0;S.flash=0.6;}
-function hoopHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
-function hoopMiss(){S.climax='miss';runFail('Naast de hoepel! Opnieuw.');}
+function gateHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
+function gateMiss(){S.climax='miss';runFail('Tegen het hek! Opnieuw.');}
 function spawnBurst(cx,cy){const cols=[[255,210,120],[255,150,90],[180,210,255],[255,120,160]],col=cols[(Math.random()*cols.length)|0],n=22;
  for(let i=0;i<n;i++){const a=(i/n)*6.283+Math.random()*0.25,sp=55+Math.random()*95;S.fw.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-12,life:0,max:0.85+Math.random()*0.55,col});}}
 
@@ -359,13 +356,13 @@ function update(dt){
    else { if(d<1.95){o.state='miss';o.ft=0;loseLife();} } }
  for(const o of S.obs)if(o.state!=='come')o.ft+=dt;
  if(!S.birdsDone&&S.travel>LEN-5){S.birdsDone=true;const py=groundY(LEN-S.travel)-30;for(let i=0;i<7;i++)S.birds.push({x:300+(Math.random()*2-1)*120,y:py,vx:(Math.random()*2-1)*60,vy:-(60+Math.random()*50),t:0});}
- /* CLIMAX (ticket 4): hoepel bij het hek — timing-sprong, geen lanes/links-rechts */
- const dHoop=HOOP_Z-S.travel;
+ /* CLIMAX (ticket 8): sprong over het hek — geen bovengrens (hoger is altijd goed) */
+ const dGate=GATE_Z-S.travel;
  if(S.climax==null){
-   if(dHoop<HOOP_CAP_D&&dHoop>HOOP_D-HOOP_DMARG){S.cap=0.25;S.capText='Spring door de hoepel!';}
-   if(dHoop<=HOOP_D+HOOP_DMARG&&dHoop>=HOOP_D-HOOP_DMARG){
-     if(S.air>=HOOP_AIR-HOOP_BAND&&S.air<=HOOP_AIR+HOOP_BAND)hoopHit();/* in de lucht binnen de ringband -> raak */
-   } else if(dHoop<HOOP_D-HOOP_DMARG){hoopMiss();}/* hoepeldiepte voorbij zonder in de band -> mis */
+   if(dGate<GATE_CAP_D&&dGate>GATE_D){S.cap=0.25;S.capText='Spring over het hek!';}
+   if(dGate<=GATE_D+GATE_DMARG&&dGate>=GATE_D-GATE_DMARG){
+     if(S.air>=GATE_CLEAR)gateHit();/* in de lucht hoog genoeg -> over het hek */
+   } else if(dGate<GATE_D-GATE_DMARG){gateMiss();}/* venster voorbij zonder te springen -> mis */
  }
 }
 
@@ -445,12 +442,6 @@ function drawErik(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy
    X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
    if(o.state==='come'&&d>1.95&&d<5.4){X.fillStyle='#ffd86b';X.font='bold 15px sans-serif';X.textAlign='center';if(Math.floor(S.t*7)%2)X.fillText('omlaag',x,gy-1.6*sc);}}}
 
-function drawHoop(d){const sc=F/Math.max(ZMIN,d),c=P(0,HOOP_Y,d),R=HOOP_R*sc,band=Math.max(2.5,R*0.13),pulse=0.82+0.18*Math.sin(S.t*4);
- X.save();X.lineCap='round';
- for(let i=3;i>=1;i--){X.globalAlpha=0.11*pulse;X.lineWidth=band*(1+i*0.95);X.strokeStyle='rgba(255,196,96,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();}/* zachte buitengloed */
- X.globalAlpha=pulse;X.lineWidth=band;X.strokeStyle='rgba(247,206,120,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();/* warme goudring */
- X.globalAlpha=0.9*pulse;X.lineWidth=band*0.4;X.strokeStyle='rgba(255,242,212,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();/* lichte binnenrand */
- X.globalAlpha=1;X.restore();}
 function drawFireworks(){
  X.globalAlpha=0.45;const g=X.createRadialGradient(300,360,40,300,360,470);g.addColorStop(0,'rgba(255,210,140,0.6)');g.addColorStop(1,'rgba(40,30,60,0)');X.fillStyle=g;X.fillRect(0,0,W,H);X.globalAlpha=1;
  for(const p of S.fw){const a=Math.max(0,1-p.life/p.max);X.globalAlpha=a;X.fillStyle='rgb('+p.col[0]+','+p.col[1]+','+p.col[2]+')';X.beginPath();X.arc(p.x,p.y,2.6,0,7);X.fill();}
@@ -492,7 +483,6 @@ function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.i
  for(const b of S.buildings)it.push({d:b.z-S.travel,f:()=>drawWall(b)});
  for(const p of S.props)it.push({d:p.z-S.travel,f:()=>drawProp(p)});
  {const d=LEN-S.travel;if(d>0.5)it.push({d,f:()=>drawGate(d)});}
- {const dh=HOOP_Z-S.travel;if(dh>0.5&&dh<14&&S.climax!=='hit')it.push({d:dh,f:()=>drawHoop(dh)});}
  for(const o of S.obs)it.push({d:o.z-S.travel,f:()=>drawObs(o)});
  it.sort((a,b)=>b.d-a.d);for(const o of it)if(o.d>0.5)o.f();
  drawBirds();drawFx();drawArthur();
