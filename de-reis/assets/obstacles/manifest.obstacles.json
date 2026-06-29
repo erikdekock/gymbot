@@ -1,0 +1,7 @@
+{
+  "cat_frames": ["obstacles/cat_1.png","obstacles/cat_2.png","obstacles/cat_3.png","obstacles/cat_4.png"],
+  "dog_frames": ["obstacles/dog_1.png","obstacles/dog_2.png","obstacles/dog_3.png"],
+  "cat_canvas": { "w": 345, "h": 496 },
+  "dog_canvas": { "w": 401, "h": 496 },
+  "note": "Parallel aan ARTHUR_FRAMES/ERIK_FRAMES: arrays van data-URIs (PNG, transparant). Alle frames per dier gelijk canvas, kop-as uitgelijnd, poten op grondlijn (kleine ~8px transparante marge). build.mjs inlinet tot globale CAT_FRAMES (4) en DOG_FRAMES (3). Bestaande blobs (IMAGES/ARTHUR_FRAMES/HOUSES/STREET/OBSTI) blijven ongewijzigd; OBSTI.cat_ok/cat_hiss/dog blijven erin staan (byte-identiek) maar worden niet meer getekend."
+}

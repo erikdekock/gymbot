@@ -5,6 +5,8 @@ const SS=1.7;C.width=W*SS;C.height=H*SS;C.style.width='100%';C.style.height='100
 const SPEED=3.5,LEN=56,JUMPV=375,GRAV=1200;
 const FPS=10,ARTHUR_W=112;
 const ERIK_FPS=8,ERIK_H=1.8;/* walk-cycle-snelheid en wereldhoogte (reproduceert de oude vector-silhouethoogte) */
+const CAT_FPS=10,CAT_H=1.0;/* kat: animatie-snelheid (fps) en wereldhoogte */
+const DOG_FPS=9,DOG_H=0.96;/* hond: animatie-snelheid (fps) en wereldhoogte */
 /* ---- Climax: hoepel bij het hek (Ticket 4) — losse tunables ---- */
 const HOOP_Z=LEN-0.1;   /* wereldpositie (bij de bestaande gate) */
 const HOOP_Y=0.95;      /* wereldhoogte van het hoepelmidden */
@@ -16,6 +18,8 @@ const HOOP_BAND=30;     /* halve ringband-dikte = succes-marge in px */
 const HOOP_CAP_D=7;     /* toon de affordance-caption binnen deze diepte */
 const AIMGS=ARTHUR_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const EIMGS=ERIK_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
+const CIMGS=CAT_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
+const DIMGS=DOG_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const HOUSE_IMGS=HOUSES.map(o=>{const im=new Image();im.src=o.d;return im;});
 const FLIP=new Array(5);
 HOUSE_IMGS.forEach((im,i)=>{ im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.translate(c.width,0);g.scale(-1,1);g.drawImage(im,0,0);FLIP[i]=c;}; });
@@ -243,13 +247,14 @@ function drawCarShape(col){X.fillStyle='rgba(0,0,0,0.25)';X.beginPath();X.ellips
 function drawObs(o){if(o.type==='cat')drawCat(o);else if(o.type==='dog')drawDog(o);else drawErik(o);}
 function drawCat(o){const d=o.z-S.travel;if(d<0.28)return;let sc=F/d,x=300,gy=groundY(d),a=1;
  if(o.state!=='come'&&o.fdir){x+=o.fdir*o.ft*sc*1.7;gy-=o.ft*sc*0.5;a=Math.max(0,1-o.ft/1.25);}
- const hiss=(o.state==='come'&&d<3.0),img=hiss?OBST.cat_hiss:OBST.cat_ok;
- if(img&&img.naturalWidth){const hh=(hiss?1.06:0.92)*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;X.save();X.globalAlpha=a;
+ const fi=Math.floor(S.t*CAT_FPS+o.z)%CIMGS.length,img=CIMGS[fi];
+ if(img&&img.naturalWidth){const hh=CAT_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;X.save();X.globalAlpha=a;
    X.fillStyle='rgba(0,0,0,'+(0.2*a)+')';X.beginPath();X.ellipse(x,gy,w*0.4,sc*0.055,0,0,7);X.fill();
    X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}X.restore();
    if(o.state==='come'&&d>1.9&&d<5){X.fillStyle='#ff8a6b';X.font='bold 16px sans-serif';X.textAlign='center';X.fillText('spatie',x,iy-0.12*sc);}}}
-function drawDog(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=groundY(d),img=OBST.dog;
- if(img&&img.naturalWidth){const hh=0.96*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;
+function drawDog(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=groundY(d);
+ const fi=Math.floor(S.t*DOG_FPS+o.z)%DIMGS.length,img=DIMGS[fi];
+ if(img&&img.naturalWidth){const hh=DOG_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;
    X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(x,gy,w*0.42,sc*0.06,0,0,7);X.fill();
    X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
    if(o.state==='come'&&d>1.95&&d<5.2){X.fillStyle='#9ad0ff';X.font='bold 16px sans-serif';X.textAlign='center';X.fillText('omhoog',x,iy-0.12*sc);}}}

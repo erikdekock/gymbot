@@ -45,6 +45,12 @@ const ARTHUR_FRAMES = manifest.ARTHUR_FRAMES.map(dataURI);
 const erikManifest = JSON.parse(fs.readFileSync(path.join(ASSETS, 'manifest.erik.json'), 'utf8'));
 const ERIK_FRAMES = erikManifest.erik_frames.map(dataURI);
 
+// CAT_FRAMES + DOG_FRAMES: additieve globals (animatie-frames), gevoed door manifest.obstacles.json.
+// Bestaande blobs (OBSTI etc.) blijven ongewijzigd.
+const obstManifest = JSON.parse(fs.readFileSync(path.join(ASSETS, 'obstacles', 'manifest.obstacles.json'), 'utf8'));
+const CAT_FRAMES = obstManifest.cat_frames.map(dataURI);
+const DOG_FRAMES = obstManifest.dog_frames.map(dataURI);
+
 const HOUSES = manifest.HOUSES.map((o) => ({ w: o.w, h: o.h, d: dataURI(o.file) }));
 
 const STREET = {};
@@ -68,6 +74,8 @@ const assetsScript =
   `const IMAGES=${JSON.stringify(IMAGES)};\n` +
   `const ARTHUR_FRAMES=${JSON.stringify(ARTHUR_FRAMES)};\n` +
   `const ERIK_FRAMES=${JSON.stringify(ERIK_FRAMES)};\n` +
+  `const CAT_FRAMES=${JSON.stringify(CAT_FRAMES)};\n` +
+  `const DOG_FRAMES=${JSON.stringify(DOG_FRAMES)};\n` +
   `const HOUSES=${JSON.stringify(HOUSES)};\n` +
   `const STREET=${JSON.stringify(STREET)};\n` +
   `const OBSTI=${JSON.stringify(OBSTI)};\n` +
@@ -92,6 +100,8 @@ console.log('  assets ge-inlined:',
   Object.keys(IMAGES).length, 'cities,',
   ARTHUR_FRAMES.length, 'arthur,',
   ERIK_FRAMES.length, 'erik,',
+  CAT_FRAMES.length, 'cat,',
+  DOG_FRAMES.length, 'dog,',
   HOUSES.length, 'houses,',
   Object.keys(STREET).length, 'street,',
   Object.keys(OBSTI).length, 'obstacles,',
