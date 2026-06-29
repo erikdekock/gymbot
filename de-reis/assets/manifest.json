@@ -1,0 +1,114 @@
+{
+  "IMAGES": {
+    "Marseille_1.png": "cities/Marseille_1.jpg",
+    "Marseille_2.png": "cities/Marseille_2.jpg",
+    "Marseille_3.png": "cities/Marseille_3.jpg",
+    "Marseille_4.png": "cities/Marseille_4.jpg",
+    "Marseille_5.png": "cities/Marseille_5.jpg",
+    "Marseille_6.png": "cities/Marseille_6.jpg",
+    "Palermo_1.png": "cities/Palermo_1.jpg",
+    "Palermo_2.png": "cities/Palermo_2.jpg",
+    "Palermo_3.png": "cities/Palermo_3.jpg",
+    "Palermo_4.png": "cities/Palermo_4.jpg",
+    "Palermo_5.png": "cities/Palermo_5.jpg",
+    "Palermo_6.png": "cities/Palermo_6.jpg",
+    "Bilbao_1.png": "cities/Bilbao_1.jpg",
+    "Bilbao_2.png": "cities/Bilbao_2.jpg",
+    "Bilbao_3.png": "cities/Bilbao_3.jpg",
+    "Bilbao_4.png": "cities/Bilbao_4.jpg",
+    "Bilbao_5.png": "cities/Bilbao_5.jpg",
+    "Bilbao_6.png": "cities/Bilbao_6.jpg"
+  },
+  "ARTHUR_FRAMES": [
+    "arthur/0.png",
+    "arthur/1.png",
+    "arthur/2.png",
+    "arthur/3.png"
+  ],
+  "HOUSES": [
+    {
+      "w": 320,
+      "h": 798,
+      "file": "houses/0.png"
+    },
+    {
+      "w": 320,
+      "h": 810,
+      "file": "houses/1.png"
+    },
+    {
+      "w": 320,
+      "h": 798,
+      "file": "houses/2.png"
+    },
+    {
+      "w": 320,
+      "h": 780,
+      "file": "houses/3.png"
+    },
+    {
+      "w": 320,
+      "h": 785,
+      "file": "houses/4.png"
+    }
+  ],
+  "STREET": {
+    "road": {
+      "w": 512,
+      "h": 512,
+      "file": "street/road.jpg"
+    },
+    "gate": {
+      "w": 640,
+      "h": 286,
+      "file": "street/gate.png"
+    },
+    "tree": {
+      "w": 300,
+      "h": 386,
+      "file": "street/tree.png"
+    },
+    "bike": {
+      "w": 340,
+      "h": 232,
+      "file": "street/bike.png"
+    },
+    "bench": {
+      "w": 330,
+      "h": 187,
+      "file": "street/bench.png"
+    },
+    "car": {
+      "w": 330,
+      "h": 204,
+      "file": "street/car.png"
+    },
+    "bollard": {
+      "w": 150,
+      "h": 612,
+      "file": "street/bollard.png"
+    },
+    "lamp": {
+      "w": 140,
+      "h": 1003,
+      "file": "street/lamp.png"
+    }
+  },
+  "OBSTI": {
+    "cat_ok": {
+      "w": 280,
+      "h": 629,
+      "file": "obstacles/cat_ok.png"
+    },
+    "cat_hiss": {
+      "w": 300,
+      "h": 518,
+      "file": "obstacles/cat_hiss.png"
+    },
+    "dog": {
+      "w": 320,
+      "h": 336,
+      "file": "obstacles/dog.png"
+    }
+  }
+}

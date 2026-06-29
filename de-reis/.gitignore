@@ -1,0 +1,10 @@
+# OS-rommel
+.DS_Store
+Thumbs.db
+
+# Node (build.mjs heeft geen deps, maar voor de zekerheid)
+node_modules/
+npm-debug.log*
+
+# dist/de-reis.html WORDT WEL gecommit: het is het speelbare eindproduct
+# (reproduceerbaar via `node build.mjs`).

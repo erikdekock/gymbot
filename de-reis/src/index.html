@@ -1,0 +1,59 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>De Reis - Arthur (v10)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#eee}
+.wrap{position:relative;height:min(94vh,820px);aspect-ratio:3/4;box-shadow:0 20px 60px rgba(0,0,0,.6);border-radius:10px;overflow:hidden;background:#000}
+#game{width:100%;height:100%;display:block}
+.overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(9,11,13,.95);padding:16px;overflow:auto}
+.overlay.show{display:flex}
+.btn{background:#84a98c;color:#10231a;border:none;border-radius:24px;padding:11px 26px;font-weight:700;font-size:15px;cursor:pointer}
+.btn:hover{background:#95b89c}
+/* final choice: only "Kies!" + images */
+#finalChoice .fcinner{width:100%;max-width:600px;text-align:center}
+.fctitle{font-family:Georgia,serif;font-size:34px;color:#f3efe7;margin-bottom:18px;letter-spacing:1px}
+.fccards{display:flex;gap:12px;justify-content:center}
+.fccard{flex:1;max-width:188px;cursor:pointer;border-radius:12px;overflow:hidden;background:#15171a;border:3px solid transparent;transition:transform .15s,border-color .15s;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.fccard:hover{transform:translateY(-8px) scale(1.03);border-color:#d9b24a}
+.fcimg{width:100%;aspect-ratio:2/3;overflow:hidden}
+.fcimg img{width:100%;height:100%;object-fit:cover;display:block}
+/* reveal */
+#reveal .rvinner{width:100%;max-width:520px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.rvhero{width:min(62%,290px);aspect-ratio:2/3;object-fit:cover;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.55);border:3px solid #d9b24a}
+.rvname{font-family:Georgia,serif;font-size:40px;color:#fff;margin:16px 0 6px;letter-spacing:1px}
+.rvline{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:16px}
+.rvstrip{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.rvstrip img{width:72px;aspect-ratio:2/3;object-fit:cover;border-radius:6px;opacity:.9}
+/* game over */
+#gameOver .goinner{width:100%;max-width:440px;text-align:center}
+.gotitle{font-family:Georgia,serif;font-size:30px;color:#f0d6d6;margin-bottom:10px}
+.gosub{font-size:14px;color:rgba(255,255,255,.78);max-width:380px;margin:0 auto 14px;line-height:1.5}
+.goscore{font-size:20px;color:#ffd86b;font-weight:700;margin-bottom:20px}
+.rvstrip{flex-wrap:wrap;max-width:472px}.rvstrip img{width:84px}.overlay{overflow-y:auto}</style></head><body>
+<div class="wrap">
+<canvas id="game" width="600" height="800"></canvas>
+<div id="finalChoice" class="overlay"><div class="fcinner">
+ <div class="fctitle">Kies!</div>
+ <div class="fccards">
+   <div class="fccard"><div class="fcimg"><img alt=""></div></div>
+   <div class="fccard"><div class="fcimg"><img alt=""></div></div>
+   <div class="fccard"><div class="fcimg"><img alt=""></div></div>
+ </div>
+</div></div>
+<div id="reveal" class="overlay"><div class="rvinner">
+ <img class="rvhero" alt="">
+ <div class="rvname"></div>
+ <div class="rvline"></div>
+ <div class="rvstrip"></div>
+ <button class="btn" onclick="restart()">Nog eens</button>
+</div></div>
+<div id="gameOver" class="overlay"><div class="goinner">
+ <div class="gotitle">Arthur haalde het niet...</div>
+ <div class="gosub">Te veel katten en betrappingen onderweg. Probeer opnieuw - Arthur moet eerst veilig thuiskomen.</div>
+ <div class="goscore"></div>
+ <button class="btn" onclick="restart()">Opnieuw</button>
+</div></div>
+</div>
+<!-- BUILD:INJECT  (build.mjs vervangt dit door <script> met ge-inlinede assets + game.js) -->
+</body></html>
