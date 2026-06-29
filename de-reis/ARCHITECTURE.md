@@ -229,3 +229,22 @@ de-reis/
   dist/de-reis.html                  het speelbare, zelfstandige eindbestand
   docs/screenshots/                  verificatie-screenshots
 ```
+
+---
+
+## 12. Wijzigingen t.o.v. het origineel (changelog)
+
+De secties hierboven beschrijven het origineel (`reference/`). De gebouwde versie wijkt af op:
+
+- **Ticket 1 — Intro.** Een DOM-overlay `#intro` (2 pagina's) in `src/index.html` verschijnt
+  bij het laden en roept aan het eind de bestaande `begin()` aan. De oude spatie-startprompt
+  in `game.js` is geneutraliseerd (de intro is de enige ingang). Fase-machine/`fresh()` ongewijzigd.
+- **Ticket 2 — Erik als sprite.** Nieuwe **additieve** blob `ERIK_FRAMES` (4 data-URI's,
+  parallel aan `ARTHUR_FRAMES`), ge-inlined door `build.mjs` uit `assets/manifest.erik.json`.
+  `drawErik` tekent nu een 4-frame walk-cycle (sprite) i.p.v. de vector-tekening; wereldhoogte
+  `ERIK_H` reproduceert de oude silhouethoogte, cyclus op `ERIK_FPS`. Nacht-tint identiek aan
+  cat/dog. De willekeurige `PEOPLE`-namen + naam-label zijn verwijderd (altijd Erik); de
+  `omlaag`-actiehint blijft (parallel aan `spatie`/`omhoog`). De vijf originele blobs
+  (`IMAGES`, `ARTHUR_FRAMES`, `HOUSES`, `STREET`, `OBSTI`) blijven **byte-identiek**.
+
+  Extra tunables: `ERIK_FPS` (walk-snelheid, ≈8) en `ERIK_H` (wereldhoogte, 1.8).

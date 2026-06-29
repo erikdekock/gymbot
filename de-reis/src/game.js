@@ -4,7 +4,9 @@ const W=600,H=800,HORIZON=300,F=190,CAMH=4.2,XW=3.2,ROAD=2.6,ZMIN=0.8;
 const SS=1.7;C.width=W*SS;C.height=H*SS;C.style.width='100%';C.style.height='100%';
 const SPEED=3.5,LEN=56,JUMPV=375,GRAV=1200;
 const FPS=10,ARTHUR_W=112;
+const ERIK_FPS=8,ERIK_H=1.8;/* walk-cycle-snelheid en wereldhoogte (reproduceert de oude vector-silhouethoogte) */
 const AIMGS=ARTHUR_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
+const EIMGS=ERIK_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const HOUSE_IMGS=HOUSES.map(o=>{const im=new Image();im.src=o.d;return im;});
 const FLIP=new Array(5);
 HOUSE_IMGS.forEach((im,i)=>{ im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.translate(c.width,0);g.scale(-1,1);g.drawImage(im,0,0);FLIP[i]=c;}; });
@@ -27,7 +29,6 @@ const FAC=[[158,92,70],[120,82,64],[201,156,96],[70,96,80],[96,110,118],[176,138
 const DOORC=['#37503f','#7a2f2f','#2f4a6a','#5a4a2a','#26323e'];
 const GAB=['tri','step','flat','tri','step'];
 const CARC=[[58,64,72],[150,44,44],[206,196,186],[44,50,64]];
-const PEOPLE=['Erik','Erik','de buurman','de buurvrouw'];
 
 function L3(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
 function RGB(a){return 'rgb('+(a[0]|0)+','+(a[1]|0)+','+(a[2]|0)+')';}
@@ -82,7 +83,7 @@ function gen(){const FAR=52;
    if(Math.round(z)%6===0)S.props.push({kind:'lamp',side:(Math.round(z)%12===0)?-1:1,z});
    S.npz+=1.6;}
  while(S.noz<Math.min(S.travel+FAR,LEN-3.5)){const r=Math.random();const type=r<0.4?'cat':r<0.7?'dog':'erik';
-   S.obs.push({type,z:S.noz,state:'come',ft:0,fdir:0,label:type==='erik'?PEOPLE[(Math.random()*PEOPLE.length)|0]:''});
+   S.obs.push({type,z:S.noz,state:'come',ft:0,fdir:0});
    S.noz+=2.9+Math.random()*1.5;}
  const lim=S.travel-2.6;
  S.buildings=S.buildings.filter(b=>b.z>lim);S.props=S.props.filter(p=>p.z>S.travel-1.6);
@@ -165,14 +166,12 @@ function drawDog(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=
    X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(x,gy,w*0.42,sc*0.06,0,0,7);X.fill();
    X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
    if(o.state==='come'&&d>1.95&&d<5.2){X.fillStyle='#9ad0ff';X.font='bold 16px sans-serif';X.textAlign='center';X.fillText('omhoog',x,iy-0.12*sc);}}}
-function drawErik(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=groundY(d);const walk=Math.sin(S.t*7+o.z)*0.12;
- X.save();X.translate(x,gy);X.scale(sc,sc);
- X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(0,0.04,0.34,0.1,0,0,7);X.fill();
- X.strokeStyle='#3a3f4a';X.lineWidth=0.16;X.lineCap='round';X.beginPath();X.moveTo(-0.05,-0.5);X.lineTo(-0.12+walk,0);X.moveTo(0.05,-0.5);X.lineTo(0.12-walk,0);X.stroke();
- X.fillStyle='#46566a';X.beginPath();X.moveTo(-0.22,-0.5);X.lineTo(-0.16,-1.35);X.lineTo(0.16,-1.35);X.lineTo(0.22,-0.5);X.closePath();X.fill();
- X.strokeStyle='#46566a';X.lineWidth=0.13;X.beginPath();X.moveTo(-0.16,-1.2);X.lineTo(-0.3,-0.8+walk);X.moveTo(0.16,-1.2);X.lineTo(0.3,-0.8-walk);X.stroke();
- X.fillStyle='#d9b48f';X.beginPath();X.arc(0,-1.5,0.18,0,7);X.fill();X.fillStyle='#2c2c2c';X.beginPath();X.arc(0,-1.62,0.2,Math.PI,0);X.fill();X.restore();
- if(o.state==='come'&&d>1.95&&d<5.4){X.fillStyle='#fff';X.font='bold 13px sans-serif';X.textAlign='center';X.fillText(o.label,x,gy-1.95*sc);X.fillStyle='#ffd86b';X.font='bold 15px sans-serif';if(Math.floor(S.t*7)%2)X.fillText('omlaag',x,gy-1.6*sc);}}
+function drawErik(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy=groundY(d);
+ const fi=Math.floor(S.t*ERIK_FPS+o.z)%EIMGS.length,img=EIMGS[fi];
+ if(img&&img.naturalWidth){const hh=ERIK_H*sc,w=hh*img.naturalWidth/img.naturalHeight,ix=x-w/2,iy=gy-hh;
+   X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(x,gy+0.04*sc,0.34*sc,0.1*sc,0,0,7);X.fill();
+   X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
+   if(o.state==='come'&&d>1.95&&d<5.4){X.fillStyle='#ffd86b';X.font='bold 15px sans-serif';X.textAlign='center';if(Math.floor(S.t*7)%2)X.fillText('omlaag',x,gy-1.6*sc);}}}
 
 function drawGate(d){const gy=groundY(d);
  if(GATEIMG.naturalWidth){const iw=GATEIMG.naturalWidth,ih=GATEIMG.naturalHeight,sw=2*XW*F/Math.max(ZMIN,d),w=sw*1.45,h=w*ih/iw;X.drawImage(GATEIMG,300-w/2,gy-h,w,h);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.42)+')';X.fillRect(300-w/2,gy-h,w,h);}return;}

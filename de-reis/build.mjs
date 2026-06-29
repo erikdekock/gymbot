@@ -40,6 +40,11 @@ for (const [key, file] of Object.entries(manifest.IMAGES)) IMAGES[key] = dataURI
 
 const ARTHUR_FRAMES = manifest.ARTHUR_FRAMES.map(dataURI);
 
+// ERIK_FRAMES: additieve nieuwe global (4-frame walk-cycle), gevoed door manifest.erik.json.
+// Bestaande blobs blijven hierdoor byte-identiek.
+const erikManifest = JSON.parse(fs.readFileSync(path.join(ASSETS, 'manifest.erik.json'), 'utf8'));
+const ERIK_FRAMES = erikManifest.erik_frames.map(dataURI);
+
 const HOUSES = manifest.HOUSES.map((o) => ({ w: o.w, h: o.h, d: dataURI(o.file) }));
 
 const STREET = {};
@@ -53,6 +58,7 @@ const assetsScript =
   '/* === ge-inlinede assets — gegenereerd door build.mjs uit assets/manifest.json. Niet handmatig bewerken. === */\n' +
   `const IMAGES=${JSON.stringify(IMAGES)};\n` +
   `const ARTHUR_FRAMES=${JSON.stringify(ARTHUR_FRAMES)};\n` +
+  `const ERIK_FRAMES=${JSON.stringify(ERIK_FRAMES)};\n` +
   `const HOUSES=${JSON.stringify(HOUSES)};\n` +
   `const STREET=${JSON.stringify(STREET)};\n` +
   `const OBSTI=${JSON.stringify(OBSTI)};\n` +
@@ -75,6 +81,7 @@ console.log('Gebouwd:', path.relative(process.cwd(), OUT));
 console.log('  assets ge-inlined:',
   Object.keys(IMAGES).length, 'cities,',
   ARTHUR_FRAMES.length, 'arthur,',
+  ERIK_FRAMES.length, 'erik,',
   HOUSES.length, 'houses,',
   Object.keys(STREET).length, 'street,',
   Object.keys(OBSTI).length, 'obstacles');

@@ -1,0 +1,10 @@
+{
+  "erik_frames": [
+    "obstacles/erik_1.png",
+    "obstacles/erik_2.png",
+    "obstacles/erik_3.png",
+    "obstacles/erik_4.png"
+  ],
+  "canvas": { "w": 343, "h": 576 },
+  "note": "Parallel aan ARTHUR_FRAMES: array van 4 data-URIs. Alle frames gelijk canvas, hoofd-as uitgelijnd, voeten op grondlijn. build.mjs inlinet deze tot een nieuwe globale ERIK_FRAMES; bestaande blobs (IMAGES/ARTHUR_FRAMES/HOUSES/STREET/OBSTI) blijven ongewijzigd."
+}
