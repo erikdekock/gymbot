@@ -5,6 +5,15 @@ const SS=1.7;C.width=W*SS;C.height=H*SS;C.style.width='100%';C.style.height='100
 const SPEED=3.5,LEN=56,JUMPV=375,GRAV=1200;
 const FPS=10,ARTHUR_W=112;
 const ERIK_FPS=8,ERIK_H=1.8;/* walk-cycle-snelheid en wereldhoogte (reproduceert de oude vector-silhouethoogte) */
+/* ---- Climax: hoepel bij het hek (Ticket 4) — losse tunables ---- */
+const HOOP_Z=LEN-0.1;   /* wereldpositie (bij de bestaande gate) */
+const HOOP_Y=0.95;      /* wereldhoogte van het hoepelmidden */
+const HOOP_R=0.72;      /* wereldstraal */
+const HOOP_D=2.15;      /* diepte waarop Arthur 'door' de hoepel gaat */
+const HOOP_DMARG=0.5;   /* diepte-marge = timing-venster (groter = makkelijker) */
+const HOOP_AIR=42;      /* midden van de ringband (sprong-hoogte in px) */
+const HOOP_BAND=30;     /* halve ringband-dikte = succes-marge in px */
+const HOOP_CAP_D=7;     /* toon de affordance-caption binnen deze diepte */
 const AIMGS=ARTHUR_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const EIMGS=ERIK_FRAMES.map(s=>{const im=new Image();im.src=s;return im;});
 const HOUSE_IMGS=HOUSES.map(o=>{const im=new Image();im.src=o.d;return im;});
@@ -42,7 +51,8 @@ for(let i=0;i<70;i++)stars.push({x:Math.random()*W,y:Math.random()*(HORIZON-30),
 function fresh(){return {phase:'start',travel:0,spd:0,air:0,vy:0,duck:false,slapT:0,stun:0,shake:0,flash:0,
  lives:3,score:0,
  buildings:[],props:[],obs:[],birds:[],fx:[],orbs:[],
- nbz:[2.2,2.9],npz:2.5,noz:7,birdsDone:false,bloomT:0,cap:0,t:0};}
+ nbz:[2.2,2.9],npz:2.5,noz:7,birdsDone:false,bloomT:0,cap:0,t:0,
+ level:1,climax:null,capText:'Op weg naar de speeltuin...',fw:[],fwT:0,fwNext:0,retryT:0};}
 S=fresh();
 let nf=0,ph=0,dusk=0;
 function gpf(){return Math.min(1,S.travel/LEN);}
@@ -82,11 +92,17 @@ function renderHubTiles(){
 }
 function startEtappe(level){if(!levelUnlocked(level-1))return;currentLevel=level;var h=document.getElementById('hub');if(h)h.classList.remove('show');begin(level);}
 function completeEtappe(){completed[currentLevel-1]=true;showHub();}
+/* ---- Climax-afloop (Ticket 4): herstart etappe zonder voortgang/stemmen te wissen, zonder reload ---- */
+function runFail(msg){S.phase='retry';S.retryT=0;S.capText=msg;S.cap=2.0;S.flash=0.6;}
+function hoopHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
+function hoopMiss(){S.climax='miss';runFail('Naast de hoepel! Opnieuw.');}
+function spawnBurst(cx,cy){const cols=[[255,210,120],[255,150,90],[180,210,255],[255,120,160]],col=cols[(Math.random()*cols.length)|0],n=22;
+ for(let i=0;i<n;i++){const a=(i/n)*6.283+Math.random()*0.25,sp=55+Math.random()*95;S.fw.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-12,life:0,max:0.85+Math.random()*0.55,col});}}
 
 function pts(d,v){S.fx.push({x:300,y:groundY(d)-44,t:0,kind:'pts',v});}
 function slap(){S.slapT=0.22;let best=99,bi=-1;S.obs.forEach((o,i)=>{if(o.type==='cat'&&o.state==='come'){const d=o.z-S.travel;if(d>1.9&&d<3.7&&d<best){best=d;bi=i;}}});
  if(bi>=0){const o=S.obs[bi];o.state='done';o.ft=0;o.fdir=Math.random()<0.5?-1:1;S.score+=10;pts(best,'+10');S.shake=0.14;}}
-function loseLife(){S.lives--;S.stun=0.9;S.shake=0.3;S.flash=0.5;if(S.lives<=0){S.phase='over';showGameOver();}}
+function loseLife(){S.lives--;S.stun=0.9;S.shake=0.3;S.flash=0.5;if(S.lives<=0)runFail('Arthur haalde het net niet — opnieuw.');}
 
 function gen(){const FAR=52;
  for(let si=0;si<2;si++){const side=si===0?-1:1;
@@ -116,6 +132,8 @@ function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;S.t+=dt;
  ph=(((S.level||1)-1)+Math.min(1,S.travel/LEN))/3;nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
  if(S.phase==='run')update(dt);
  else if(S.phase==='bloom'){S.bloomT+=dt;if(S.bloomT>0.3&&S.orbs.length<26&&Math.random()<0.4)S.orbs.push({x:120+Math.random()*360,y:760+Math.random()*40,vy:-(20+Math.random()*30),tw:Math.random()*6,r:3+Math.random()*4});if(S.bloomT>4.2&&!document.getElementById('finalChoice').classList.contains('show'))showFinalChoice();}
+ else if(S.phase==='fireworks'){S.fwT+=dt;if(S.fwT>=S.fwNext&&S.fwT<2.0){S.fwNext+=0.34;spawnBurst(140+Math.random()*320,150+Math.random()*230);}for(const p of S.fw){p.life+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=140*dt;}S.fw=S.fw.filter(p=>p.life<p.max);if(S.fwT>2.7)completeEtappe();}
+ else if(S.phase==='retry'){S.retryT+=dt;if(S.flash>0)S.flash-=dt*1.2;if(S.retryT>1.6)begin(currentLevel);}
  for(const o of S.orbs)o.y+=o.vy*dt,o.tw+=dt;
  for(const b of S.birds){b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=20*dt;b.t+=dt;}S.birds=S.birds.filter(b=>b.t<2.4);
  for(const f of S.fx)f.t+=dt;S.fx=S.fx.filter(f=>f.t<(f.kind==='pts'?0.7:0.45));
@@ -132,7 +150,14 @@ function update(dt){
    else { if(d<1.95){o.state='miss';o.ft=0;loseLife();} } }
  for(const o of S.obs)if(o.state!=='come')o.ft+=dt;
  if(!S.birdsDone&&S.travel>LEN-5){S.birdsDone=true;const py=groundY(LEN-S.travel)-30;for(let i=0;i<7;i++)S.birds.push({x:300+(Math.random()*2-1)*120,y:py,vx:(Math.random()*2-1)*60,vy:-(60+Math.random()*50),t:0});}
- if(S.travel>=LEN-2.2){completeEtappe();}/* TIJDELIJK (ticket 3): etappe gehaald -> terug naar #hub (geen finalChoice/reveal) */
+ /* CLIMAX (ticket 4): hoepel bij het hek — timing-sprong, geen lanes/links-rechts */
+ const dHoop=HOOP_Z-S.travel;
+ if(S.climax==null){
+   if(dHoop<HOOP_CAP_D&&dHoop>HOOP_D-HOOP_DMARG){S.cap=0.25;S.capText='Spring door de hoepel!';}
+   if(dHoop<=HOOP_D+HOOP_DMARG&&dHoop>=HOOP_D-HOOP_DMARG){
+     if(S.air>=HOOP_AIR-HOOP_BAND&&S.air<=HOOP_AIR+HOOP_BAND)hoopHit();/* in de lucht binnen de ringband -> raak */
+   } else if(dHoop<HOOP_D-HOOP_DMARG){hoopMiss();}/* hoepeldiepte voorbij zonder in de band -> mis */
+ }
 }
 
 function quad(p){X.beginPath();X.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)X.lineTo(p[i][0],p[i][1]);X.closePath();X.fill();}
@@ -194,6 +219,16 @@ function drawErik(o){const d=o.z-S.travel;if(d<0.28)return;const sc=F/d,x=300,gy
    X.drawImage(img,ix,iy,w,hh);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.45)+')';X.fillRect(ix,iy,w,hh);}
    if(o.state==='come'&&d>1.95&&d<5.4){X.fillStyle='#ffd86b';X.font='bold 15px sans-serif';X.textAlign='center';if(Math.floor(S.t*7)%2)X.fillText('omlaag',x,gy-1.6*sc);}}}
 
+function drawHoop(d){const sc=F/Math.max(ZMIN,d),c=P(0,HOOP_Y,d),R=HOOP_R*sc,band=Math.max(2.5,R*0.13),pulse=0.82+0.18*Math.sin(S.t*4);
+ X.save();X.lineCap='round';
+ for(let i=3;i>=1;i--){X.globalAlpha=0.11*pulse;X.lineWidth=band*(1+i*0.95);X.strokeStyle='rgba(255,196,96,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();}/* zachte buitengloed */
+ X.globalAlpha=pulse;X.lineWidth=band;X.strokeStyle='rgba(247,206,120,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();/* warme goudring */
+ X.globalAlpha=0.9*pulse;X.lineWidth=band*0.4;X.strokeStyle='rgba(255,242,212,1)';X.beginPath();X.ellipse(c[0],c[1],R,R*0.97,0,0,7);X.stroke();/* lichte binnenrand */
+ X.globalAlpha=1;X.restore();}
+function drawFireworks(){
+ X.globalAlpha=0.45;const g=X.createRadialGradient(300,360,40,300,360,470);g.addColorStop(0,'rgba(255,210,140,0.6)');g.addColorStop(1,'rgba(40,30,60,0)');X.fillStyle=g;X.fillRect(0,0,W,H);X.globalAlpha=1;
+ for(const p of S.fw){const a=Math.max(0,1-p.life/p.max);X.globalAlpha=a;X.fillStyle='rgb('+p.col[0]+','+p.col[1]+','+p.col[2]+')';X.beginPath();X.arc(p.x,p.y,2.6,0,7);X.fill();}
+ X.globalAlpha=1;X.fillStyle='#fff';X.font='600 26px Georgia,serif';X.textAlign='center';X.fillText('Etappe gehaald!',300,300);}
 function drawGate(d){const gy=groundY(d);
  if(GATEIMG.naturalWidth){const iw=GATEIMG.naturalWidth,ih=GATEIMG.naturalHeight,sw=2*XW*F/Math.max(ZMIN,d),w=sw*1.45,h=w*ih/iw;X.drawImage(GATEIMG,300-w/2,gy-h,w,h);if(nf>0){X.fillStyle='rgba(18,22,42,'+(nf*0.42)+')';X.fillRect(300-w/2,gy-h,w,h);}return;}
  const sc=F/d,top=HORIZON+(CAMH-2.3)*F/Math.max(ZMIN,d);X.fillStyle=RGB(L3([72,106,62],[24,40,30],nf));for(let gx=-2.6;gx<=2.6;gx+=0.6){const bx=300+gx*sc;X.beginPath();X.arc(bx,top-0.1*sc,0.5*sc,0,7);X.fill();}}
@@ -230,14 +265,16 @@ function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.i
  for(const b of S.buildings)it.push({d:b.z-S.travel,f:()=>drawWall(b)});
  for(const p of S.props)it.push({d:p.z-S.travel,f:()=>drawProp(p)});
  {const d=LEN-S.travel;if(d>0.5)it.push({d,f:()=>drawGate(d)});}
+ {const dh=HOOP_Z-S.travel;if(dh>0.5&&dh<14&&S.climax!=='hit')it.push({d:dh,f:()=>drawHoop(dh)});}
  for(const o of S.obs)it.push({d:o.z-S.travel,f:()=>drawObs(o)});
  it.sort((a,b)=>b.d-a.d);for(const o of it)if(o.d>0.5)o.f();
  drawBirds();drawFx();drawArthur();
  X.restore();
  if(S.flash>0){X.fillStyle='rgba(200,40,40,'+(S.flash*0.45)+')';X.fillRect(0,0,W,H);}
  if(S.phase==='bloom')bloom();
+ if(S.phase==='fireworks')drawFireworks();
  drawHUD();
- if(S.cap>0){X.globalAlpha=Math.min(1,S.cap);X.fillStyle='rgba(0,0,0,0.42)';X.fillRect(0,150,W,50);X.fillStyle='#fff';X.font='600 23px Georgia,serif';X.textAlign='center';X.fillText('Op weg naar de speeltuin...',300,182);X.globalAlpha=1;}}
+ if(S.cap>0){X.globalAlpha=Math.min(1,S.cap);X.fillStyle='rgba(0,0,0,0.42)';X.fillRect(0,150,W,50);X.fillStyle='#fff';X.font='600 23px Georgia,serif';X.textAlign='center';X.fillText(S.capText||'Op weg naar de speeltuin...',300,182);X.globalAlpha=1;}}
 function bloom(){const t=Math.min(1,S.bloomT/1.6);X.globalAlpha=t*0.55;const g=X.createRadialGradient(300,470,40,300,470,460);g.addColorStop(0,'rgba(255,210,140,0.7)');g.addColorStop(1,'rgba(40,30,60,0)');X.fillStyle=g;X.fillRect(0,0,W,H);X.globalAlpha=1;
  for(const o of S.orbs){X.globalAlpha=0.5+0.4*Math.sin(o.tw*3);const gg=X.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r*3);gg.addColorStop(0,'rgba(255,225,150,0.9)');gg.addColorStop(1,'rgba(255,225,150,0)');X.fillStyle=gg;X.beginPath();X.arc(o.x,o.y,o.r*3,0,7);X.fill();}X.globalAlpha=1;
  if(S.bloomT>0.8){X.globalAlpha=Math.min(1,(S.bloomT-0.8)/1.2);X.fillStyle='#fff';X.font='600 22px Georgia,serif';X.textAlign='center';X.fillText('Ergens wacht een reis op jullie...',300,290);X.globalAlpha=1;}}

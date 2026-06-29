@@ -258,3 +258,15 @@ De secties hierboven beschrijven het origineel (`reference/`). De gebouwde versi
   etappe en keert terug naar `#hub` — de oude `showFinalChoice`/`reveal` is **tijdelijk
   losgekoppeld** (keert terug in ticket 5). Kern-runner/obstakels/projectie/`texStrip`
   ongewijzigd; blobs byte-identiek.
+- **Ticket 4 — Climax: hoepel-sprong + vuurwerk (optie A).** De tijdelijke auto-voltooiing
+  is vervangen door een echte climax. Aan het eind verschijnt bij het hek een **procedurele
+  hoepel** (`drawHoop`, warme goudring via `P()`, geen asset) op spronghoogte, met de caption
+  "Spring door de hoepel!" (dynamisch `S.capText` in het bestaande caption-systeem). Succes =
+  Arthur binnen een diepte-venster rond `HOOP_D` **én** `air` binnen de ringband
+  (`HOOP_AIR ± HOOP_BAND`) → `hoopHit()` → fase `fireworks` (procedurele bursts, `drawFireworks`,
+  "Etappe gehaald!") → `completeEtappe()`. Mis (diepte voorbij zonder in de band) → `hoopMiss()`
+  → rode flash + "Naast de hoepel! Opnieuw." → fase `retry` → `begin(currentLevel)`. Levens-op
+  tijdens de run gaat via dezelfde `runFail()`-herstart (géén dood-scherm/reveal). Geen
+  links/rechts-as, geen lanes; bestaande sprong (↑/`air`/`GRAV`) hergebruikt. In-memory
+  voortgang/stemmen blijven; geen reload. Tunables: `HOOP_Z/Y/R/D/DMARG/AIR/BAND/CAP_D`.
+  Kern-runner/obstakels/projectie/`texStrip` ongewijzigd; blobs byte-identiek.
