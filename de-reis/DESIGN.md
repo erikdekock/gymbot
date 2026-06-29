@@ -16,9 +16,9 @@ De drie etappes vormen samen één reis van ochtend → nacht.
 
 ## PER ETAPPE
 - Speel de run. 3 levens voor obstakels: overburen-katten = spatie, Ritchie (hond) = ↑, Erik = ↓.
-- CLIMAX aan het eind (optie A): bij het hek verschijnt een hoepel in het MIDDEN; spring er op het
-  juiste moment doorheen. Raak → VUURWERK → etappe gehaald. Mis → etappe MISLUKT → opnieuw doen.
-  Levens op tijdens de run → ook opnieuw. (Bewust wat moeilijker, op verzoek.)
+- CLIMAX: Arthur bereikt het hek aan het einde van de run → automatisch VUURWERK → etappe gehaald.
+  Geen sprong-actie nodig; het hek is het visuele eindpunt, niet een obstakel.
+  Levens op tijdens de run → etappe herstart (runFail). Enige faal-staat.
 
 ## BELONING / KAARTEN
 - Elke gehaalde etappe → 3 pakjes. Per pakje 3 kaarten (géén tekst), kies er 1 op gevoel.

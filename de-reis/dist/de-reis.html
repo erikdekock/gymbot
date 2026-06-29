@@ -215,12 +215,7 @@ const KNOCK_UV=8.8;  /* initiële opwaartse snelheid (sc-eenheden/s) */
 const KNOCK_GV=11.5; /* zwaartekracht van de boog (sc-eenheden/s²) */
 const KNOCK_ROT=13.5;/* rotatiesnelheid (rad/s) */
 const KNOCK_SHR=0.5; /* schaalkrimp per seconde */
-/* ---- Climax: sprong over het hek (Ticket 8) — losse tunables ---- */
-const GATE_Z=LEN;       /* wereldpositie van het hek (einde van het parcours) */
-const GATE_D=1.8;       /* controlediepte: check valt als d ≈ GATE_D */
-const GATE_DMARG=0.45;  /* timing-venster (halve breedte); groter = milder */
-const GATE_CLEAR=48;    /* minimale air-hoogte (px) om over het hek te komen */
-const GATE_CAP_D=8;     /* toon affordance-caption binnen deze diepte */
+const GATE_Z=LEN;       /* visueel eindpunt: positie van het hek in de wereld */
 /* ---- Bekendmaking / tromgeroffel (Ticket 11) ---- */
 var _bkRaf=0;
 const HOLD_DUR=1.7;
@@ -268,7 +263,7 @@ function fresh(){return {phase:'start',travel:0,spd:0,air:0,vy:0,duck:false,slap
  lives:3,score:0,
  buildings:[],props:[],obs:[],birds:[],fx:[],orbs:[],
  nbz:[2.2,2.9],npz:2.5,noz:7,birdsDone:false,bloomT:0,cap:0,t:0,
- level:1,climax:null,capText:'Op weg naar de speeltuin...',fw:[],fwT:0,fwNext:0,retryT:0};}
+ level:1,capText:'Op weg naar de speeltuin...',fw:[],fwT:0,fwNext:0,retryT:0};}
 S=fresh();
 let nf=0,ph=0,dusk=0;
 function gpf(){return Math.min(1,S.travel/LEN);}
@@ -452,8 +447,6 @@ function _startBkAnim(ov){
 }
 /* ---- Climax-afloop (Ticket 4): herstart etappe zonder voortgang/stemmen te wissen, zonder reload ---- */
 function runFail(msg){S.phase='retry';S.retryT=0;S.capText=msg;S.cap=2.0;S.flash=0.6;}
-function gateHit(){S.climax='hit';S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
-function gateMiss(){S.climax='miss';runFail('Tegen het hek! Opnieuw.');}
 function spawnBurst(cx,cy){const cols=[[255,210,120],[255,150,90],[180,210,255],[255,120,160]],col=cols[(Math.random()*cols.length)|0],n=22;
  for(let i=0;i<n;i++){const a=(i/n)*6.283+Math.random()*0.25,sp=55+Math.random()*95;S.fw.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-12,life:0,max:0.85+Math.random()*0.55,col});}}
 
@@ -508,14 +501,8 @@ function update(dt){
    else { if(d<1.95){o.state='miss';o.ft=0;loseLife();} } }
  for(const o of S.obs)if(o.state!=='come')o.ft+=dt;
  if(!S.birdsDone&&S.travel>LEN-5){S.birdsDone=true;const py=groundY(LEN-S.travel)-30;for(let i=0;i<7;i++)S.birds.push({x:300+(Math.random()*2-1)*120,y:py,vx:(Math.random()*2-1)*60,vy:-(60+Math.random()*50),t:0});}
- /* CLIMAX (ticket 8): sprong over het hek — geen bovengrens (hoger is altijd goed) */
- const dGate=GATE_Z-S.travel;
- if(S.climax==null){
-   if(dGate<GATE_CAP_D&&dGate>GATE_D){S.cap=0.25;S.capText='Spring over het hek!';}
-   if(dGate<=GATE_D+GATE_DMARG&&dGate>=GATE_D-GATE_DMARG){
-     if(S.air>=GATE_CLEAR)gateHit();/* in de lucht hoog genoeg -> over het hek */
-   } else if(dGate<GATE_D-GATE_DMARG){gateMiss();}/* venster voorbij zonder te springen -> mis */
- }
+ /* Auto-voltooiing: hek bereikt = etappe gehaald → vuurwerk */
+ if(S.travel>=LEN-0.3){S.phase='fireworks';S.fw=[];S.fwT=0;S.fwNext=0;S.shake=0.18;S.cap=0;}
 }
 
 function quad(p){X.beginPath();X.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)X.lineTo(p[i][0],p[i][1]);X.closePath();X.fill();}
