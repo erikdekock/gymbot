@@ -25,6 +25,26 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
 .rvline{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:16px}
 .rvstrip{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
 .rvstrip img{width:72px;aspect-ratio:2/3;object-fit:cover;border-radius:6px;opacity:.9}
+/* reishub / level-select: zelfde papier-stijl als #intro, 3 tijd-getinte tegels */
+#hub{background:radial-gradient(120% 90% at 50% 24%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%);color:#3a2f26}
+#hub .hubinner{width:100%;max-width:540px;text-align:center;padding:10px 18px}
+.hubtitle{font-family:Georgia,serif;font-size:36px;color:#7a4a2a;margin:2px 0 6px;letter-spacing:1px;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.hubsub{font-family:Georgia,serif;font-size:16px;color:#6b5d4c;margin-bottom:22px}
+.htiles{display:flex;gap:12px;justify-content:center}
+.htile{position:relative;flex:1;max-width:160px;aspect-ratio:3/4;border-radius:14px;cursor:pointer;overflow:hidden;border:3px solid rgba(0,0,0,.12);box-shadow:0 8px 22px rgba(0,0,0,.28);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:14px 8px;transition:transform .15s,border-color .15s,box-shadow .15s}
+.htile:hover{transform:translateY(-7px) scale(1.03);border-color:#d9b24a}
+/* tijd-tints: 1 ochtend/warm, 2 schemering/oranje, 3 nacht/diepblauw */
+.htile[data-level="1"]{background:linear-gradient(180deg,#fbe7c2 0%,#f6c98e 60%,#e8a76a 100%);color:#5a3a1e}
+.htile[data-level="2"]{background:linear-gradient(180deg,#f3b46b 0%,#d9784a 55%,#8e5170 100%);color:#fff5ec}
+.htile[data-level="3"]{background:linear-gradient(180deg,#3a4a86 0%,#243463 55%,#121a38 100%);color:#eaf0ff}
+.hnum{font-family:Georgia,serif;font-size:21px;font-weight:700;letter-spacing:.4px}
+.htime{font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px;opacity:.92;margin-top:3px;letter-spacing:.4px}
+.htile .hcheck{position:absolute;top:8px;right:10px;font-size:24px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5);display:none}
+.htile.done{border-color:#d9b24a;box-shadow:0 0 0 2px #d9b24a,0 10px 26px rgba(217,178,74,.45)}
+.htile.locked{cursor:default;filter:saturate(.82) brightness(.9);opacity:.72}
+.htile.locked:hover{transform:none;border-color:rgba(0,0,0,.12)}
+.htile .hlock{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:12px;font-weight:700;color:#fff;background:rgba(20,16,12,.32);letter-spacing:.5px}
+.hubdone{display:none;margin-top:22px;font-family:Georgia,serif;font-size:16px;font-style:italic;color:#9a6a2a}
 /* intro: storybook/aquarel papier, twee pagina's */
 #intro{background:radial-gradient(120% 90% at 50% 28%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%);color:#3a2f26}
 #intro .iinner{width:100%;max-width:520px;text-align:center;padding:10px 20px}
@@ -86,6 +106,16 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
    <p class="itouch">(Touch: tik boven = springen · midden = meppen · onder = duiken)</p>
    <div class="ihint">spatie of tik om te beginnen</div>
  </div>
+</div></div>
+<div id="hub" class="overlay"><div class="hubinner">
+ <div class="hubtitle">De Reis</div>
+ <div class="hubsub">Kies een etappe — Arthur leidt de weg.</div>
+ <div class="htiles">
+   <div class="htile" data-level="1"><div class="hnum">Etappe 1</div><div class="htime">Ochtend</div><div class="hcheck">✓</div><div class="hlock">op slot</div></div>
+   <div class="htile" data-level="2"><div class="hnum">Etappe 2</div><div class="htime">Schemering</div><div class="hcheck">✓</div><div class="hlock">op slot</div></div>
+   <div class="htile" data-level="3"><div class="hnum">Etappe 3</div><div class="htime">Nacht</div><div class="hcheck">✓</div><div class="hlock">op slot</div></div>
+ </div>
+ <div id="hubdone" class="hubdone">Reis voltooid — kaarten volgen</div>
 </div></div>
 </div>
 <script>
@@ -159,9 +189,29 @@ C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.cli
  if(S.phase==='start'){return;}/* de #intro-overlay start de run */
  if(S.phase==='run'){ if(cy<H*0.4){if(S.air<=0&&!S.duck)S.vy=JUMPV;} else if(cy>H*0.7){S.duck=true;} else slap(); }});
 C.addEventListener('pointerup',()=>{S.duck=false;});
-function begin(){S=fresh();gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
-function restart(){begin();}
-function clearOv(){['finalChoice','reveal','gameOver'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+function begin(level){S=fresh();S.level=level||currentLevel||1;gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
+function restart(){begin(currentLevel);}
+function clearOv(){['finalChoice','reveal','gameOver','hub'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+
+/* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
+let currentLevel=1, completed=[false,false,false];
+const REIS={picks:[],votes:{marseille:0,palermo:0,bilbao:0}};/* placeholder voor kaarten/stemtelling (ticket 5) */
+const HUBTIJD=['Ochtend','Schemering','Nacht'];/* tijd-van-de-dag per etappe */
+function levelUnlocked(i){return i===0||completed[i-1];}/* lineair ontgrendeld (0-based) */
+function showHub(){S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
+function renderHubTiles(){
+ var tiles=document.querySelectorAll('#hub .htile');
+ for(var i=0;i<tiles.length;i++){(function(i){
+   var t=tiles[i],open=levelUnlocked(i),done=completed[i];
+   t.classList.toggle('locked',!open);t.classList.toggle('done',done);
+   var ck=t.querySelector('.hcheck');if(ck)ck.style.display=done?'block':'none';
+   var lk=t.querySelector('.hlock');if(lk)lk.style.display=open?'none':'block';
+   t.onclick=open?function(){startEtappe(i+1);}:null;
+ })(i);}
+ var dn=document.getElementById('hubdone');if(dn)dn.style.display=completed.every(Boolean)?'block':'none';
+}
+function startEtappe(level){if(!levelUnlocked(level-1))return;currentLevel=level;var h=document.getElementById('hub');if(h)h.classList.remove('show');begin(level);}
+function completeEtappe(){completed[currentLevel-1]=true;showHub();}
 
 function pts(d,v){S.fx.push({x:300,y:groundY(d)-44,t:0,kind:'pts',v});}
 function slap(){S.slapT=0.22;let best=99,bi=-1;S.obs.forEach((o,i)=>{if(o.type==='cat'&&o.state==='come'){const d=o.z-S.travel;if(d>1.9&&d<3.7&&d<best){best=d;bi=i;}}});
@@ -192,7 +242,8 @@ function gen(){const FAR=52;
 
 let last=performance.now();
 function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;S.t+=dt;
- ph=Math.min(1,gpf());nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
+ /* reis-brede tijd: etappe 1 ochtend -> 2 schemering -> 3 nacht, via offset in dezelfde curve */
+ ph=(((S.level||1)-1)+Math.min(1,S.travel/LEN))/3;nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
  if(S.phase==='run')update(dt);
  else if(S.phase==='bloom'){S.bloomT+=dt;if(S.bloomT>0.3&&S.orbs.length<26&&Math.random()<0.4)S.orbs.push({x:120+Math.random()*360,y:760+Math.random()*40,vy:-(20+Math.random()*30),tw:Math.random()*6,r:3+Math.random()*4});if(S.bloomT>4.2&&!document.getElementById('finalChoice').classList.contains('show'))showFinalChoice();}
  for(const o of S.orbs)o.y+=o.vy*dt,o.tw+=dt;
@@ -211,7 +262,7 @@ function update(dt){
    else { if(d<1.95){o.state='miss';o.ft=0;loseLife();} } }
  for(const o of S.obs)if(o.state!=='come')o.ft+=dt;
  if(!S.birdsDone&&S.travel>LEN-5){S.birdsDone=true;const py=groundY(LEN-S.travel)-30;for(let i=0;i<7;i++)S.birds.push({x:300+(Math.random()*2-1)*120,y:py,vx:(Math.random()*2-1)*60,vy:-(60+Math.random()*50),t:0});}
- if(S.travel>=LEN-2.2){S.phase='bloom';S.bloomT=0;}
+ if(S.travel>=LEN-2.2){completeEtappe();}/* TIJDELIJK (ticket 3): etappe gehaald -> terug naar #hub (geen finalChoice/reveal) */
 }
 
 function quad(p){X.beginPath();X.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)X.lineTo(p[i][0],p[i][1]);X.closePath();X.fill();}
@@ -302,7 +353,7 @@ function drawHUD(){
  X.fillStyle='rgba(255,255,255,0.78)';X.font='12px sans-serif';X.textAlign='center';X.fillText('spatie = kat    .    omhoog = hond    .    omlaag = Erik',300,H-12);}
 
 function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.clearRect(0,0,W,H);
- if(S.phase==='start'){startScreen();return;}
+ if(S.phase==='start'||S.phase==='hub'){startScreen();return;}
  X.save();if(S.shake>0){X.translate((Math.random()-0.5)*9*S.shake/0.2,(Math.random()-0.5)*9*S.shake/0.2);}
  drawSky();drawGround();
  const it=[];
@@ -358,7 +409,7 @@ gen();requestAnimationFrame(loop);
    document.removeEventListener('keydown',onKey,true);
    intro.removeEventListener('pointerdown',onPointer);
    intro.classList.remove('show');intro.style.display='none';
-   if(typeof begin==='function')begin();
+   if(typeof showHub==='function')showHub();/* intro -> reishub (ticket 3); de hub start de etappe */
  }
  show(0);intro.classList.add('show');
  /* capture-fase: vóór de keydown-listener van game.js, en stopt die tijdens de intro */

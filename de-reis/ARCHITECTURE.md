@@ -248,3 +248,13 @@ De secties hierboven beschrijven het origineel (`reference/`). De gebouwde versi
   (`IMAGES`, `ARTHUR_FRAMES`, `HOUSES`, `STREET`, `OBSTI`) blijven **byte-identiek**.
 
   Extra tunables: `ERIK_FPS` (walk-snelheid, ≈8) en `ERIK_H` (wereldhoogte, 1.8).
+- **Ticket 3 — Reishub + 3 etappes + tijd-van-de-dag (schil).** DOM-overlay `#hub`
+  (level-select, papier-stijl) met 3 tijd-getinte tegels; lineair ontgrendeld, gehaalde
+  gemarkeerd. Nieuwe `hub`-fase; flow: intro → `#hub` → etappe → `#hub`. `begin(level)` zet
+  `S.level` (1..3). De dag→nacht-curve wordt nu gevoed met een **reis-brede** factor
+  `ph = ((S.level-1) + travel/LEN) / 3` i.p.v. `travel/LEN` → etappe 1 ochtend, 2 schemering,
+  3 nacht. Voortgang in module-scope (`currentLevel`, `completed[3]`, `REIS` placeholder voor
+  ticket 5); **geen storage**, geen reload. Einde van de run (`travel ≥ LEN−2.2`) markeert de
+  etappe en keert terug naar `#hub` — de oude `showFinalChoice`/`reveal` is **tijdelijk
+  losgekoppeld** (keert terug in ticket 5). Kern-runner/obstakels/projectie/`texStrip`
+  ongewijzigd; blobs byte-identiek.

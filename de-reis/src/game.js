@@ -59,9 +59,29 @@ C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.cli
  if(S.phase==='start'){return;}/* de #intro-overlay start de run */
  if(S.phase==='run'){ if(cy<H*0.4){if(S.air<=0&&!S.duck)S.vy=JUMPV;} else if(cy>H*0.7){S.duck=true;} else slap(); }});
 C.addEventListener('pointerup',()=>{S.duck=false;});
-function begin(){S=fresh();gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
-function restart(){begin();}
-function clearOv(){['finalChoice','reveal','gameOver'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+function begin(level){S=fresh();S.level=level||currentLevel||1;gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
+function restart(){begin(currentLevel);}
+function clearOv(){['finalChoice','reveal','gameOver','hub'].forEach(id=>{var e=document.getElementById(id);if(e)e.classList.remove('show');});}
+
+/* ===== Reishub / 3 etappes (Ticket 3) — voortgang in module-scope, GEEN storage ===== */
+let currentLevel=1, completed=[false,false,false];
+const REIS={picks:[],votes:{marseille:0,palermo:0,bilbao:0}};/* placeholder voor kaarten/stemtelling (ticket 5) */
+const HUBTIJD=['Ochtend','Schemering','Nacht'];/* tijd-van-de-dag per etappe */
+function levelUnlocked(i){return i===0||completed[i-1];}/* lineair ontgrendeld (0-based) */
+function showHub(){S.phase='hub';renderHubTiles();var h=document.getElementById('hub');if(h)h.classList.add('show');}
+function renderHubTiles(){
+ var tiles=document.querySelectorAll('#hub .htile');
+ for(var i=0;i<tiles.length;i++){(function(i){
+   var t=tiles[i],open=levelUnlocked(i),done=completed[i];
+   t.classList.toggle('locked',!open);t.classList.toggle('done',done);
+   var ck=t.querySelector('.hcheck');if(ck)ck.style.display=done?'block':'none';
+   var lk=t.querySelector('.hlock');if(lk)lk.style.display=open?'none':'block';
+   t.onclick=open?function(){startEtappe(i+1);}:null;
+ })(i);}
+ var dn=document.getElementById('hubdone');if(dn)dn.style.display=completed.every(Boolean)?'block':'none';
+}
+function startEtappe(level){if(!levelUnlocked(level-1))return;currentLevel=level;var h=document.getElementById('hub');if(h)h.classList.remove('show');begin(level);}
+function completeEtappe(){completed[currentLevel-1]=true;showHub();}
 
 function pts(d,v){S.fx.push({x:300,y:groundY(d)-44,t:0,kind:'pts',v});}
 function slap(){S.slapT=0.22;let best=99,bi=-1;S.obs.forEach((o,i)=>{if(o.type==='cat'&&o.state==='come'){const d=o.z-S.travel;if(d>1.9&&d<3.7&&d<best){best=d;bi=i;}}});
@@ -92,7 +112,8 @@ function gen(){const FAR=52;
 
 let last=performance.now();
 function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;S.t+=dt;
- ph=Math.min(1,gpf());nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
+ /* reis-brede tijd: etappe 1 ochtend -> 2 schemering -> 3 nacht, via offset in dezelfde curve */
+ ph=(((S.level||1)-1)+Math.min(1,S.travel/LEN))/3;nf=sm(0.45,1.0,ph);dusk=Math.sin(ph*Math.PI)*0.62*(1-nf*0.55);
  if(S.phase==='run')update(dt);
  else if(S.phase==='bloom'){S.bloomT+=dt;if(S.bloomT>0.3&&S.orbs.length<26&&Math.random()<0.4)S.orbs.push({x:120+Math.random()*360,y:760+Math.random()*40,vy:-(20+Math.random()*30),tw:Math.random()*6,r:3+Math.random()*4});if(S.bloomT>4.2&&!document.getElementById('finalChoice').classList.contains('show'))showFinalChoice();}
  for(const o of S.orbs)o.y+=o.vy*dt,o.tw+=dt;
@@ -111,7 +132,7 @@ function update(dt){
    else { if(d<1.95){o.state='miss';o.ft=0;loseLife();} } }
  for(const o of S.obs)if(o.state!=='come')o.ft+=dt;
  if(!S.birdsDone&&S.travel>LEN-5){S.birdsDone=true;const py=groundY(LEN-S.travel)-30;for(let i=0;i<7;i++)S.birds.push({x:300+(Math.random()*2-1)*120,y:py,vx:(Math.random()*2-1)*60,vy:-(60+Math.random()*50),t:0});}
- if(S.travel>=LEN-2.2){S.phase='bloom';S.bloomT=0;}
+ if(S.travel>=LEN-2.2){completeEtappe();}/* TIJDELIJK (ticket 3): etappe gehaald -> terug naar #hub (geen finalChoice/reveal) */
 }
 
 function quad(p){X.beginPath();X.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)X.lineTo(p[i][0],p[i][1]);X.closePath();X.fill();}
@@ -202,7 +223,7 @@ function drawHUD(){
  X.fillStyle='rgba(255,255,255,0.78)';X.font='12px sans-serif';X.textAlign='center';X.fillText('spatie = kat    .    omhoog = hond    .    omlaag = Erik',300,H-12);}
 
 function render(){X.setTransform(SS,0,0,SS,0,0);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.clearRect(0,0,W,H);
- if(S.phase==='start'){startScreen();return;}
+ if(S.phase==='start'||S.phase==='hub'){startScreen();return;}
  X.save();if(S.shake>0){X.translate((Math.random()-0.5)*9*S.shake/0.2,(Math.random()-0.5)*9*S.shake/0.2);}
  drawSky();drawGround();
  const it=[];
