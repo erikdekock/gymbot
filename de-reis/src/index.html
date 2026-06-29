@@ -25,6 +25,18 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
 .rvline{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:16px}
 .rvstrip{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
 .rvstrip img{width:72px;aspect-ratio:2/3;object-fit:cover;border-radius:6px;opacity:.9}
+/* intro: storybook/aquarel papier, twee pagina's */
+#intro{background:radial-gradient(120% 90% at 50% 28%,#f8f1e3 0%,#efe3cd 58%,#e2d2b4 100%);color:#3a2f26}
+#intro .iinner{width:100%;max-width:520px;text-align:center;padding:10px 20px}
+.ipage{animation:ifade .45s ease both}
+@keyframes ifade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ititle{font-family:Georgia,serif;font-size:38px;color:#7a4a2a;margin:4px 0 22px;letter-spacing:1px;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+#intro p{font-family:Georgia,serif;font-size:17px;line-height:1.62;color:#3a2f26;margin:0 auto 14px;max-width:450px}
+.ikeys{list-style:none;text-align:left;max-width:470px;margin:2px auto 16px}
+.ikeys li{font-family:Georgia,serif;font-size:16px;line-height:1.5;color:#3a2f26;margin-bottom:13px}
+.ikey{display:inline-block;min-width:104px;font-weight:700;color:#7a4a2a}
+.itouch{font-size:13.5px!important;color:#6b5d4c;font-style:italic;margin-top:4px}
+.ihint{margin-top:24px;font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;font-weight:700;color:#9a6a2a;letter-spacing:.3px}
 /* game over */
 #gameOver .goinner{width:100%;max-width:440px;text-align:center}
 .gotitle{font-family:Georgia,serif;font-size:30px;color:#f0d6d6;margin-bottom:10px}
@@ -54,6 +66,49 @@ body{background:#0b0d0f;min-height:100vh;display:flex;align-items:center;justify
  <div class="goscore"></div>
  <button class="btn" onclick="restart()">Opnieuw</button>
 </div></div>
+<div id="intro" class="overlay show"><div class="iinner">
+ <div class="ipage" data-page="1">
+   <div class="ititle">De Reis</div>
+   <p>Liefie, gefeliciteerd.</p>
+   <p>Dit jaar krijg je een lang weekend weg — naar een plek die écht bij je past.</p>
+   <p>Maar kiezen is niks voor jou, Amena. Dus maakte ik een spel dat het voor je doet: niet met je hoofd, maar op gevoel.</p>
+   <p>Eerst moet Arthur veilig bij het speeltuintje zien te komen…</p>
+   <div class="ihint">spatie of tik om verder te gaan →</div>
+ </div>
+ <div class="ipage" data-page="2" hidden>
+   <div class="ititle">Help Arthur naar het speeltuintje</div>
+   <ul class="ikeys">
+     <li><span class="ikey">␣ spatie</span> — mep de zwarte katten van de overburen weg</li>
+     <li><span class="ikey">↑ omhoog</span> — spring over Ritchie, de vieze hond van Amir</li>
+     <li><span class="ikey">↓ omlaag</span> — duik onder een auto als Erik voorbijkomt; hij speurt de straat af met zijn Tracktive</li>
+   </ul>
+   <p>Drie pootjes = drie levens. Alle drie kwijt? Gewoon opnieuw — Arthur geeft nooit op.</p>
+   <p class="itouch">(Touch: tik boven = springen · midden = meppen · onder = duiken)</p>
+   <div class="ihint">spatie of tik om te beginnen</div>
+ </div>
+</div></div>
 </div>
 <!-- BUILD:INJECT  (build.mjs vervangt dit door <script> met ge-inlinede assets + game.js) -->
+<script>
+/* Intro-controller: twee pagina's vóór de runner. Spatie/Enter of tik gaat verder;
+   vanaf pagina 2 verdwijnt #intro en start de bestaande run-trigger begin().
+   Listeners worden verwijderd zodra de intro klaar is, zodat spatie weer = meppen. */
+(function(){
+ var intro=document.getElementById('intro'),pages=intro.querySelectorAll('.ipage'),page=0;
+ function show(i){for(var k=0;k<pages.length;k++)pages[k].hidden=(k!==i);}
+ function advance(){if(page===0){page=1;show(1);}else finish();}
+ function onKey(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();advance();}}
+ function onPointer(e){e.preventDefault();advance();}
+ function finish(){
+   document.removeEventListener('keydown',onKey,true);
+   intro.removeEventListener('pointerdown',onPointer);
+   intro.classList.remove('show');intro.style.display='none';
+   if(typeof begin==='function')begin();
+ }
+ show(0);intro.classList.add('show');
+ /* capture-fase: vóór de keydown-listener van game.js, en stopt die tijdens de intro */
+ document.addEventListener('keydown',onKey,true);
+ intro.addEventListener('pointerdown',onPointer);
+})();
+</script>
 </body></html>

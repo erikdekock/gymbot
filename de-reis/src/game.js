@@ -48,14 +48,14 @@ function gpf(){return Math.min(1,S.travel/LEN);}
 
 addEventListener('keydown',e=>{
  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
- if(S.phase==='start'){if(e.key===' '||e.key==='Enter')begin();return;}
+ if(S.phase==='start'){return;}/* de #intro-overlay start de run (begin()); geen spatie-startprompt meer hier */
  if(S.phase==='run'){
    if(e.key==='ArrowUp'&&S.air<=0&&!S.duck)S.vy=JUMPV;
    if(e.key==='ArrowDown')S.duck=true;
    if(e.key===' ')slap();}});
 addEventListener('keyup',e=>{if(e.key==='ArrowDown')S.duck=false;});
 C.addEventListener('pointerdown',e=>{const r=C.getBoundingClientRect(),cy=(e.clientY-r.top)/r.height*H;
- if(S.phase==='start'){begin();return;}
+ if(S.phase==='start'){return;}/* de #intro-overlay start de run */
  if(S.phase==='run'){ if(cy<H*0.4){if(S.air<=0&&!S.duck)S.vy=JUMPV;} else if(cy>H*0.7){S.duck=true;} else slap(); }});
 C.addEventListener('pointerup',()=>{S.duck=false;});
 function begin(){S=fresh();gen();S.props=S.props.filter(p=>!(p.kind==='tree'&&p.z<6));S.props.push({kind:'bench',side:1,z:4.6,cx:3.02});S.props.push({kind:'bench',side:-1,z:10.5,cx:3.02});S.phase='run';S.cap=2.2;clearOv();}
