@@ -27,7 +27,12 @@ npm run dev      # local dev server
 npm run build    # production build → dist/
 npm run preview  # serve the production build
 npm run icons    # regenerate PWA icons from scripts/icon.js (uses sharp)
+npm run standalone  # assemble the single-file offline ademsessie-standalone.html
 ```
+
+The breath cycle has four phases (grow / top pause / shrink / bottom pause) with
+video-accurate timing. Retention is either a fixed hold or **"Op gevoel"** — hold
+until you double-tap, with a soft gong each full minute.
 
 ## Project layout
 
@@ -36,8 +41,8 @@ index.html              app shell (setup / session / end screens)
 src/main.js             entry — wires setup + session, sky-photo fallback
 src/config.js           live settings, localStorage persistence, helpers
 src/setup.js            setup screen bindings + restore-from-storage
-src/session.js          phase engine (get-ready → breaths → retention →
-                        recovery → loop → done), double-tap, wake lock
+src/session.js          phase engine (breaths → retention → recovery → let go
+                        → loop → done), double-tap, wake lock
 src/audio.js            Web Audio engine (breath whoosh + synth bass + pings)
 src/haptics.js          navigator.vibrate, gated on the Trilling toggle
 src/wakelock.js         Screen Wake Lock (acquire/release + re-acquire on show)

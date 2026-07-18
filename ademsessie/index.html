@@ -30,6 +30,7 @@
   <!-- ============ SETUP ============ -->
   <section class="screen active" id="setup">
     <div class="card">
+      <div class="preview-wrap"><div class="preview-orb" id="previewOrb"></div></div>
       <p class="card-title">Ademsessie</p>
       <p class="card-sub">Stel je ronde in en begin wanneer je klaar bent.</p>
 
@@ -62,10 +63,11 @@
 
       <div class="row stack">
         <div class="label">Retentie</div>
-        <div class="sub">Hoe lang je de adem leeg vasthoudt. Dubbeltik tijdens de hold om eerder door te gaan.</div>
-        <div class="seg full" id="retSeg" role="group" aria-label="Retentie">
+        <div class="sub">Op gevoel: vasthouden tot jij dubbeltikt, met een zachte gong per volle minuut.</div>
+        <div class="seg full wrap" id="retSeg" role="group" aria-label="Retentie">
+          <button type="button" data-val="feel" aria-pressed="true">Op gevoel</button>
           <button type="button" data-val="90" aria-pressed="false">1:30</button>
-          <button type="button" data-val="120" aria-pressed="true">2:00</button>
+          <button type="button" data-val="120" aria-pressed="false">2:00</button>
           <button type="button" data-val="150" aria-pressed="false">2:30</button>
           <button type="button" data-val="180" aria-pressed="false">3:00</button>
           <button type="button" data-val="custom" aria-pressed="false">Zelf</button>
@@ -91,8 +93,12 @@
           </div>
         </div>
         <div class="row">
-          <div><div class="label">Toon</div><div class="sub">Zachte cue per in- en uitademing</div></div>
-          <button class="toggle" id="toneTgl" aria-pressed="true" aria-label="Toon aan/uit"><span class="knob"></span></button>
+          <div><div class="label">Ademgeluiden</div><div class="sub">Lucht bij elke in- en uitademing</div></div>
+          <button class="toggle" id="toneTgl" aria-pressed="true" aria-label="Ademgeluiden aan/uit"><span class="knob"></span></button>
+        </div>
+        <div class="row">
+          <div><div class="label">Ping en gong</div><div class="sub">Belmomenten bij retentie en rondes</div></div>
+          <button class="toggle" id="pingTgl" aria-pressed="true" aria-label="Ping en gong aan/uit"><span class="knob"></span></button>
         </div>
         <div class="row">
           <div><div class="label">Trilling</div><div class="sub">Werkt alleen op ondersteunde toestellen</div></div>

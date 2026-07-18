@@ -12,8 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Ademsessie" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <style>
 @font-face{
   font-family:'Fraunces'; font-style:italic; font-weight:400; font-display:swap;
@@ -91,12 +91,26 @@ body{
 .card{
   width:min(440px,93vw); max-height:88dvh; overflow:auto;
   background:var(--card-bg); border:1px solid rgba(255,255,255,.18);
-  border-radius:26px; padding:26px 22px;
+  border-radius:26px; padding:22px 22px 26px;
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
   box-shadow:0 22px 60px rgba(8,20,40,.4);
 }
+.preview-wrap{display:grid; place-items:center; height:76px; margin-bottom:2px;}
+.preview-orb{
+  width:56px; height:56px; border-radius:50%;
+  background:radial-gradient(circle at 50% 41%, var(--orb-core) 0%, var(--orb-halo) 46%, rgba(255,255,255,0) 72%);
+  box-shadow:0 0 26px 8px var(--glow);
+  animation:previewBreath 3500ms cubic-bezier(.42,0,.58,1) infinite;
+}
+@keyframes previewBreath{
+  0%{transform:scale(.15);}
+  35.7%{transform:scale(1);}
+  55.7%{transform:scale(1);}
+  70%{transform:scale(.15);}
+  100%{transform:scale(.15);}
+}
 .card-title{font-family:"Fraunces",Georgia,serif; font-style:italic; font-weight:400; font-size:27px; text-align:center; margin:0 0 4px;}
-.card-sub{text-align:center; color:var(--text-soft); font-size:13.5px; margin:0 0 20px;}
+.card-sub{text-align:center; color:var(--text-soft); font-size:13.5px; margin:0 0 16px;}
 
 .row{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 2px; border-top:1px solid rgba(255,255,255,.10);}
 .row:first-of-type{border-top:none;}
@@ -113,9 +127,11 @@ body{
 .seg{display:inline-flex; background:var(--field); border-radius:999px; padding:4px; gap:2px;}
 .seg.full{display:flex; width:100%;}
 .seg.full button{flex:1;}
+.seg.wrap{flex-wrap:wrap; border-radius:18px;}
+.seg.wrap button{flex:1 1 30%; border-radius:12px;}
 .seg button{font-family:inherit; font-size:13px; font-weight:500; color:rgba(255,255,255,.86); background:transparent; border:none; border-radius:999px; padding:9px 14px; cursor:pointer; transition:background .18s,color .18s; white-space:nowrap;}
 .seg button[aria-pressed="true"]{background:rgba(255,255,255,.92); color:#173042;}
-#retSeg button{padding:9px 7px; font-size:12.5px;}
+#retSeg button{padding:9px 6px; font-size:12.5px;}
 .custom-ret{display:flex; align-items:center; justify-content:space-between; margin-top:12px;}
 .custom-ret[hidden]{display:none;}
 .custom-label{font-size:13.5px; color:var(--text-soft);}
@@ -140,10 +156,10 @@ body{
 
 .center{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px 6dvh; text-align:center; cursor:pointer; user-select:none; -webkit-user-select:none;}
 
-.stage{position:relative; width:clamp(180px,58vw,300px); height:clamp(180px,58vw,300px); display:grid; place-items:center; transform:scale(.62); transition:transform 2200ms cubic-bezier(.42,0,.58,1); will-change:transform;}
+.stage{position:relative; width:clamp(190px,60vw,310px); height:clamp(190px,60vw,310px); display:grid; place-items:center; transform:scale(.1); transition:transform 1250ms cubic-bezier(.42,0,.58,1); will-change:transform;}
 .stage.inhale{transform:scale(1);}
 .stage.hold{transform:scale(.9);}
-.aura{position:absolute; inset:-26%; border-radius:50%; background:radial-gradient(circle, var(--glow), transparent 62%); opacity:.32; filter:blur(8px); pointer-events:none; transition:opacity 2200ms cubic-bezier(.42,0,.58,1);}
+.aura{position:absolute; inset:-26%; border-radius:50%; background:radial-gradient(circle, var(--glow), transparent 62%); opacity:.25; filter:blur(8px); pointer-events:none; transition:opacity 1250ms cubic-bezier(.42,0,.58,1);}
 .stage.inhale .aura{opacity:.85;}
 .stage.hold .aura{opacity:.55; animation:shimmer 7s ease-in-out infinite;}
 @keyframes shimmer{0%,100%{opacity:.45}50%{opacity:.7}}
@@ -163,6 +179,7 @@ button:focus-visible,.toggle:focus-visible{outline:2px solid var(--text); outlin
 @media (prefers-reduced-motion: reduce){
   .sky-photo{animation:none !important; transform:scale(1.28) !important;}
   .sky-css::before,.sky-css::after{animation:none !important;}
+  .preview-orb{animation:none !important; transform:scale(.7);}
   .stage{transition:none !important; transform:scale(.82) !important;}
   .aura{transition:none !important; opacity:.6 !important; animation:none !important;}
 }
@@ -175,12 +192,13 @@ button:focus-visible,.toggle:focus-visible{outline:2px solid var(--text); outlin
        locally-bundled image at public/sky.jpg and uncomment the line below;
        main.js removes it automatically if it ever fails to load, so the CSS
        sky always remains as the base. Do NOT hotlink an external image. -->
-  <!-- <img class="sky-photo" src="/sky.jpg" alt="" decoding="async" /> -->
+  <!-- <img class="sky-photo" src="sky.jpg" alt="" decoding="async" /> -->
   <div class="scrim"></div>
 
   <!-- ============ SETUP ============ -->
   <section class="screen active" id="setup">
     <div class="card">
+      <div class="preview-wrap"><div class="preview-orb" id="previewOrb"></div></div>
       <p class="card-title">Ademsessie</p>
       <p class="card-sub">Stel je ronde in en begin wanneer je klaar bent.</p>
 
@@ -213,10 +231,11 @@ button:focus-visible,.toggle:focus-visible{outline:2px solid var(--text); outlin
 
       <div class="row stack">
         <div class="label">Retentie</div>
-        <div class="sub">Hoe lang je de adem leeg vasthoudt. Dubbeltik tijdens de hold om eerder door te gaan.</div>
-        <div class="seg full" id="retSeg" role="group" aria-label="Retentie">
+        <div class="sub">Op gevoel: vasthouden tot jij dubbeltikt, met een zachte gong per volle minuut.</div>
+        <div class="seg full wrap" id="retSeg" role="group" aria-label="Retentie">
+          <button type="button" data-val="feel" aria-pressed="true">Op gevoel</button>
           <button type="button" data-val="90" aria-pressed="false">1:30</button>
-          <button type="button" data-val="120" aria-pressed="true">2:00</button>
+          <button type="button" data-val="120" aria-pressed="false">2:00</button>
           <button type="button" data-val="150" aria-pressed="false">2:30</button>
           <button type="button" data-val="180" aria-pressed="false">3:00</button>
           <button type="button" data-val="custom" aria-pressed="false">Zelf</button>
@@ -242,8 +261,12 @@ button:focus-visible,.toggle:focus-visible{outline:2px solid var(--text); outlin
           </div>
         </div>
         <div class="row">
-          <div><div class="label">Toon</div><div class="sub">Zachte cue per in- en uitademing</div></div>
-          <button class="toggle" id="toneTgl" aria-pressed="true" aria-label="Toon aan/uit"><span class="knob"></span></button>
+          <div><div class="label">Ademgeluiden</div><div class="sub">Lucht bij elke in- en uitademing</div></div>
+          <button class="toggle" id="toneTgl" aria-pressed="true" aria-label="Ademgeluiden aan/uit"><span class="knob"></span></button>
+        </div>
+        <div class="row">
+          <div><div class="label">Ping en gong</div><div class="sub">Belmomenten bij retentie en rondes</div></div>
+          <button class="toggle" id="pingTgl" aria-pressed="true" aria-label="Ping en gong aan/uit"><span class="knob"></span></button>
         </div>
         <div class="row">
           <div><div class="label">Trilling</div><div class="sub">Werkt alleen op ondersteunde toestellen</div></div>
@@ -289,16 +312,23 @@ const $ = (id) => document.getElementById(id);
 
 const STORAGE_KEY = 'ademsessie.settings'
 
-const tempoMap = { langzaam: 3000, normaal: 2200, snel: 1500 }
+// Total breath-cycle duration per tempo (ms). Measured from the WHM video:
+// Standard ≈ 3.5s/cycle. The cycle is split into four phases below.
+const tempoTotal = { langzaam: 4550, normaal: 3500, snel: 2500 }
+
+// Phase fractions of the cycle: grow (inhale) / top pause / shrink (exhale) /
+// bottom pause — 35.7% / 20% / 14.3% / 30%, matching the video.
+const phases = { grow: 0.357, top: 0.2, shrink: 0.143, bottom: 0.3 }
 
 const defaults = {
   rounds: 3,
   breaths: 30,
   tempo: 'normaal',
-  retention: 120, // seconds; or 'custom' resolves to customRetention
+  retention: 'feel', // 'feel' (hold until double-tap) | seconds | 'custom'
   customRetention: 120,
   recovery: 15,
-  tone: true,
+  tone: true, // breath sounds
+  ping: true, // bell/gong markers
   vibrate: true,
 }
 
@@ -314,6 +344,12 @@ function clampNum(v, min, max) {
   return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : null
 }
 
+// Normalise a stored retention value: 'feel', 'custom', or a clamped number.
+function parseRetention(v) {
+  if (v === 'feel' || v === 'custom') return v
+  return clampNum(v, 30, 300)
+}
+
 function loadConfig() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -323,7 +359,7 @@ function loadConfig() {
     const breaths = clampNum(s.breaths, 20, 40)
     const recovery = [10, 15, 20].includes(Number(s.recovery)) ? Number(s.recovery) : null
     const customRetention = clampNum(s.customRetention, 30, 300)
-    const retention = s.retention === 'custom' ? 'custom' : clampNum(s.retention, 30, 300)
+    const retention = parseRetention(s.retention)
 
     if (rounds != null) cfg.rounds = rounds
     if (breaths != null) cfg.breaths = breaths
@@ -332,6 +368,7 @@ function loadConfig() {
     if (customRetention != null) cfg.customRetention = customRetention
     if (recovery != null) cfg.recovery = recovery
     if (typeof s.tone === 'boolean') cfg.tone = s.tone
+    if (typeof s.ping === 'boolean') cfg.ping = s.ping
     if (typeof s.vibrate === 'boolean') cfg.vibrate = s.vibrate
   } catch {
     /* storage unavailable or corrupt — fall back to defaults */
@@ -348,6 +385,7 @@ function saveConfig() {
 }
 
 // Resolve the effective retention hold in seconds for the current config.
+// Only meaningful for timed holds ('feel' is handled separately by the session).
 function retentionSeconds() {
   return cfg.retention === 'custom' ? cfg.customRetention : cfg.retention
 }
@@ -357,11 +395,12 @@ const fmt = (s) =>
 
 
 // ===== src/audio.js =====
-// Web Audio engine. Reproduces the prototype's tuned node graph + envelopes
-// exactly: an airy noise whoosh layered with a warm detuned-triangle bass that
-// both follow the breath direction, plus soft sine pings for phase markers and
-// get-ready ticks. The AudioContext is created/resumed on the first user
-// gesture (the "Begin" tap). All audio respects the live `cfg.tone` flag.
+// Web Audio engine. Reproduces the prototype's tuned node graph + envelopes:
+// an airy noise whoosh layered with a warm detuned-triangle bass that both
+// follow the breath direction, plus a bell-like `ping` (fundamental + partials)
+// for phase markers, round transitions and the per-minute retention gong. The
+// AudioContext is created/resumed on the first user gesture (the "Begin" tap).
+// Breath sounds respect `cfg.tone`; bells respect `cfg.ping`.
 
 
 let actx = null
@@ -379,23 +418,6 @@ function unlockAudio() {
   }
 }
 
-// Soft sine ping — phase-transition markers, completion, get-ready ticks.
-function tone(freq, dur = 0.2, vol = 0.05) {
-  if (!cfg.tone || !actx) return
-  const o = actx.createOscillator()
-  const g = actx.createGain()
-  o.type = 'sine'
-  o.frequency.value = freq
-  o.connect(g)
-  g.connect(actx.destination)
-  const t = actx.currentTime
-  g.gain.setValueAtTime(0, t)
-  g.gain.linearRampToValueAtTime(vol, t + 0.02)
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
-  o.start(t)
-  o.stop(t + dur + 0.03)
-}
-
 function buildNoise() {
   const len = Math.floor(actx.sampleRate * 2)
   noiseBuf = actx.createBuffer(1, len, actx.sampleRate)
@@ -403,21 +425,39 @@ function buildNoise() {
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1
 }
 
-function env(g, dir, t, dur, peak) {
-  g.gain.setValueAtTime(0.0001, t)
-  if (dir === 'in') g.gain.linearRampToValueAtTime(peak, t + dur * 0.8)
-  else g.gain.linearRampToValueAtTime(peak, t + dur * 0.16)
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+// Bell ping tuned to the video: ~2452Hz fundamental + two partials, each with
+// an exponential ring. Used for phase markers and the retention gong.
+function ping(ringSec, vol) {
+  if (!cfg.ping || !actx) return
+  const t = actx.currentTime
+  ;[
+    [2452, 1],
+    [4904, 0.32],
+    [5862, 0.12],
+  ].forEach(([f, a]) => {
+    const o = actx.createOscillator()
+    const g = actx.createGain()
+    o.type = 'sine'
+    o.frequency.value = f
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.linearRampToValueAtTime(vol * a, t + 0.012)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + ringSec)
+    o.connect(g)
+    g.connect(actx.destination)
+    o.start(t)
+    o.stop(t + ringSec + 0.05)
+  })
 }
 
 // Airy breath whoosh + warm synth-bass layer underneath; both follow the breath.
+// Inhale is mid + long; exhale is bright + short (see `exhaleMs` in session).
 function breathTone(dir, durMs) {
   if (!cfg.tone || !actx) return
   stopBreathTone()
   if (!noiseBuf) buildNoise()
   const t = actx.currentTime
-  const dur = Math.max(0.5, durMs / 1000)
-  const jit = (n) => n * (0.9 + Math.random() * 0.2)
+  const dur = Math.max(0.3, durMs / 1000)
+  const jit = (n) => n * (0.92 + Math.random() * 0.16)
 
   // --- airy raspy noise whoosh ---
   const src = actx.createBufferSource()
@@ -425,19 +465,25 @@ function breathTone(dir, durMs) {
   src.loop = true
   const hp = actx.createBiquadFilter()
   hp.type = 'highpass'
-  hp.frequency.value = 140
+  hp.frequency.value = 160
   const bp = actx.createBiquadFilter()
   bp.type = 'bandpass'
-  bp.Q.value = 0.9
   const gN = actx.createGain()
   if (dir === 'in') {
-    bp.frequency.setValueAtTime(jit(600), t)
-    bp.frequency.linearRampToValueAtTime(jit(1500), t + dur)
+    bp.Q.value = 1.15
+    bp.frequency.setValueAtTime(jit(540), t)
+    bp.frequency.linearRampToValueAtTime(jit(1000), t + dur)
+    gN.gain.setValueAtTime(0.0001, t)
+    gN.gain.linearRampToValueAtTime(0.12, t + dur * 0.7)
+    gN.gain.exponentialRampToValueAtTime(0.0001, t + dur)
   } else {
-    bp.frequency.setValueAtTime(jit(1400), t)
-    bp.frequency.linearRampToValueAtTime(jit(420), t + dur)
+    bp.Q.value = 0.8
+    bp.frequency.setValueAtTime(jit(3100), t)
+    bp.frequency.linearRampToValueAtTime(jit(1700), t + dur)
+    gN.gain.setValueAtTime(0.0001, t)
+    gN.gain.linearRampToValueAtTime(0.13, t + dur * 0.14)
+    gN.gain.exponentialRampToValueAtTime(0.0001, t + dur)
   }
-  env(gN, dir, t, dur, 0.13)
   src.connect(hp)
   hp.connect(bp)
   bp.connect(gN)
@@ -450,11 +496,11 @@ function breathTone(dir, durMs) {
   const o2 = actx.createOscillator()
   const lp = actx.createBiquadFilter()
   lp.type = 'lowpass'
-  lp.frequency.value = 850
+  lp.frequency.value = 700
   lp.Q.value = 0.7
   const gB = actx.createGain()
-  const f1 = dir === 'in' ? 110 : 165
-  const f2 = dir === 'in' ? 165 : 98
+  const f1 = dir === 'in' ? 108 : 152
+  const f2 = dir === 'in' ? 152 : 100
   o1.type = 'triangle'
   o2.type = 'triangle'
   o2.detune.value = 9
@@ -462,7 +508,10 @@ function breathTone(dir, durMs) {
   o1.frequency.exponentialRampToValueAtTime(f2, t + dur)
   o2.frequency.setValueAtTime(f1, t)
   o2.frequency.exponentialRampToValueAtTime(f2, t + dur)
-  env(gB, dir, t, dur, 0.06)
+  gB.gain.setValueAtTime(0.0001, t)
+  if (dir === 'in') gB.gain.linearRampToValueAtTime(0.05, t + dur * 0.7)
+  else gB.gain.linearRampToValueAtTime(0.05, t + dur * 0.14)
+  gB.gain.exponentialRampToValueAtTime(0.0001, t + dur)
   o1.connect(lp)
   o2.connect(lp)
   lp.connect(gB)
@@ -561,9 +610,11 @@ document.addEventListener('visibilitychange', () => {
 
 
 // ===== src/session.js =====
-// Breathing session engine: Get-ready → Breaths → Retention → Recovery → loop
-// → Done. Mirrors the prototype's flow, timings and cues 1:1. Auto-advance per
-// phase; double-tap on the breathing area advances Breaths→Retention and
+// Breathing session engine: Breaths → Retention → Recovery → Let go → loop →
+// Done. Mirrors the video's flow, timings and cues 1:1. The breath cycle has
+// four phases (grow / top pause / shrink / bottom pause). Retention is either a
+// fixed hold or 'feel' (count up, soft gong each minute, advance on double-tap).
+// Double-tap on the breathing area advances Breaths→Retention and
 // Retention→Recovery early. Holds the screen awake for the whole session.
 
 
@@ -589,67 +640,63 @@ function show(id) {
 }
 
 // ---- stage helpers ----
+// mode: 'inhale' (grow to full), 'hold' (settle at hold scale), or null (small).
 function setStage(mode, ms) {
-  stage.style.transitionDuration = (ms || 2200) + 'ms'
-  aura.style.transitionDuration = (ms || 2200) + 'ms'
+  stage.style.transitionDuration = ms + 'ms'
+  aura.style.transitionDuration = ms + 'ms'
   stage.classList.remove('inhale', 'hold')
-  if (mode === 'hold') stage.classList.add('hold')
+  if (mode === 'inhale') stage.classList.add('inhale')
+  else if (mode === 'hold') stage.classList.add('hold')
 }
 
 // ---- phases ----
-function getReady() {
-  phase = 'getready'
-  setStage('hold', 500)
-  instruction.textContent = 'Maak je klaar'
-  helper.textContent = ''
-  let c = 3
-  readout.textContent = c
-  tone(396, 0.12, 0.045)
-  buzz(12)
-  timers.push(
-    setInterval(() => {
-      c--
-      if (c <= 0) {
-        clearTimers()
-        startBreaths()
-        return
-      }
-      readout.textContent = c
-      tone(396, 0.12, 0.045)
-      buzz(12)
-    }, 1000)
-  )
-}
-
 function startBreaths() {
   phase = 'breaths'
-  const dur = tempoMap[cfg.tempo]
-  setStage('breaths', dur)
   helper.textContent = 'Dubbeltik voor de retentie'
+  ping(1.5, 0.06)
+  buzz(18)
+  const T = tempoTotal[cfg.tempo]
+  const grow = T * phases.grow
+  const top = T * phases.top
+  const shrink = T * phases.shrink
+  const bottom = T * phases.bottom
+  // Exhale sound is shorter than the visual shrink and scales gently with tempo.
+  const exhaleMs = Math.min(600, Math.max(300, 450 * (T / 3500)))
   let n = 1
+  setStage(null, 600) // settle small before the first grow
   const cycle = () => {
     readout.textContent = n
     instruction.textContent = 'Adem in'
-    stage.classList.add('inhale')
-    breathTone('in', dur)
+    setStage('inhale', grow)
+    breathTone('in', grow)
     buzz(16)
     timers.push(
       setTimeout(() => {
-        instruction.textContent = 'Adem uit'
-        stage.classList.remove('inhale')
-        breathTone('out', dur)
-        buzz(12)
+        // top pause (orb stays full)
         timers.push(
           setTimeout(() => {
-            if (n >= cfg.breaths) {
-              toRetention()
-              return
-            }
-            n++
-            cycle()
-          }, dur)
+            instruction.textContent = 'Adem uit'
+            setStage(null, shrink)
+            breathTone('out', exhaleMs)
+            buzz(10)
+            timers.push(
+              setTimeout(() => {
+                // bottom pause (orb stays small)
+                timers.push(
+                  setTimeout(() => {
+                    if (n >= cfg.breaths) {
+                      toRetention()
+                      return
+                    }
+                    n++
+                    cycle()
+                  }, bottom)
+                )
+              }, shrink)
+            )
+          }, top)
         )
-      }, dur)
+      }, grow)
     )
   }
   cycle()
@@ -660,44 +707,87 @@ function toRetention() {
   stopBreathTone()
   phase = 'retention'
   setStage('hold', 1200)
-  tone(528, 0.4, 0.05)
+  ping(3.0, 0.07)
   buzz([22, 40, 22])
   instruction.textContent = 'Laat los en houd vast'
-  helper.textContent = 'Dubbeltik om eerder door te gaan'
-  let s = retentionSeconds()
-  readout.textContent = fmt(s)
-  timers.push(
-    setInterval(() => {
-      s--
-      if (s <= 0) {
-        readout.textContent = fmt(0)
-        toRecovery()
-        return
-      }
-      readout.textContent = fmt(s)
-    }, 1000)
-  )
+  if (cfg.retention === 'feel') {
+    // Hold on feel: count up, soft gong each full minute, advance on double-tap.
+    helper.textContent = 'Dubbeltik voor de herstelademhaling'
+    let s = 0
+    readout.textContent = fmt(0)
+    timers.push(
+      setInterval(() => {
+        s++
+        readout.textContent = fmt(s)
+        if (s > 0 && s % 60 === 0) {
+          ping(2.1, 0.05)
+          buzz(14)
+        }
+      }, 1000)
+    )
+  } else {
+    // Fixed hold: count down, auto-advance at zero, double-tap to go early.
+    helper.textContent = 'Dubbeltik om eerder door te gaan'
+    let s = retentionSeconds()
+    readout.textContent = fmt(s)
+    timers.push(
+      setInterval(() => {
+        s--
+        if (s <= 0) {
+          readout.textContent = fmt(0)
+          toRecovery()
+          return
+        }
+        readout.textContent = fmt(s)
+      }, 1000)
+    )
+  }
 }
 
 function toRecovery() {
   clearTimers()
   phase = 'recovery'
   setStage('hold', 1200)
-  tone(528, 0.35, 0.05)
-  buzz(20)
+  buzz(20) // no ping here — matches the video
   instruction.textContent = 'Adem diep in en houd vast'
   helper.textContent = ''
   let s = cfg.recovery
   readout.textContent = fmt(s)
   timers.push(
+    setTimeout(() => {
+      // first tick after a beat (deep breath in)
+      timers.push(
+        setInterval(() => {
+          s--
+          if (s <= 0) {
+            readout.textContent = fmt(0)
+            toLetGo()
+            return
+          }
+          readout.textContent = fmt(s)
+        }, 1000)
+      )
+    }, 1200)
+  )
+}
+
+function toLetGo() {
+  clearTimers()
+  phase = 'letgo'
+  readout.textContent = fmt(0)
+  helper.textContent = ''
+  let c = 3
+  instruction.textContent = 'Laat los (' + c + ')'
+  buzz(12)
+  timers.push(
     setInterval(() => {
-      s--
-      if (s <= 0) {
-        readout.textContent = fmt(0)
+      c--
+      if (c <= 0) {
+        clearTimers()
         endRound()
         return
       }
-      readout.textContent = fmt(s)
+      instruction.textContent = 'Laat los (' + c + ')'
     }, 1000)
   )
 }
@@ -718,16 +808,13 @@ function complete() {
   stopBreathTone()
   releaseWakeLock()
   show('end')
-  // Completion cue. Deliberately not tracked in `timers` so the screen switch's
-  // clearTimers() doesn't cancel the second note of the chord.
-  tone(528, 0.5, 0.05)
-  setTimeout(() => tone(660, 0.5, 0.04), 150)
+  // Completion cue. Deliberately after show() (which clears timers) so it rings.
+  ping(2.5, 0.06)
   buzz(40)
 }
 
 function onDoubleTap() {
   if (phase === 'breaths') {
-    clearTimers()
     toRetention()
   } else if (phase === 'retention') {
     toRecovery()
@@ -748,7 +835,7 @@ function startSession() {
   round = 1
   roundLabel.textContent = 'Ronde 1 / ' + cfg.rounds
   show('session')
-  getReady()
+  startBreaths() // straight in — no 3-2-1, matches the video
 }
 
 function backToSetup() {
@@ -794,6 +881,12 @@ function setSegPressed(segId, val) {
   ;[...el.children].forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === String(val))))
 }
 
+// Match the preview orb's breathing speed to the selected tempo.
+function syncPreviewTempo() {
+  const orb = $('previewOrb')
+  if (orb) orb.style.animationDuration = tempoTotal[cfg.tempo] + 'ms'
+}
+
 function bindStepper(stepId, valId, key, min, max, step) {
   const el = $(stepId)
   el.addEventListener('click', (e) => {
@@ -834,16 +927,19 @@ function render() {
   setSegPressed('tempoSeg', cfg.tempo)
   setSegPressed('recSeg', cfg.recovery)
   $('retCustomVal').textContent = fmt(cfg.customRetention)
+  syncPreviewTempo()
 
   if (cfg.retention === 'custom') {
     setSegPressed('retSeg', 'custom')
     $('customRet').hidden = false
   } else {
+    // 'feel' or a fixed number of seconds
     setSegPressed('retSeg', cfg.retention)
     $('customRet').hidden = true
   }
 
   $('toneTgl').setAttribute('aria-pressed', String(cfg.tone))
+  $('pingTgl').setAttribute('aria-pressed', String(cfg.ping))
   $('vibTgl').setAttribute('aria-pressed', String(cfg.vibrate))
 }
 
@@ -852,12 +948,18 @@ function initSetup() {
 
   bindStepper('roundsStep', 'roundsVal', 'rounds', 1, 5, 1)
   bindStepper('breathsStep', 'breathsVal', 'breaths', 20, 40, 5)
-  bindSeg('tempoSeg', (v) => (cfg.tempo = v))
+  bindSeg('tempoSeg', (v) => {
+    cfg.tempo = v
+    syncPreviewTempo()
+  })
 
   bindSeg('retSeg', (v) => {
     if (v === 'custom') {
       $('customRet').hidden = false
       cfg.retention = 'custom'
+    } else if (v === 'feel') {
+      $('customRet').hidden = true
+      cfg.retention = 'feel'
     } else {
       $('customRet').hidden = true
       cfg.retention = Number(v)
@@ -875,6 +977,7 @@ function initSetup() {
 
   bindSeg('recSeg', (v) => (cfg.recovery = Number(v)))
   bindToggle('toneTgl', 'tone')
+  bindToggle('pingTgl', 'ping')
   bindToggle('vibTgl', 'vibrate')
 
   $('moreBtn').addEventListener('click', () => {

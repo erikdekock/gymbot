@@ -4,16 +4,23 @@
 
 const STORAGE_KEY = 'ademsessie.settings'
 
-export const tempoMap = { langzaam: 3000, normaal: 2200, snel: 1500 }
+// Total breath-cycle duration per tempo (ms). Measured from the WHM video:
+// Standard ≈ 3.5s/cycle. The cycle is split into four phases below.
+export const tempoTotal = { langzaam: 4550, normaal: 3500, snel: 2500 }
+
+// Phase fractions of the cycle: grow (inhale) / top pause / shrink (exhale) /
+// bottom pause — 35.7% / 20% / 14.3% / 30%, matching the video.
+export const phases = { grow: 0.357, top: 0.2, shrink: 0.143, bottom: 0.3 }
 
 export const defaults = {
   rounds: 3,
   breaths: 30,
   tempo: 'normaal',
-  retention: 120, // seconds; or 'custom' resolves to customRetention
+  retention: 'feel', // 'feel' (hold until double-tap) | seconds | 'custom'
   customRetention: 120,
   recovery: 15,
-  tone: true,
+  tone: true, // breath sounds
+  ping: true, // bell/gong markers
   vibrate: true,
 }
 
@@ -29,6 +36,12 @@ function clampNum(v, min, max) {
   return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : null
 }
 
+// Normalise a stored retention value: 'feel', 'custom', or a clamped number.
+function parseRetention(v) {
+  if (v === 'feel' || v === 'custom') return v
+  return clampNum(v, 30, 300)
+}
+
 export function loadConfig() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -38,7 +51,7 @@ export function loadConfig() {
     const breaths = clampNum(s.breaths, 20, 40)
     const recovery = [10, 15, 20].includes(Number(s.recovery)) ? Number(s.recovery) : null
     const customRetention = clampNum(s.customRetention, 30, 300)
-    const retention = s.retention === 'custom' ? 'custom' : clampNum(s.retention, 30, 300)
+    const retention = parseRetention(s.retention)
 
     if (rounds != null) cfg.rounds = rounds
     if (breaths != null) cfg.breaths = breaths
@@ -47,6 +60,7 @@ export function loadConfig() {
     if (customRetention != null) cfg.customRetention = customRetention
     if (recovery != null) cfg.recovery = recovery
     if (typeof s.tone === 'boolean') cfg.tone = s.tone
+    if (typeof s.ping === 'boolean') cfg.ping = s.ping
     if (typeof s.vibrate === 'boolean') cfg.vibrate = s.vibrate
   } catch {
     /* storage unavailable or corrupt — fall back to defaults */
@@ -63,6 +77,7 @@ export function saveConfig() {
 }
 
 // Resolve the effective retention hold in seconds for the current config.
+// Only meaningful for timed holds ('feel' is handled separately by the session).
 export function retentionSeconds() {
   return cfg.retention === 'custom' ? cfg.customRetention : cfg.retention
 }

@@ -1,13 +1,19 @@
 // Setup screen: binds the controls to the live config, reflects restored
 // settings into the UI on load, and persists changes to localStorage.
 
-import { cfg, saveConfig, fmt } from './config.js'
+import { cfg, tempoTotal, saveConfig, fmt } from './config.js'
 
 const $ = (id) => document.getElementById(id)
 
 function setSegPressed(segId, val) {
   const el = $(segId)
   ;[...el.children].forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === String(val))))
+}
+
+// Match the preview orb's breathing speed to the selected tempo.
+function syncPreviewTempo() {
+  const orb = $('previewOrb')
+  if (orb) orb.style.animationDuration = tempoTotal[cfg.tempo] + 'ms'
 }
 
 function bindStepper(stepId, valId, key, min, max, step) {
@@ -50,16 +56,19 @@ function render() {
   setSegPressed('tempoSeg', cfg.tempo)
   setSegPressed('recSeg', cfg.recovery)
   $('retCustomVal').textContent = fmt(cfg.customRetention)
+  syncPreviewTempo()
 
   if (cfg.retention === 'custom') {
     setSegPressed('retSeg', 'custom')
     $('customRet').hidden = false
   } else {
+    // 'feel' or a fixed number of seconds
     setSegPressed('retSeg', cfg.retention)
     $('customRet').hidden = true
   }
 
   $('toneTgl').setAttribute('aria-pressed', String(cfg.tone))
+  $('pingTgl').setAttribute('aria-pressed', String(cfg.ping))
   $('vibTgl').setAttribute('aria-pressed', String(cfg.vibrate))
 }
 
@@ -68,12 +77,18 @@ export function initSetup() {
 
   bindStepper('roundsStep', 'roundsVal', 'rounds', 1, 5, 1)
   bindStepper('breathsStep', 'breathsVal', 'breaths', 20, 40, 5)
-  bindSeg('tempoSeg', (v) => (cfg.tempo = v))
+  bindSeg('tempoSeg', (v) => {
+    cfg.tempo = v
+    syncPreviewTempo()
+  })
 
   bindSeg('retSeg', (v) => {
     if (v === 'custom') {
       $('customRet').hidden = false
       cfg.retention = 'custom'
+    } else if (v === 'feel') {
+      $('customRet').hidden = true
+      cfg.retention = 'feel'
     } else {
       $('customRet').hidden = true
       cfg.retention = Number(v)
@@ -91,6 +106,7 @@ export function initSetup() {
 
   bindSeg('recSeg', (v) => (cfg.recovery = Number(v)))
   bindToggle('toneTgl', 'tone')
+  bindToggle('pingTgl', 'ping')
   bindToggle('vibTgl', 'vibrate')
 
   $('moreBtn').addEventListener('click', () => {
