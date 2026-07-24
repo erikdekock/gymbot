@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "placeholder": true,
+    "note": "PLACEHOLDER — KB Editor canonical content pending. This file is a stub built by App Builder for the Engine Tier-3 contra-fallback walk (scope item (i), ticket 3724fef0d1ea81d6a0a9fb0b046c6ee4). Per PD's DS-01 §3.5 ruling, the cross-family ladder is keyed by slot_role (movement-PATTERN, not movement-family) and ordered by knee-safety / load preference. The CONTENT below is a deterministic stand-in chosen only to let the Tier-3 engine walk be built and the three PR #17 Pattern R fixtures flip to pass; the physiologically-correct ladder content + knee-safety ordering is scope item (ii), owned by KB Editor. When KB Editor publishes the canonical ladder, swap this file (path + key structure) per the coordinated hand-off. Every candidate is still re-run through the engine's full hard-filter chain (incl. CONTRA_MAP) at Tier 3 — defense-in-depth — so a knee-unsafe id listed here can never be blind-swapped in.",
+    "ticket": "3724fef0d1ea81d6a0a9fb0b046c6ee4",
+    "schema_version": "0-placeholder",
+    "key_structure": "ladders[slot_role] = ordered [{ order, exercise_id, rationale? }]; engine reads by slot.slot_role at Tier 3 of the contra-fallback walk and re-filters each candidate."
+  },
+  "ladders": {
+    "Compound squat": [
+      { "order": 1, "exercise_id": 8, "rationale": "Trap Bar Deadlift — bilateral hinge, knee-spares deep flexion under load" },
+      { "order": 2, "exercise_id": 7, "rationale": "Romanian Deadlift — hip-dominant hinge" },
+      { "order": 3, "exercise_id": 5, "rationale": "Conventional Deadlift — hinge compound" },
+      { "order": 4, "exercise_id": 21, "rationale": "Hip Thrust — posterior-chain compound" }
+    ],
+    "Squat regression": [
+      { "order": 1, "exercise_id": 7, "rationale": "Romanian Deadlift — low-load hinge regression, knee-safe" },
+      { "order": 2, "exercise_id": 21, "rationale": "Hip Thrust" },
+      { "order": 3, "exercise_id": 25, "rationale": "Cable Pull-Through" },
+      { "order": 4, "exercise_id": 26, "rationale": "Glute Bridge" }
+    ],
+    "Quad-dominant accessory": [
+      { "order": 1, "exercise_id": 21, "rationale": "Hip Thrust — knee-safe posterior accessory" },
+      { "order": 2, "exercise_id": 7, "rationale": "Romanian Deadlift" },
+      { "order": 3, "exercise_id": 58, "rationale": "Leg Extension (isolation) — open-chain, not squat/lunge family" }
+    ],
+    "Unilateral squat or step-up": [
+      { "order": 1, "exercise_id": 23, "rationale": "Single-Leg RDL — unilateral hinge, knee-safe" },
+      { "order": 2, "exercise_id": 22, "rationale": "Single-Leg Hip Thrust — unilateral posterior" },
+      { "order": 3, "exercise_id": 21, "rationale": "Hip Thrust — bilateral fallback" }
+    ],
+    "Unilateral lower": [
+      { "order": 1, "exercise_id": 23, "rationale": "Single-Leg RDL — unilateral hinge, knee-safe" },
+      { "order": 2, "exercise_id": 22, "rationale": "Single-Leg Hip Thrust — unilateral posterior" },
+      { "order": 3, "exercise_id": 21, "rationale": "Hip Thrust — bilateral fallback" }
+    ]
+  }
+}
