@@ -210,3 +210,621 @@ body {
     transition: none;
   }
 }
+
+/* ==================================================================== */
+/*  THE OPEN BOOK — desktop only (≥1024px).                             */
+/*                                                                      */
+/*  Everything below is gated on BOTH the media query and the           */
+/*  data-reader-mode="book" attribute, so phone and tablet layouts are  */
+/*  untouched no matter what. The text itself is ordinary, selectable   */
+/*  markup sitting above the paper; every aged-paper and pencil layer   */
+/*  is decorative, inert and can never cover the text column.           */
+/* ==================================================================== */
+@media (min-width: 1024px) {
+  html[data-reader-mode='book'] {
+    /* Daylight: aged cream paper on a dark, quiet desk. */
+    --bk-desk: #221e18;
+    --bk-desk-deep: #14110d;
+    --bk-paper: #e9dcc0;
+    --bk-paper-warm: #e2d2b0;
+    --bk-ink: #2a231b;
+    --bk-ink-soft: #6a5c48;
+    --bk-rule: rgba(42, 35, 27, 0.3);
+    --bk-cloth: #4b3a2a;
+    --bk-cloth-2: #38291d;
+    --bk-graphite: #4a4844;
+    --bk-violet: #6a5a86;
+    --bk-ink-bleed: rgba(42, 35, 27, 0.3);
+    --bk-fox: #6b4a22;
+    --bk-grain-opacity: 0.055;
+
+    /* Geometry. The book keeps a spread's proportions and fits the window. */
+    --bk-w: min(94vw, 1360px, calc(86vh * 1.42));
+    --bk-mo: clamp(52px, 4.4vw, 88px); /* outer margin  */
+    --bk-mt: clamp(50px, 6.6vh, 84px); /* head margin   */
+    --bk-mb: clamp(40px, 5.2vh, 70px); /* foot margin   */
+    --bk-gutter: clamp(54px, 5vw, 100px); /* = the CSS column gap */
+  }
+
+  /* Lamplight: the same book, dimmer and warmer — not a black screen. */
+  html[data-reader-mode='book'][data-theme='dark'] {
+    --bk-desk: #0f0d0a;
+    --bk-desk-deep: #060505;
+    --bk-paper: #423729;
+    --bk-paper-warm: #3b3124;
+    --bk-ink: #ddcfb2;
+    --bk-ink-soft: #a2917a;
+    --bk-rule: rgba(221, 207, 178, 0.26);
+    --bk-cloth: #2b2119;
+    --bk-cloth-2: #1d1610;
+    --bk-graphite: #b9b2a4;
+    --bk-violet: #9a86bd;
+    --bk-ink-bleed: rgba(221, 207, 178, 0.22);
+    --bk-fox: #caa165;
+    --bk-grain-opacity: 0.075;
+  }
+
+  html[data-reader-mode='book'] body {
+    background:
+      radial-gradient(120% 90% at 50% 12%, var(--bk-desk) 0%, var(--bk-desk-deep) 100%),
+      var(--bk-desk-deep);
+  }
+
+  /* ---- the object on the desk ------------------------------------- */
+  [data-reader-mode='book'] .book-desk {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  [data-reader-mode='book'] .book {
+    position: relative;
+    width: var(--bk-w);
+    height: calc(var(--bk-w) / 1.42);
+  }
+
+  /* Cloth boards peeking out behind the page block. */
+  [data-reader-mode='book'] .book-boards {
+    position: absolute;
+    inset: -14px -20px -17px -20px;
+    z-index: 0;
+    border-radius: 3px 7px 7px 3px;
+    background:
+      linear-gradient(100deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.25)),
+      linear-gradient(var(--bk-cloth), var(--bk-cloth-2));
+    box-shadow:
+      0 44px 90px -34px rgba(0, 0, 0, 0.8),
+      0 10px 26px rgba(0, 0, 0, 0.42);
+  }
+
+  /* The stack of remaining pages at each outer edge. */
+  [data-reader-mode='book'] .book-edge {
+    position: absolute;
+    top: 7px;
+    bottom: 7px;
+    width: 11px;
+    z-index: 1;
+    border-radius: 2px;
+    background: repeating-linear-gradient(
+      to right,
+      var(--bk-paper) 0 2px,
+      rgba(150, 128, 90, 0.55) 2px 3px
+    );
+  }
+  [data-reader-mode='book'] .book-edge--left {
+    left: -11px;
+    box-shadow: -7px 0 15px rgba(0, 0, 0, 0.4);
+  }
+  [data-reader-mode='book'] .book-edge--right {
+    right: -11px;
+    box-shadow: 7px 0 15px rgba(0, 0, 0, 0.4);
+  }
+
+  [data-reader-mode='book'] .book-spread {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  /* ---- one sheet of paper ------------------------------------------ */
+  [data-reader-mode='book'] .book-page {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 1;
+    overflow: hidden;
+    background: var(--bk-paper);
+    filter: brightness(calc(1 + var(--tone, 0)));
+  }
+  [data-reader-mode='book'] .book-page--verso {
+    left: 0;
+  }
+  [data-reader-mode='book'] .book-page--recto {
+    right: 0;
+  }
+
+  [data-reader-mode='book'] .book-page__grain {
+    position: absolute;
+    inset: 0;
+    opacity: var(--bk-grain-opacity);
+    mix-blend-mode: multiply;
+    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+
+  [data-reader-mode='book'] .book-page__marks {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: multiply;
+  }
+
+  /* Darkening into the gutter and, more faintly, at the outer edge. */
+  [data-reader-mode='book'] .book-page__vignette {
+    position: absolute;
+    inset: 0;
+  }
+  [data-reader-mode='book'] .book-page--verso .book-page__vignette {
+    background:
+      linear-gradient(to left, rgba(46, 30, 10, 0.26) 0%, rgba(46, 30, 10, 0) 20%),
+      linear-gradient(to right, rgba(60, 42, 20, 0.14) 0%, rgba(60, 42, 20, 0) 11%),
+      linear-gradient(to bottom, rgba(60, 42, 20, 0.09) 0%, rgba(60, 42, 20, 0) 7%),
+      linear-gradient(to top, rgba(60, 42, 20, 0.09) 0%, rgba(60, 42, 20, 0) 7%);
+  }
+  [data-reader-mode='book'] .book-page--recto .book-page__vignette {
+    background:
+      linear-gradient(to right, rgba(46, 30, 10, 0.26) 0%, rgba(46, 30, 10, 0) 20%),
+      linear-gradient(to left, rgba(60, 42, 20, 0.14) 0%, rgba(60, 42, 20, 0) 11%),
+      linear-gradient(to bottom, rgba(60, 42, 20, 0.09) 0%, rgba(60, 42, 20, 0) 7%),
+      linear-gradient(to top, rgba(60, 42, 20, 0.09) 0%, rgba(60, 42, 20, 0) 7%);
+  }
+
+  /* A little wear along the outer edge — seeded phase, so it's stable. */
+  [data-reader-mode='book'] .book-page__deckle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 7px;
+    opacity: 0.65;
+    background-position-y: var(--edge-phase, 0px);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(96, 70, 34, 0) 0px,
+      rgba(96, 70, 34, 0.17) 3px,
+      rgba(96, 70, 34, 0) 8px,
+      rgba(96, 70, 34, 0.1) 13px,
+      rgba(96, 70, 34, 0) 19px
+    );
+  }
+  [data-reader-mode='book'] .book-page--verso .book-page__deckle {
+    left: 0;
+  }
+  [data-reader-mode='book'] .book-page--recto .book-page__deckle {
+    right: 0;
+  }
+
+  /* A softly folded corner, in the outer bottom corner only. */
+  [data-reader-mode='book'] .book-page__dogear {
+    position: absolute;
+    bottom: 0;
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, rgba(255, 250, 236, 0.5), rgba(148, 118, 70, 0.34));
+  }
+  [data-reader-mode='book'] .book-page--verso .book-page__dogear {
+    left: 0;
+    clip-path: polygon(0 100%, 100% 100%, 0 0);
+  }
+  [data-reader-mode='book'] .book-page--recto .book-page__dogear {
+    right: 0;
+    clip-path: polygon(100% 100%, 0 100%, 100% 0);
+  }
+
+  /* The one easter egg. */
+  [data-reader-mode='book'] .book-stamp {
+    position: absolute;
+    left: -30px;
+    bottom: 26px;
+    width: 132px;
+    height: 132px;
+    color: var(--bk-violet);
+    opacity: 0.17;
+    transform: rotate(-13deg);
+  }
+  [data-reader-mode='book'] .book-stamp__ring {
+    font-family: var(--font-book), Georgia, serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    fill: currentColor;
+  }
+  [data-reader-mode='book'] .book-stamp__no {
+    font-family: var(--font-book), Georgia, serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    fill: currentColor;
+  }
+
+  /* ---- the spine ---------------------------------------------------- */
+  [data-reader-mode='book'] .book-gutter {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: var(--bk-gutter);
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      rgba(40, 26, 10, 0) 0%,
+      rgba(40, 26, 10, 0.09) 24%,
+      rgba(30, 18, 6, 0.28) 45%,
+      rgba(20, 12, 4, 0.4) 50%,
+      rgba(30, 18, 6, 0.28) 55%,
+      rgba(40, 26, 10, 0.09) 76%,
+      rgba(40, 26, 10, 0) 100%
+    );
+  }
+  [data-reader-mode='book'] .book-gutter__fold {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform: translateX(-50%);
+    background: rgba(18, 11, 3, 0.5);
+  }
+
+  /* ---- the text ----------------------------------------------------- */
+  [data-reader-mode='book'] .book-spread .page-viewport {
+    position: absolute;
+    top: var(--bk-mt);
+    right: var(--bk-mo);
+    bottom: var(--bk-mb);
+    left: var(--bk-mo);
+    z-index: 3;
+  }
+  /* Instant swap; the shadow sweep below carries the sense of the turn. */
+  [data-reader-mode='book'] .page-track {
+    transition: none;
+  }
+
+  [data-reader-mode='book'] .prose-book {
+    font-family: var(--font-book), 'Old Standard TT', Georgia, 'Times New Roman', serif;
+    color: var(--bk-ink);
+    font-size: 1.06rem;
+    line-height: 1.62;
+    letter-spacing: 0;
+    /* A whisper of ink spread — never enough to soften the glyph edges. */
+    text-shadow: 0 0 0.35px var(--bk-ink-bleed);
+  }
+  [data-reader-mode='book'] .fs-sm .prose-book {
+    font-size: 0.95rem;
+  }
+  [data-reader-mode='book'] .fs-md .prose-book {
+    font-size: 1.06rem;
+  }
+  [data-reader-mode='book'] .fs-lg .prose-book {
+    font-size: 1.22rem;
+  }
+  [data-reader-mode='book'] .prose-book em {
+    font-family: var(--font-book-italic), var(--font-book), Georgia, serif;
+    font-style: italic;
+  }
+  [data-reader-mode='book'] .prose-book blockquote {
+    border-left-color: var(--bk-rule);
+    color: var(--bk-ink-soft);
+  }
+  [data-reader-mode='book'] .prose-book code {
+    background: rgba(120, 96, 56, 0.14);
+  }
+  [data-reader-mode='book'] .prose-book hr.scene-break::before {
+    color: var(--bk-ink-soft);
+  }
+
+  /* Chapter opening: label, title, ornament, raised initial. */
+  [data-reader-mode='book'] .prose-book h1 {
+    font-family: var(--font-book), Georgia, serif;
+    font-weight: 400;
+    font-size: 1.7em;
+    text-align: center;
+    letter-spacing: 0.06em;
+    color: var(--bk-ink);
+    /* padding (not margin) so the space survives column fragmentation */
+    padding-top: 2.1em;
+    margin: 0 0 1.5em;
+    line-height: 1.25;
+  }
+  [data-reader-mode='book'] .prose-book h1::before {
+    content: var(--chapter-label, '');
+    display: block;
+    font-size: 0.4em;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--bk-ink-soft);
+    margin-bottom: 1.5em;
+  }
+  [data-reader-mode='book'] .prose-book h1::after {
+    content: '❦';
+    display: block;
+    font-size: 0.44em;
+    color: var(--bk-ink-soft);
+    opacity: 0.8;
+    margin-top: 1em;
+  }
+  [data-reader-mode='book'] .prose-book h2,
+  [data-reader-mode='book'] .prose-book h3 {
+    font-family: var(--font-book), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--bk-ink);
+  }
+  [data-reader-mode='book'] .prose-book h1 + p {
+    text-indent: 0;
+  }
+  [data-reader-mode='book'] .prose-book h1 + p::first-letter {
+    float: left;
+    font-family: var(--font-book), Georgia, serif;
+    font-size: 3.3em;
+    line-height: 0.8;
+    padding: 0.08em 0.08em 0 0;
+    color: var(--bk-ink);
+  }
+
+  /* ---- running heads, folios, rules --------------------------------- */
+  [data-reader-mode='book'] .book-heads {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--bk-mt);
+    z-index: 4;
+    pointer-events: none;
+    user-select: none;
+  }
+  [data-reader-mode='book'] .book-head {
+    position: absolute;
+    bottom: 13px;
+    width: calc(50% - var(--bk-mo) - (var(--bk-gutter) / 2));
+  }
+  [data-reader-mode='book'] .book-head--verso {
+    left: var(--bk-mo);
+  }
+  [data-reader-mode='book'] .book-head--recto {
+    right: var(--bk-mo);
+  }
+  [data-reader-mode='book'] .book-head__row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  [data-reader-mode='book'] .book-head--recto .book-head__row {
+    flex-direction: row-reverse;
+  }
+  [data-reader-mode='book'] .book-folio {
+    font-family: var(--font-book), Georgia, serif;
+    font-size: 12.5px;
+    color: var(--bk-ink-soft);
+    font-variant-numeric: oldstyle-nums;
+  }
+  [data-reader-mode='book'] .book-runhead {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-book), Georgia, serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--bk-ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  [data-reader-mode='book'] .book-head__rule {
+    position: relative;
+    margin-top: 7px;
+    height: 1px;
+    background: var(--bk-rule);
+  }
+  [data-reader-mode='book'] .book-head__rule.is-hidden {
+    visibility: hidden;
+  }
+  [data-reader-mode='book'] .book-head__ornament {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    padding: 0 9px;
+    background: var(--bk-paper);
+    font-size: 10px;
+    line-height: 1;
+    color: var(--bk-ink-soft);
+  }
+
+  /* ---- pencil marginalia — outer margin strips only ------------------ */
+  [data-reader-mode='book'] .book-margins {
+    position: absolute;
+    top: var(--bk-mt);
+    right: 0;
+    bottom: var(--bk-mb);
+    left: 0;
+    z-index: 4;
+    pointer-events: none;
+    user-select: none;
+  }
+  [data-reader-mode='book'] .book-mark {
+    position: absolute;
+    display: block;
+    width: calc(var(--bk-mo) - 14px);
+    text-align: center;
+    color: var(--bk-graphite);
+    font-family: var(--font-hand), 'Comic Sans MS', cursive;
+    font-size: 13px;
+    line-height: 1.15;
+    transform-origin: center;
+  }
+  [data-reader-mode='book'] .book-mark--verso {
+    left: 7px;
+  }
+  [data-reader-mode='book'] .book-mark--recto {
+    right: 7px;
+  }
+  [data-reader-mode='book'] .book-mark--big {
+    font-size: 20px;
+  }
+  [data-reader-mode='book'] .book-mark--rule svg {
+    width: 100%;
+    height: 10px;
+  }
+  [data-reader-mode='book'] .book-mark--bracket svg {
+    width: 14px;
+    height: 58px;
+  }
+  [data-reader-mode='book'] .book-mark--bracket {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ---- page turn ----------------------------------------------------- */
+  [data-reader-mode='book'] .book-sweep {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.17) 44%,
+      rgba(0, 0, 0, 0.05) 62%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    animation: book-sweep 220ms ease-out 1;
+  }
+  [data-reader-mode='book'] .book-sweep[data-dir='prev'] {
+    animation-name: book-sweep-back;
+  }
+  @keyframes book-sweep {
+    0% {
+      opacity: 0.85;
+      transform: translateX(-62%);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(62%);
+    }
+  }
+  @keyframes book-sweep-back {
+    0% {
+      opacity: 0.85;
+      transform: translateX(62%);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-62%);
+    }
+  }
+
+  /* ---- minimal chrome ------------------------------------------------ */
+  [data-reader-mode='book'] .book-chrome {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  [data-reader-mode='book'] .book-chrome__bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: rgba(26, 22, 17, 0.84);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(7px);
+    opacity: 0;
+    transform: translateY(-7px);
+    transition: opacity 0.24s ease, transform 0.24s ease;
+  }
+  [data-reader-mode='book'] .book-chrome:hover .book-chrome__bar,
+  [data-reader-mode='book'] .book-chrome:focus-within .book-chrome__bar {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reader-mode='book'] .book-chrome__btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: rgba(236, 226, 205, 0.7);
+    font-family: var(--font-book), Georgia, serif;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  [data-reader-mode='book'] .book-chrome__btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.09);
+  }
+  [data-reader-mode='book'] .book-chrome__btn.is-on {
+    color: #f2e6cb;
+    background: rgba(255, 255, 255, 0.14);
+  }
+  [data-reader-mode='book'] .book-chrome__sep {
+    width: 1px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.13);
+    margin: 0 3px;
+  }
+
+  [data-reader-mode='book'] .book-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 45;
+    width: 42px;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(228, 216, 192, 0.26);
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  [data-reader-mode='book'] .book-arrow:hover {
+    color: rgba(243, 235, 217, 0.82);
+  }
+  [data-reader-mode='book'] .book-arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-reader-mode='book'] .book-arrow--prev {
+    left: 3px;
+  }
+  [data-reader-mode='book'] .book-arrow--next {
+    right: 3px;
+  }
+
+  /* The progress bar stays, but recedes into the desk. */
+  [data-reader-mode='book'] .reader-progress {
+    background: rgba(255, 255, 255, 0.05) !important;
+    height: 2px;
+  }
+  [data-reader-mode='book'] .reader-progress__fill {
+    background: rgba(203, 160, 104, 0.5) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reader-mode='book'] .book-sweep {
+      animation: none;
+      opacity: 0;
+    }
+  }
+}

@@ -1,10 +1,11 @@
 import Reader from '../../components/Reader'
 import { getChapters } from '../../lib/content'
+import { BOOK } from '../../lib/book-config'
 
 // Build-time/server read of the markdown chapters, handed to the client reader.
 export default function ReadPage() {
   const chapters = getChapters()
-  const bookTitle = 'The Book'
+  const bookTitle = BOOK.title
 
   if (!chapters.length) {
     return (
@@ -21,5 +22,5 @@ export default function ReadPage() {
     )
   }
 
-  return <Reader chapters={chapters} bookTitle={bookTitle} />
+  return <Reader chapters={chapters} bookTitle={bookTitle} lang={BOOK.lang} />
 }
