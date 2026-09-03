@@ -24,6 +24,7 @@ export default function BookChrome({
   onFontSize,
   theme,
   onTheme,
+  onFeedback,
   onPrev,
   onNext,
   atStart,
@@ -79,6 +80,14 @@ export default function BookChrome({
           ))}
 
           <span className="book-chrome__sep" />
+
+          {onFeedback && (
+            <button onClick={onFeedback} className="book-chrome__btn" aria-label="Feedback">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-4.6A8.4 8.4 0 1 1 21 11.5z" />
+              </svg>
+            </button>
+          )}
 
           <button onClick={onShare} className="book-chrome__btn" aria-label="Share the book">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

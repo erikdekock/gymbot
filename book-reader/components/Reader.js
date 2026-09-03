@@ -7,6 +7,11 @@ import ChapterNav from './ChapterNav'
 import WelcomeModal from './WelcomeModal'
 import BookSpread from './BookSpread'
 import BookChrome from './BookChrome'
+import SelectionPopup, { QuestionComposer } from './SelectionPopup'
+import SurveyCard from './SurveyCard'
+import FeedbackPanel from './FeedbackPanel'
+import ConsentNotice from './ConsentNotice'
+import AccountBox from './AccountBox'
 import {
   resolveReaderId,
   isRegistered,
@@ -14,19 +19,40 @@ import {
   loadPosition,
   savePosition,
   getReferral,
+  getLegacyReaderId,
+  clearLegacyReaderId,
 } from '../lib/reader-id'
 import {
   registerReader,
   trackChapter,
   updateProgress,
   setReferrer,
-  subscribeHetZal,
   recordShare,
+  addAnnotation,
 } from '../lib/analytics'
+import {
+  startSession,
+  track,
+  flush,
+  recordDwell,
+  medianDwell,
+  dwellSampleCount,
+  setConsent,
+} from '../lib/events'
+import {
+  blocksIn,
+  anchorFromSelection,
+  firstBlockOnPage,
+  locationAt,
+  percentThrough,
+} from '../lib/locations'
+import { COPY, BOOK, formatNumber } from '../lib/book-config'
+import { questionsFor } from '../content/_survey'
 
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n))
+const SURVEY_KEY = 'br_surveys_done'
 
-export default function Reader({ chapters, bookTitle, lang = 'en' }) {
+export default function Reader({ chapters, bookTitle, lang = 'en', totalLocations = 1 }) {
   const [ready, setReady] = useState(false)
   const [readerId, setReaderId] = useState(null)
 
@@ -51,12 +77,38 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
   const [showContinue, setShowContinue] = useState(false)
   const [hasProgress, setHasProgress] = useState(false)
 
+  // Identity + consent (auth-backed; falls back to local id in demo mode).
+  const [authed, setAuthed] = useState(false)
+  const [email, setEmail] = useState('')
+  const [showConsent, setShowConsent] = useState(false)
+
+  // Locations (the stable, human-readable position).
+  const [location, setLocation] = useState(1)
+  const [paragraphIndex, setParagraphIndex] = useState(0)
+
+  // Selection → popup → composer.
+  const [selRect, setSelRect] = useState(null)
+  const [anchor, setAnchor] = useState(null)
+  const [askOpen, setAskOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [survey, setSurvey] = useState(null)
+
   const viewportRef = useRef(null)
   const columnsRef = useRef(null)
 
   // Pagination intentions resolved after the next measure.
   const restorePageRef = useRef(null)
+  const restoreParagraphRef = useRef(null)
   const goLastRef = useRef(false)
+
+  // Location / event bookkeeping.
+  const furthestRef = useRef(0)
+  const pageEnteredRef = useRef(Date.now())
+  const milestonesRef = useRef(new Set())
+  const locationRef = useRef(1)
+  // How the reader arrived in the current chapter: resume / toc / sequential.
+  const enterViaRef = useRef('resume')
+  const surveyShownRef = useRef(new Set())
 
   // Analytics accumulators.
   const timeRef = useRef(0)
@@ -72,32 +124,95 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
 
   // ---- init: identity, restored position, welcome ----------------------------
   useEffect(() => {
-    const id = resolveReaderId()
-    setReaderId(id)
+    let cancelled = false
 
-    const pos = loadPosition(id)
-    if (pos) {
-      if (pos.fontSize) setFontSize(pos.fontSize)
-      if (pos.theme) setTheme(pos.theme)
-      if (typeof pos.chapterIndex === 'number') {
-        const ci = clamp(pos.chapterIndex, 0, chapters.length - 1)
-        setChapterIndex(ci)
-        restorePageRef.current = pos.pageIndex || 0
-        if (ci > 0 || (pos.pageIndex || 0) > 0) setHasProgress(true)
-      }
+    // Local cache first, so the page can render immediately; the server
+    // position (below) is the source of truth and wins when it arrives.
+    const legacyId = getLegacyReaderId()
+    const cached = legacyId ? loadPosition(legacyId) : null
+    if (cached) {
+      if (cached.fontSize) setFontSize(cached.fontSize)
+      if (cached.theme) setTheme(cached.theme)
     }
 
-    if (!isRegistered(id)) {
-      setShowWelcome(true)
-    } else {
-      registerReader(id)
-    }
-
-    // If they arrived via someone's share link, record the referral once.
     const ref = getReferral()
-    if (ref) setReferrer(id, ref)
 
-    setReady(true)
+    ;(async () => {
+      let me = { configured: false, user: null }
+      try {
+        const res = await fetch('/api/me', { credentials: 'same-origin' })
+        me = await res.json()
+      } catch {
+        /* offline or no backend — fall through to demo mode */
+      }
+      if (cancelled) return
+
+      if (me.configured && me.user) {
+        // Identity is now the auth user id.
+        setAuthed(true)
+        setReaderId(me.user.id)
+        setEmail(me.user.email || '')
+
+        // Adopt any pre-account rows from this browser, then forget the old id.
+        try {
+          await fetch('/api/me', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ legacy_reader_id: legacyId }),
+          })
+          if (legacyId) clearLegacyReaderId()
+        } catch {
+          /* best effort */
+        }
+
+        const r = me.reader
+        if (!r || !r.first_name) setShowWelcome(true)
+
+        // Resume from the SERVER position — a stable chapter+paragraph anchor,
+        // never a page number, so it carries across devices and font sizes.
+        if (r && typeof r.current_chapter === 'number') {
+          const ci = chapters.findIndex((c) => c.number === r.current_chapter)
+          if (ci >= 0) {
+            setChapterIndex(ci)
+            restoreParagraphRef.current = r.current_paragraph || 0
+            if (ci > 0 || (r.current_paragraph || 0) > 0) setHasProgress(true)
+          }
+        }
+        furthestRef.current = r?.furthest_location || 0
+
+        // Consent is asked once and never assumed.
+        if (r && r.analytics_consent === null) {
+          setShowConsent(true)
+          startSession({ enabled: false })
+        } else {
+          const ok = r ? r.analytics_consent !== false : true
+          startSession({ enabled: ok })
+        }
+      } else {
+        // Demo mode (no Supabase): behave exactly as before.
+        const id = resolveReaderId()
+        setReaderId(id)
+        const pos = loadPosition(id)
+        if (pos && typeof pos.chapterIndex === 'number') {
+          const ci = clamp(pos.chapterIndex, 0, chapters.length - 1)
+          setChapterIndex(ci)
+          restorePageRef.current = pos.pageIndex || 0
+          if (ci > 0 || (pos.pageIndex || 0) > 0) setHasProgress(true)
+        }
+        if (!isRegistered(id)) setShowWelcome(true)
+        else registerReader(id)
+        if (ref) setReferrer(id, ref)
+        startSession({ enabled: true })
+      }
+
+      if (ref) track('referral_landed', { ref })
+      setReady(true)
+    })()
+
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -172,6 +287,15 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
     const snap = (p) => (bookMode ? Math.floor(p / 2) * 2 : p)
 
     setPageIndex((prev) => {
+      // Resuming by paragraph: find the column that paragraph landed in. This
+      // is why position is stored as an anchor — the page number it maps to
+      // differs per device, but the paragraph does not.
+      if (restoreParagraphRef.current != null) {
+        const idx = restoreParagraphRef.current
+        restoreParagraphRef.current = null
+        const el = blocksIn(col)[idx]
+        if (el) return snap(clamp(Math.floor((el.offsetLeft + 1) / pitch), 0, total - 1))
+      }
       if (restorePageRef.current != null) {
         const p = clamp(restorePageRef.current, 0, total - 1)
         restorePageRef.current = null
@@ -224,6 +348,12 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
       pages: 0,
       isView: true,
     })
+    track(
+      'chapter_entered',
+      { via: enterViaRef.current, title: chapter.title },
+      { chapter: chapter.number, location: chapter.startLocation }
+    )
+    enterViaRef.current = 'sequential'
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, readerId, chapterIndex])
 
@@ -251,6 +381,47 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
 
     savePosition(readerId, { chapterIndex, pageIndex, fontSize, theme })
 
+    // --- stable location for this page ---------------------------------------
+    const paraIdx = firstBlockOnPage(columnsRef.current, pageIndex, pageWidth)
+    const loc = chapter?.locations?.[paraIdx] ?? chapter?.startLocation ?? 1
+    setParagraphIndex(paraIdx)
+    setLocation(loc)
+
+    // --- dwell on the page we just left, and stall detection ------------------
+    const now = Date.now()
+    const dwell = Math.round((now - pageEnteredRef.current) / 1000)
+    const prevLoc = locationRef.current
+    if (dwell >= 1 && dwell < 3600) {
+      const median = recordDwell(dwell)
+      track('page_dwell', { seconds: dwell }, { chapter: chapter.number, location: prevLoc })
+      // "Stuck here": far longer than this reader's own typical page.
+      if (median > 0 && dwellSampleCount() >= 8 && dwell > median * 3) {
+        track('stall_detected', { seconds: dwell, median }, { chapter: chapter.number, location: prevLoc })
+      }
+    }
+    pageEnteredRef.current = now
+    locationRef.current = loc
+
+    track('page_viewed', { page: pageIndex, of: pageCount }, { chapter: chapter.number, location: loc })
+
+    // --- reread: went back at least a page behind the furthest point ----------
+    if (furthestRef.current && loc < furthestRef.current - 1) {
+      track('reread_detected', { from: furthestRef.current }, { chapter: chapter.number, location: loc })
+    }
+    if (loc > furthestRef.current) {
+      furthestRef.current = loc
+      track('furthest_point_updated', {}, { chapter: chapter.number, location: loc })
+    }
+
+    // --- milestones ----------------------------------------------------------
+    for (const m of [25, 50, 75, 100]) {
+      if (pct >= m && !milestonesRef.current.has(m)) {
+        milestonesRef.current.add(m)
+        track('progress_milestone', { milestone: m }, { chapter: chapter.number, location: loc })
+      }
+    }
+    if (finished) track('book_finished', {}, { chapter: chapter.number, location: loc })
+
     clearTimeout(progressTimer.current)
     progressTimer.current = setTimeout(() => {
       updateProgress(readerId, {
@@ -259,9 +430,24 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
         page: pageIndex,
         finished,
       })
+      // Server-side position: what makes resuming work on another device.
+      if (authed) {
+        fetch('/api/position', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            chapter_number: chapter.number,
+            paragraph_index: paraIdx,
+            location: loc,
+            progress_pct: Math.round(pct),
+            finished,
+          }),
+        }).catch(() => {})
+      }
     }, 700)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, readerId, chapterIndex, pageIndex, pageCount, bookMode])
+  }, [ready, readerId, chapterIndex, pageIndex, pageCount, bookMode, pageWidth, authed])
 
   // ---- analytics: time tracking + flushing -----------------------------------
   const flushChapter = useCallback(() => {
@@ -310,9 +496,10 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
 
   // ---- navigation ------------------------------------------------------------
   const goToChapter = useCallback(
-    (index, where = 'first') => {
+    (index, where = 'first', via = 'sequential') => {
       if (index < 0 || index >= chapters.length) return
       flushChapter()
+      enterViaRef.current = via
       if (where === 'last') goLastRef.current = true
       setNavOpen(false)
       setShowContinue(false)
@@ -382,21 +569,42 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
   }
 
   // ---- welcome handlers ------------------------------------------------------
-  const handleWelcome = ({ name, email, subscribe }) => {
-    if (readerId) {
-      registerReader(readerId, name, email)
-      markRegistered(readerId)
-      if (subscribe && email) subscribeHetZal(readerId, { email, name, book: bookTitle })
-    }
+  // Email now comes from auth; this only captures the name.
+  const handleWelcome = async ({ firstName, lastName }) => {
     setShowWelcome(false)
+    if (readerId) markRegistered(readerId)
+    if (authed) {
+      try {
+        await fetch('/api/me', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ first_name: firstName, last_name: lastName }),
+        })
+      } catch {
+        /* ignore */
+      }
+    } else if (readerId) {
+      registerReader(readerId, [firstName, lastName].filter(Boolean).join(' '))
+    }
   }
   const handleSkip = () => {
     if (readerId) {
-      registerReader(readerId)
       markRegistered(readerId)
+      if (!authed) registerReader(readerId)
     }
     setShowWelcome(false)
   }
+
+  // Preference changes are part of the behavioural record too.
+  const changeTheme = useCallback((next) => {
+    setTheme(next)
+    track('theme_changed', { theme: next })
+  }, [])
+  const changeFontSize = useCallback((next) => {
+    setFontSize(next)
+    track('font_size_changed', { size: next })
+  }, [])
 
   // ---- share -----------------------------------------------------------------
   const [shareToast, setShareToast] = useState(false)
@@ -420,7 +628,213 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
       return
     }
     if (readerId) recordShare(readerId, channel)
-  }, [readerId, bookTitle])
+    track('share_initiated', { channel }, { chapter: chapter?.number, location: locationRef.current })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readerId, bookTitle, chapter])
+
+  // ---- selection: popup, anchors, copy ---------------------------------------
+  useEffect(() => {
+    if (!ready) return
+
+    const onSelectionChange = () => {
+      const sel = document.getSelection()
+      const col = columnsRef.current
+      if (!sel || sel.isCollapsed || !col) {
+        setSelRect(null)
+        return
+      }
+      // Only react to selections inside the reading column.
+      if (!col.contains(sel.anchorNode)) {
+        setSelRect(null)
+        return
+      }
+      const a = anchorFromSelection(sel, col, chapter?.number)
+      if (!a) {
+        setSelRect(null)
+        return
+      }
+      const rect = sel.getRangeAt(0).getBoundingClientRect()
+      setAnchor({ ...a, location: locationRef.current, paragraph_index: a.paragraph_index })
+      setSelRect({ top: rect.top, left: rect.left, width: rect.width })
+      track('text_selected', { length: a.selected_text.length }, { chapter: chapter?.number, location: locationRef.current })
+    }
+
+    const onCopy = () => {
+      const sel = document.getSelection()
+      const col = columnsRef.current
+      if (!sel || sel.isCollapsed || !col || !col.contains(sel.anchorNode)) return
+      const a = anchorFromSelection(sel, col, chapter?.number)
+      if (a) {
+        track(
+          'text_copied',
+          { selected_text: a.selected_text.slice(0, 500), paragraph_index: a.paragraph_index },
+          { chapter: chapter?.number, location: locationRef.current }
+        )
+      }
+    }
+
+    document.addEventListener('selectionchange', onSelectionChange)
+    document.addEventListener('copy', onCopy)
+    return () => {
+      document.removeEventListener('selectionchange', onSelectionChange)
+      document.removeEventListener('copy', onCopy)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, chapterIndex])
+
+  // ---- chapter-end survey ----------------------------------------------------
+  useEffect(() => {
+    if (!ready || !authed || showWelcome || survey) return
+    const visible = bookMode ? Math.min(pageIndex + 1, pageCount - 1) : pageIndex
+    const atChapterEnd = pageCount > 0 && visible >= pageCount - 1
+    if (!atChapterEnd) return
+
+    const num = chapter?.number
+    if (num == null || surveyShownRef.current.has(num)) return
+
+    // Once per chapter per reader, remembered locally as well as server-side.
+    let done = []
+    try {
+      done = JSON.parse(localStorage.getItem(SURVEY_KEY) || '[]')
+    } catch {
+      done = []
+    }
+    if (done.includes(num)) return
+
+    surveyShownRef.current.add(num)
+    const isLast = chapterIndex === chapters.length - 1
+    setSurvey({ chapterNumber: num, isEndOfBook: isLast, questions: questionsFor(num, isLast) })
+    track('survey_shown', { kind: isLast ? 'end_of_book' : 'chapter' }, { chapter: num, location: locationRef.current })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, authed, showWelcome, pageIndex, pageCount, chapterIndex, bookMode, survey])
+
+  const markSurveyDone = useCallback((num) => {
+    try {
+      const done = JSON.parse(localStorage.getItem(SURVEY_KEY) || '[]')
+      if (!done.includes(num)) localStorage.setItem(SURVEY_KEY, JSON.stringify([...done, num]))
+    } catch {
+      /* ignore */
+    }
+    setSurvey(null)
+  }, [])
+
+  // ---- action handlers -------------------------------------------------------
+  const clearSelection = useCallback(() => {
+    setSelRect(null)
+    try {
+      document.getSelection()?.removeAllRanges()
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
+  const onSelectionAction = useCallback(
+    (action) => {
+      if (!anchor) return
+      if (action === 'ask') {
+        setAskOpen(true)
+        setSelRect(null)
+        return
+      }
+      const kind = action === 'comment' ? 'comment' : action === 'like' ? 'like' : 'highlight'
+      if (readerId) {
+        addAnnotation(readerId, {
+          chapter: anchor.chapter_number,
+          title: chapter?.title,
+          kind,
+          passage: anchor.selected_text,
+        })
+      }
+      track(
+        kind === 'like' ? 'like_created' : kind === 'comment' ? 'note_created' : 'highlight_created',
+        { length: anchor.selected_text.length },
+        { chapter: anchor.chapter_number, location: anchor.location }
+      )
+      clearSelection()
+    },
+    [anchor, readerId, chapter, clearSelection]
+  )
+
+  const submitQuestion = useCallback(
+    async (question) => {
+      track('question_asked', { length: question.length }, { chapter: anchor?.chapter_number, location: anchor?.location })
+      try {
+        const res = await fetch('/api/questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ ...anchor, question }),
+        })
+        const json = await res.json()
+        return Boolean(json.ok)
+      } catch {
+        return false
+      }
+    },
+    [anchor]
+  )
+
+  const submitFeedback = useCallback(
+    async (message) => {
+      try {
+        await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            message,
+            chapter_number: chapter?.number,
+            location: locationRef.current,
+            selected_text: anchor?.selected_text || null,
+          }),
+        })
+      } catch {
+        /* stored client-side intent only */
+      }
+    },
+    [chapter, anchor]
+  )
+
+  const submitSurvey = useCallback(
+    async (answers) => {
+      if (!survey) return
+      track('survey_completed', { answers }, { chapter: survey.chapterNumber, location: locationRef.current })
+      try {
+        await fetch('/api/survey', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            chapter_number: survey.chapterNumber,
+            kind: survey.isEndOfBook ? 'end_of_book' : 'chapter',
+            answers,
+          }),
+        })
+      } catch {
+        /* ignore */
+      }
+      markSurveyDone(survey.chapterNumber)
+    },
+    [survey, markSurveyDone]
+  )
+
+  const acceptConsent = useCallback(async (granted) => {
+    setShowConsent(false)
+    setConsent(granted)
+    track(granted ? 'consent_granted' : 'consent_declined')
+    if (granted) startSession({ enabled: true })
+    try {
+      await fetch('/api/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ analytics_consent: granted }),
+      })
+    } catch {
+      /* ignore */
+    }
+    if (!granted) flush(true)
+  }, [])
 
   const lastVisiblePage = bookMode ? Math.min(pageIndex + 1, pageCount - 1) : pageIndex
   const atVeryEnd =
@@ -482,10 +896,11 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
         <BookChrome
           onOpenNav={() => setNavOpen(true)}
           onShare={handleShare}
+          onFeedback={() => { track('feedback_opened'); setFeedbackOpen(true) }}
           fontSize={fontSize}
-          onFontSize={setFontSize}
+          onFontSize={changeFontSize}
           theme={theme === 'dark' ? 'dark' : 'light'}
-          onTheme={setTheme}
+          onTheme={changeTheme}
           onPrev={prevPage}
           onNext={nextPage}
           atStart={atVeryStart}
@@ -496,11 +911,12 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
           visible={chromeVisible}
           title={chapter?.title || bookTitle}
           fontSize={fontSize}
-          onFontSize={setFontSize}
+          onFontSize={changeFontSize}
           theme={theme}
-          onTheme={setTheme}
+          onTheme={changeTheme}
           onOpenNav={() => setNavOpen(true)}
           onShare={handleShare}
+          onFeedback={() => { track('feedback_opened'); setFeedbackOpen(true) }}
         />
       )}
 
@@ -516,8 +932,9 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
         open={navOpen}
         chapters={chapters}
         currentIndex={chapterIndex}
-        onSelect={(i) => goToChapter(i, 'first')}
+        onSelect={(i) => goToChapter(i, 'first', 'toc')}
         onClose={() => setNavOpen(false)}
+        account={authed ? <AccountBox email={email} /> : null}
       />
 
       {/* Reading sheet */}
@@ -593,9 +1010,20 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
           }`}
         >
           <span className="text-[11px] tracking-wide" style={{ color: 'var(--ink-soft)' }}>
-            {atVeryEnd ? 'The End' : `Page ${pageIndex + 1} of ${pageCount}`}
+            {atVeryEnd ? COPY.reader.theEnd : COPY.reader.locationLabel(location, totalLocations)}
             <span className="mx-2 opacity-40">·</span>
-            {Math.round(percent)}%
+            {COPY.reader.chapterLabel(chapter?.number ?? 1)}
+          </span>
+        </footer>
+      )}
+
+      {/* Book mode keeps its folios, but the location belongs on screen too */}
+      {bookMode && (
+        <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 pb-3 text-center">
+          <span className="text-[11px] tracking-wide" style={{ color: 'rgba(228,216,192,0.4)' }}>
+            {COPY.reader.locationLabel(location, totalLocations)}
+            <span className="mx-2 opacity-50">·</span>
+            {percentThrough(location, totalLocations)}%
           </span>
         </footer>
       )}
@@ -605,17 +1033,57 @@ export default function Reader({ chapters, bookTitle, lang = 'en' }) {
         <div className="pointer-events-none fixed bottom-14 left-0 right-0 z-40 flex justify-center px-4">
           <div className="panel pointer-events-auto flex items-center gap-3 rounded-full py-2 pl-5 pr-2">
             <span className="text-sm" style={{ color: 'var(--ink)' }}>
-              Welcome back — picking up where you left off
+              {COPY.reader.resume}
             </span>
             <button
-              onClick={() => goToChapter(0, 'first')}
+              onClick={() => {
+                track('resume_prompt_accepted', {}, { chapter: chapter?.number, location })
+                goToChapter(0, 'first', 'toc')
+              }}
               className="rounded-full px-3 py-1.5 text-xs"
               style={{ background: 'var(--paper-edge)', color: 'var(--ink-soft)' }}
             >
-              Start over
+              {COPY.reader.restart}
             </button>
           </div>
         </div>
+      )}
+
+      {/* Selection → highlight / note / like / ask */}
+      {selRect && !askOpen && (
+        <SelectionPopup rect={selRect} onAction={onSelectionAction} onDismiss={clearSelection} />
+      )}
+      {askOpen && (
+        <QuestionComposer
+          selectedText={anchor?.selected_text}
+          onSubmit={submitQuestion}
+          onClose={() => {
+            setAskOpen(false)
+            clearSelection()
+          }}
+        />
+      )}
+
+      {/* Chapter-end / end-of-book survey */}
+      {survey && !showWelcome && (
+        <SurveyCard
+          chapterNumber={survey.chapterNumber}
+          questions={survey.questions}
+          isEndOfBook={survey.isEndOfBook}
+          onSubmit={submitSurvey}
+          onSkip={() => {
+            track('survey_skipped', {}, { chapter: survey.chapterNumber, location })
+            markSurveyDone(survey.chapterNumber)
+          }}
+        />
+      )}
+
+      {feedbackOpen && (
+        <FeedbackPanel onSubmit={submitFeedback} onClose={() => setFeedbackOpen(false)} />
+      )}
+
+      {showConsent && !showWelcome && (
+        <ConsentNotice onAccept={() => acceptConsent(true)} onDecline={() => acceptConsent(false)} />
       )}
 
       {showWelcome && <WelcomeModal onSubmit={handleWelcome} onSkip={handleSkip} />}

@@ -25,6 +25,7 @@ export default function Toolbar({
   onTheme,
   onOpenNav,
   onShare,
+  onFeedback,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const popoverRef = useRef(null)
@@ -72,6 +73,19 @@ export default function Toolbar({
         </div>
 
         <div className="flex items-center gap-2">
+          {onFeedback && (
+            <button
+              onClick={onFeedback}
+              aria-label="Feedback"
+              className="panel flex h-10 w-10 items-center justify-center rounded-full"
+              style={{ color: 'var(--ink)' }}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-4.6A8.4 8.4 0 1 1 21 11.5z" />
+              </svg>
+            </button>
+          )}
+
           {onShare && (
             <button
               onClick={onShare}

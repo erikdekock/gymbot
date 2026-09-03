@@ -13,6 +13,9 @@ export default function OverviewTab({ data }) {
     { label: 'Het Zal subscribers', value: o.subscriberCount, sub: `${o.optInRate}% opt-in rate`, emoji: '✉️' },
     { label: 'Times shared', value: o.timesShared, sub: `${o.referralReach} arrived via referral`, emoji: '↗️' },
     { label: 'Engaged + superfans', value: data.people.filter((p) => p.engagement.score >= 40).length, sub: 'readers worth nurturing', emoji: '🔥' },
+    { label: 'Open vragen', value: o.openQuestions, sub: `${o.totalQuestions} in totaal`, emoji: '❓' },
+    { label: 'Survey-antwoorden', value: o.surveyCount, sub: 'per hoofdstuk verzameld', emoji: '📝' },
+    { label: 'Events', value: o.eventCount, sub: 'gedragssignalen', emoji: '📡' },
   ]
 
   return (

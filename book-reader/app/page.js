@@ -1,51 +1,46 @@
-import Link from 'next/link'
-import { getChapters } from '../lib/content'
+import { redirect } from 'next/navigation'
+import SignIn from '../components/SignIn'
+import { COPY } from '../lib/book-config'
+import { getCurrentUser } from '../lib/supabase/server'
+import { isAuthEnabled } from '../lib/supabase/config'
 
-export default function Home() {
-  const chapters = getChapters()
-  const bookTitle = 'The Book'
-  const author = 'by Your Name'
+export const dynamic = 'force-dynamic'
+
+// Landing page: the cover, and one field. Already signed in? Go straight to
+// the book — the reader resumes at the last saved position by itself.
+export default async function Home() {
+  const authOn = isAuthEnabled()
+  if (authOn) {
+    const user = await getCurrentUser()
+    if (user) redirect('/read')
+  }
+
+  const c = COPY.landing
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-md text-center">
-        <div
-          className="panel mx-auto flex aspect-[3/4] max-w-[18rem] flex-col items-center justify-center rounded-2xl px-8"
-          style={{ background: 'var(--panel)' }}
-        >
-          <p
-            className="mb-6 text-[11px] uppercase tracking-[0.32em]"
-            style={{ color: 'var(--accent)' }}
-          >
-            A Novel
+    <main className="flex min-h-screen items-center justify-center px-6 py-14">
+      <div className="w-full max-w-md">
+        <div className="text-center">
+          <p className="mb-5 text-[11px] uppercase tracking-[0.32em]" style={{ color: 'var(--accent)' }}>
+            {c.eyebrow}
           </p>
-          <h1
-            className="font-display text-4xl leading-tight"
-            style={{ color: 'var(--ink)' }}
-          >
-            {bookTitle}
+          <h1 className="font-display text-5xl leading-tight" style={{ color: 'var(--ink)' }}>
+            {c.title}
           </h1>
-          <div
-            className="my-6 h-px w-12"
-            style={{ background: 'var(--rule)' }}
-            aria-hidden="true"
-          />
+          <div className="mx-auto my-6 h-px w-12" style={{ background: 'var(--rule)' }} aria-hidden="true" />
           <p className="font-display text-sm italic" style={{ color: 'var(--ink-soft)' }}>
-            {author}
+            {c.author}
+          </p>
+
+          <p
+            className="mx-auto mb-9 mt-10 max-w-sm text-sm leading-relaxed"
+            style={{ color: 'var(--ink-soft)' }}
+          >
+            {c.intro}
           </p>
         </div>
 
-        <Link
-          href="/read"
-          className="mt-9 inline-block rounded-full px-8 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          style={{ background: 'var(--accent)' }}
-        >
-          Start reading
-        </Link>
-
-        <p className="mt-5 text-xs" style={{ color: 'var(--ink-soft)' }}>
-          {chapters.length} {chapters.length === 1 ? 'chapter' : 'chapters'} · saved as you read
-        </p>
+        <SignIn authEnabled={authOn} />
       </div>
     </main>
   )

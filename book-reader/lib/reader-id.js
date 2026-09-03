@@ -43,6 +43,27 @@ export function resolveReaderId() {
   return id
 }
 
+// The pre-accounts reader id, if this browser has one. Read only — it does not
+// create an id or touch the URL. On first login it's handed to the server so
+// the old rows can be adopted by the new auth user, then dropped.
+export function getLegacyReaderId() {
+  if (typeof window === 'undefined') return null
+  try {
+    return localStorage.getItem(ID_KEY) || null
+  } catch {
+    return null
+  }
+}
+
+export function clearLegacyReaderId() {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.removeItem(ID_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 // The ?ref= id, if this reader arrived via someone else's share link. Captured
 // once (the first visit) so we can build the referral chain in the dashboard.
 export function getReferral() {

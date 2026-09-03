@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 
 // Slide-in sidebar listing chapters. Tapping one jumps straight to it.
-export default function ChapterNav({ open, chapters, currentIndex, onSelect, onClose }) {
+export default function ChapterNav({ open, chapters, currentIndex, onSelect, onClose, account }) {
   // Close on Escape while open.
   useEffect(() => {
     if (!open) return
@@ -65,6 +65,8 @@ export default function ChapterNav({ open, chapters, currentIndex, onSelect, onC
             )
           })}
         </nav>
+
+        {account}
       </aside>
     </>
   )

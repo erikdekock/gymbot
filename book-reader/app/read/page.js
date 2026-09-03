@@ -2,10 +2,15 @@ import Reader from '../../components/Reader'
 import { getChapters } from '../../lib/content'
 import { BOOK } from '../../lib/book-config'
 
+export const dynamic = 'force-dynamic'
+
 // Build-time/server read of the markdown chapters, handed to the client reader.
+// Paragraph *text* stays on the server — the client only needs each paragraph's
+// starting location number, which is what makes positions stable.
 export default function ReadPage() {
   const chapters = getChapters()
   const bookTitle = BOOK.title
+  const totalLocations = chapters.length ? chapters[0].totalLocations : 1
 
   if (!chapters.length) {
     return (
@@ -22,5 +27,20 @@ export default function ReadPage() {
     )
   }
 
-  return <Reader chapters={chapters} bookTitle={bookTitle} lang={BOOK.lang} />
+  const slim = chapters.map((c) => ({
+    number: c.number,
+    title: c.title,
+    html: c.html,
+    startLocation: c.startLocation,
+    locations: c.paragraphs.map((p) => p.startLocation),
+  }))
+
+  return (
+    <Reader
+      chapters={slim}
+      bookTitle={bookTitle}
+      lang={BOOK.lang}
+      totalLocations={totalLocations}
+    />
+  )
 }

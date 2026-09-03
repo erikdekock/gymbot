@@ -176,6 +176,9 @@ function ProfileDrawer({ p, onClose }) {
           <MiniStat label="Complete" value={`${p.progressPct}%`} />
           <MiniStat label="Time" value={fmtDuration(p.timeSpentSeconds)} />
           <MiniStat label="Last seen" value={fmtRelative(p.lastSeen)} />
+          <MiniStat label="Locatie" value={p.currentLocation || '—'} />
+          <MiniStat label="Verst" value={p.furthestLocation || '—'} />
+          <MiniStat label="Sessies" value={p.sessionCount || 0} />
         </div>
 
         {/* Engagement breakdown */}
@@ -251,6 +254,41 @@ function ProfileDrawer({ p, onClose }) {
                   {f.rating ? <div className="text-sm" style={{ color: 'var(--accent)' }}>{'★'.repeat(f.rating)}{'☆'.repeat(Math.max(0, 5 - f.rating))}</div> : null}
                   <p className="text-sm" style={{ color: 'var(--ink)' }}>{f.message}</p>
                   <p className="mt-1 text-[11px]" style={{ color: 'var(--ink-soft)' }}>{fmtDateTime(f.created_at)}</p>
+                </div>
+              ))}
+            </div>
+          </Section>
+        )}
+
+        {/* Their questions */}
+        {p.questions.length > 0 && (
+          <Section title={`Vragen (${p.questions.length})`}>
+            <div className="space-y-2">
+              {p.questions.map((q) => (
+                <div key={q.id} className="rounded-xl p-3" style={{ background: 'var(--paper)', border: '1px solid var(--rule)' }}>
+                  <div className="mb-1 flex items-center justify-between text-[11px]" style={{ color: 'var(--ink-soft)' }}>
+                    <span>Hoofdstuk {q.chapter_number} · locatie {q.location ?? '—'}</span>
+                    <span>{fmtRelative(q.created_at)}</span>
+                  </div>
+                  {q.selected_text && <p className="text-sm italic" style={{ color: 'var(--ink-soft)' }}>&ldquo;{q.selected_text}&rdquo;</p>}
+                  <p className="mt-1 text-sm" style={{ color: 'var(--ink)' }}>{q.question}</p>
+                </div>
+              ))}
+            </div>
+          </Section>
+        )}
+
+        {/* Event timeline — what they actually did, in order */}
+        {p.events.length > 0 && (
+          <Section title={`Events (${p.events.length})`}>
+            <div className="max-h-80 space-y-1 overflow-y-auto pr-1">
+              {p.events.slice(0, 200).map((e) => (
+                <div key={e.id} className="flex items-baseline gap-2 text-xs" style={{ color: 'var(--ink-soft)' }}>
+                  <span className="w-20 shrink-0 tabular-nums">{fmtRelative(e.occurred_at)}</span>
+                  <span style={{ color: 'var(--ink)' }}>{e.event_type}</span>
+                  {e.location != null && <span>· loc {e.location}</span>}
+                  {e.chapter_number != null && <span>· h{e.chapter_number}</span>}
+                  {e.payload?.seconds != null && <span>· {e.payload.seconds}s</span>}
                 </div>
               ))}
             </div>

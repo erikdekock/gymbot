@@ -1,0 +1,73 @@
+<!--
+  Supabase → Authentication → Email Templates → "Magic Link".
+  Paste the markup below into the template body.
+
+  Supabase substitutes {{ .ConfirmationURL }} with the sign-in link.
+  Keep that variable exactly as it is; everything else is free text.
+
+  Subject line to use:
+      Je leeslink voor Het Zal
+-->
+<!doctype html>
+<html lang="nl">
+  <body style="margin:0;padding:0;background:#f6f1e7;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1e7;padding:40px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                 style="max-width:520px;background:#fbf8f1;border:1px solid rgba(43,38,34,.12);border-radius:14px;padding:40px;font-family:Georgia,'Times New Roman',serif;color:#2b2622;">
+
+            <tr>
+              <td style="text-align:center;padding-bottom:8px;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#9b6a43;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+                Het Zal
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center;font-size:28px;line-height:1.25;padding-bottom:22px;">
+                Hier is je leeslink
+              </td>
+            </tr>
+
+            <tr>
+              <td style="font-size:16px;line-height:1.7;padding-bottom:28px;">
+                Klik op de knop hieronder en je zit meteen in het boek, op de plek
+                waar je gebleven was. Geen wachtwoord nodig.
+              </td>
+            </tr>
+
+            <tr>
+              <td align="center" style="padding-bottom:28px;">
+                <a href="{{ .ConfirmationURL }}"
+                   style="display:inline-block;background:#9b6a43;color:#ffffff;text-decoration:none;
+                          padding:14px 32px;border-radius:999px;font-size:15px;
+                          font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+                  Verder lezen
+                </a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="font-size:13px;line-height:1.6;color:#6b6256;padding-bottom:8px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+                Werkt de knop niet? Plak deze link in je browser:
+              </td>
+            </tr>
+            <tr>
+              <td style="font-size:12px;line-height:1.5;color:#9b6a43;word-break:break-all;padding-bottom:28px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+                {{ .ConfirmationURL }}
+              </td>
+            </tr>
+
+            <tr>
+              <td style="border-top:1px solid rgba(43,38,34,.12);padding-top:22px;font-size:12px;line-height:1.6;color:#6b6256;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;">
+                Deze link is één uur geldig en werkt één keer. Heb je hem niet zelf
+                aangevraagd? Dan kun je deze mail negeren — er gebeurt niets.
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
